@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
 const BLOCK_WIDTH = 100
@@ -11,6 +11,9 @@ const BACKGROUND_COLOR = "#bdc3c7"
 
 const LABEL_FONT_SIZE = 18.5
 const DATA_FONT_SIZE = 24
+
+const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInProgress',"deaths"]
+
 
 function getPercent(amount,total,decimals){
   var quotient = amount / total * 100
@@ -27,7 +30,13 @@ function createDataObject(data,xKey,yKey){
       const dateObj = new Date(entry[xKey])
       xShorthand = `${dateObj.getDate()}-${dateObj.getMonth()}`
     }
-    const formattedEntry = {"x":xShorthand,"y":entry[yKey]}
+
+    var yValue = entry[yKey]
+    if (!yValue){
+      continue
+    }
+    console.log(`Y value is ${yValue}`)
+    const formattedEntry = {"x":xShorthand,"y":yValue}
     formattedData.push(formattedEntry)
   }
 
@@ -66,7 +75,7 @@ class Home extends Component{
     super(props)
     const defaultXY = [{confirmedCases:100,timestamp:0},{confirmedCases:200,timestamp:1}]
 
-    this.state = {
+    const initialState = {
             conductedTests:0,
             confirmedCases:0,
             deaths:0,
@@ -74,7 +83,15 @@ class Home extends Component{
             testsInProgress:0,
             timestamp:0,
             saludTimeSignature:0,
-            historicalData:defaultXY}
+            historicalData:defaultXY,
+            attributeToGraph:'confirmedCases',
+          }
+    for (var i = 0; i < ATTRIBUTES.length; i++) {
+      const attribute = ATTRIBUTES[i]
+      initialState[`${attribute}ButtonVariant`] = 'light'
+    }
+
+    this.state = initialState
   }
 
 
@@ -103,14 +120,64 @@ class Home extends Component{
 
     }
 }
+  chooseButton = (attributeToGraph)=>{
+    var newState = this.state
+    for (var i = 0; i < ATTRIBUTES.length; i++) {
+      const attribute = ATTRIBUTES[i];
+      const stateItem = `${attribute}ButtonVariant`
+
+      if (attribute == attributeToGraph){
+        newState[stateItem] = 'primary'
+        newState.attributeToGraph = attribute
+      } else{
+        newState[stateItem] = 'light'
+      }
+    }
+    this.setState({...newState})
+  }
 
   render (){
-    const dataObjectForChart = createDataObject(this.state.historicalData,'timestamp','confirmedCases')
-    const xAxisLabel = 'Date'
-    const yAxisLabel = 'Confirmed Cases'
+    const attributeToChartOptions = {
+      'confirmedCases':{
+        xKey: 'timestamp',
+        yKey: 'confirmedCases',
+        xAxisLabel: 'Fecha',
+        yAxisLabel: 'Casos confirmados'
+      },
+      'conductedTests':{
+        xKey: 'timestamp',
+        yKey: 'conductedTests',
+        xAxisLabel: 'Fecha',
+        yAxisLabel: 'Pruebas administradas'
+      },
+      'negativeCases':{
+        xKey: 'timestamp',
+        yKey: 'negativeCases',
+        xAxisLabel: 'Fecha',
+        yAxisLabel: 'Casos negativos'
+      },
+      'testsInProgress':{
+        xKey: 'timestamp',
+        yKey: 'testsInProgress',
+        xAxisLabel: 'Fecha',
+        yAxisLabel: 'Pruebas en progreso'
+      },
+      'deaths':{
+        xKey: 'timestamp',
+        yKey: 'deaths',
+        xAxisLabel: 'Fecha',
+        yAxisLabel: 'Muertes'
+      },
+
+    }
+    const attributeToGraph = this.state.attributeToGraph
+
+    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[attributeToGraph].xKey,attributeToChartOptions[attributeToGraph].yKey)
+    const xAxisLabel = attributeToChartOptions[attributeToGraph].xAxisLabel
+    const yAxisLabel = attributeToChartOptions[attributeToGraph].yAxisLabel
 
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',paddingTop: 0}}>
         <div style={{display:'flex',flexDirection:'row',paddingTop: 2}}>
           <div style={{fontSize: 30,fontWeight: 'bold',divAlign:'center'}}>{"COVID-19 en\n Puerto Rico🇵🇷"}</div>
         </div>
@@ -148,6 +215,15 @@ class Home extends Component{
         <div style={{display:'flex',flexDirection:'row'}}>
           <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature.replace("\n","") : ""}`}</div>
         </div>
+        <div style={{display:'flex',flexDirection:'row'}}>
+          <Button onClick={()=>this.chooseButton('conductedTests')} variant={this.state.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
+          <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
+          <Button onClick={()=>this.chooseButton('negativeCases')} variant={this.state.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
+          <Button onClick={()=>this.chooseButton('testsInProgress')} variant={this.state.testsInProgressButtonVariant}>Pruebas en proceso</Button>{' '}
+          <Button onClick={()=>this.chooseButton('deaths')} variant={this.state.deathsButtonVariant}>Muertes</Button>{' '}
+
+        </div>
+
         <div style={{height:500,width:800}}>
           {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel)}
         </div>
