@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
-const BLOCK_WIDTH = 140
+const BLOCK_WIDTH = "10vw"
 const BLOCK_HEIGHT = 60
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
@@ -97,7 +97,7 @@ function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=
 
 
   return (
-    <div style={{width: BLOCK_WIDTH, height: BLOCK_HEIGHT,
+    <div style={{width: "20vw",maxWidth: "160px",minWidth: "100px",height: BLOCK_HEIGHT,
       borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
       backgroundColor: backgroundColor,color:fontColor,
       alignItems:'center',justifyContent:'center',textAlign: 'center',fontSize: fontSize}}>
@@ -238,19 +238,14 @@ class Home extends Component{
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 5}}>
                 {getDataBlock("label","Casos positivos",15)}
-                {getDataBlock("label","Casos nuevos hoy")}
                 {getDataBlock("label","Casos negativos")}
-                {getDataBlock("label","Muertes")}
-                {getDataBlock("label","Muertes nuevas hoy",0,15)}
+                {getDataBlock("label","Muertes",0,15)}
 
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",formatInteger(this.state.confirmedCases),0,0,15)}
-                {getDataBlock("data",formatInteger(this.state.newCasesToday))}
+                {getDataBlock("data",`${formatInteger(this.state.confirmedCases)}\n(${formatInteger(this.state.newCasesToday)} hoy)`,0,0,15)}
                 {getDataBlock("data",formatInteger(this.state.negativeCases))}
-                {getDataBlock("data",this.state.deaths,)}
-                {getDataBlock("data",formatInteger(this.state.newDeathsToday),0,0,0,15)}
-
+                {getDataBlock("data",`${this.state.deaths}\n(${formatInteger(this.state.newDeathsToday)} hoy)`,0,0,0,15)}
               </div>
             </div>
           </div>
@@ -286,7 +281,7 @@ class Home extends Component{
 
           </div>
         </div>
-        <div style={{display:'flex',flexDirection:'row'}}>
+        <div style={{display:'flex',flexDirection:'row',textAlign: 'center'}}>
           <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature.replace("al","obtenidos del Departmento de Salud de Puerto Rico el") : ""}`}</div>
         </div>
         <div style={{display:'flex',flexDirection:'row'}}>
@@ -298,7 +293,7 @@ class Home extends Component{
 
         </div>
 
-        <div style={{height:500,width:"70%",justifyContent: 'center'}}>
+        <div style={{height:500,width:"70%",minWidth: "600px",justifyContent: 'center'}}>
           {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
         </div>
 
