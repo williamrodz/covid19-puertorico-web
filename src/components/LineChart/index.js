@@ -9,14 +9,14 @@ textColor: 'blue',
 },
 };
 
-const App = (data,xAxisLabel="x",yAxisLabel="y") =>
+const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
 
   (
       <ResponsiveLine
           data={data}
           // animate={lineGraphSettings.animate == false ? lineGraphSettings.animate : true}
           // theme={lineGraphSettings.theme}
-          enableArea={true}
+          enableArea={false}
           margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
           xScale={{ type: 'point' }}
           yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
@@ -40,7 +40,9 @@ const App = (data,xAxisLabel="x",yAxisLabel="y") =>
               legendOffset: -40,
               legendPosition: 'middle'
           }}
-          colors={{ scheme: 'nivo' }}
+          lineWidth={"4px"}
+          colors={graphColors }
+          enablePoints={false}
           pointSize={10}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={2}

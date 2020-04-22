@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
-const BLOCK_WIDTH = 100
+const BLOCK_WIDTH = 140
 const BLOCK_HEIGHT = 60
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
@@ -12,18 +12,32 @@ const BACKGROUND_COLOR = "#bdc3c7"
 const LABEL_FONT_SIZE = 18.5
 const DATA_FONT_SIZE = 24
 
-const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInProgress',"deaths"]
 const MONTHS_ES = {1:"enero",2:"febrero",3:"marzo",4:"abril",5:"mayo",6:"junio",7:"julio",8:"agosto",9:"septiembre",10:"octubre",11:"noviembre",12:"diciembre"}
 
+const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInProgress',"deaths"]
+const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','secondary','danger']
+
+
+const BOOTSTRAP_BUTTON_CLASSES_TO_COLORS = {'warning':'rgb(255, 193, 7)','primary':'rgb(0, 123, 255)','success':'rgb(40, 167, 69)','secondary':'rgb(108, 117, 125)','danger':'rgb(220, 53, 69)'}
+
+// const ATTRIBUTES_TO_CLASSES =
+var ATTRIBUTES_TO_CLASSES = []
+ATTRIBUTES.forEach((item, i) => {
+  ATTRIBUTES_TO_CLASSES[item] = ATTRIBUTE_CLASS_ORDER[i]
+});
 
 function getPercent(amount,total,decimals){
   var quotient = amount / total * 100
   return quotient.toFixed(decimals) + '%'
+}
 
+function formatInteger(number){
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function createDataObject(data,xKey,yKey){
   var formattedData = []
+  var formattedDeltaData = []
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
     var xShorthand = entry[xKey]
@@ -37,30 +51,51 @@ function createDataObject(data,xKey,yKey){
       continue
     }
     console.log(`Y value is ${yValue}`)
+    if (i >= 1){
+      const prevEntry = data[i-1]
+      const prevYvalue = prevEntry[yKey]
+      console.log(`prevY value is ${prevYvalue}`)
+      const delta = yValue - prevYvalue
+      const formattedDelta = {"x":xShorthand,"y":delta}
+      formattedDeltaData.push(formattedDelta)
+    }
+
     const formattedEntry = {"x":xShorthand,"y":yValue}
     formattedData.push(formattedEntry)
   }
 
+  // formattedDeltaData = [formattedDeltaData[0]].concat(formattedDeltaData)
+
   const dataObject = {
   "id": yKey,
-  "color": "#8e44ad",
+  "color":Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS)[0],
   "data": formattedData}
+
+  const deltaObject = {
+  "id": "delta",
+  "color":Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS)[1],
+  "data": formattedDeltaData}
+  console.log("formattedData",formattedData)
+  console.log("formattedDeltaData",formattedDeltaData)
+
 
   return [dataObject]
 }
 
 
-function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=0,borderBottomLeftRadius=0,borderBottomRightRadius=0){
+function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=0,borderBottomLeftRadius=0,borderBottomRightRadius=0,fontSize=null){
   if (blockType == "label"){
     var backgroundColor = DATA_LABEL_BACKGROUND_COLOR
-    var fontSize = LABEL_FONT_SIZE
+    fontSize = fontSize ? fontSize : LABEL_FONT_SIZE
     var fontColor = DATA_VALUE_TEXT_COLOR
   }
   else if (blockType == "data"){
     var backgroundColor = DATA_VALUE_BACKGROUND_COLOR
-    var fontSize = DATA_FONT_SIZE
+    fontSize = fontSize ? fontSize : DATA_FONT_SIZE
     var fontColor = "black"
   }
+
+
   return (
     <div style={{width: BLOCK_WIDTH, height: BLOCK_HEIGHT,
       borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
@@ -86,13 +121,18 @@ class Home extends Component{
             saludTimeSignature:0,
             historicalData:defaultXY,
             attributeToGraph:'confirmedCases',
+            PRpopulation:3.194*(10**6),
+            graphColors:Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS),
+            newCasesToday:0,
+            newDeathsToday:0,
           }
     for (var i = 0; i < ATTRIBUTES.length; i++) {
       const attribute = ATTRIBUTES[i]
       var defaultButtonVariant = 'light'
       if (attribute == "confirmedCases"){
-        defaultButtonVariant = 'primary'
+        defaultButtonVariant = 'warning'
       }
+
       initialState[`${attribute}ButtonVariant`] = defaultButtonVariant
     }
 
@@ -121,7 +161,11 @@ class Home extends Component{
     const historicalDataRef = await this.props.firebase.getHistoricalData()
     if (historicalDataRef.exists){
       const historicalData = historicalDataRef.data().all
-      this.setState({historicalData:historicalData})
+      const lengthOfData = historicalData.length
+      this.setState({historicalData:historicalData,
+                    newCasesToday:historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases,
+                    newDeathsToday:historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths
+                  })
 
     }
 }
@@ -132,8 +176,10 @@ class Home extends Component{
       const stateItem = `${attribute}ButtonVariant`
 
       if (attribute == attributeToGraph){
-        newState[stateItem] = 'primary'
+        const variantClass = ATTRIBUTES_TO_CLASSES[attribute]
+        newState[stateItem] = variantClass
         newState.attributeToGraph = attribute
+        // newState.graphColors = [BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[variantClass],'purple']
       } else{
         newState[stateItem] = 'light'
       }
@@ -188,18 +234,27 @@ class Home extends Component{
         </div>
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
+
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 5}}>
                 {getDataBlock("label","Casos positivos",15)}
+                {getDataBlock("label","Casos nuevos hoy")}
                 {getDataBlock("label","Casos negativos")}
-                {getDataBlock("label","Muertes",0,15)}
+                {getDataBlock("label","Muertes")}
+                {getDataBlock("label","Muertes nuevas hoy",0,15)}
+
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",this.state.confirmedCases,0,0,15)}
-                {getDataBlock("data",this.state.negativeCases)}
-                {getDataBlock("data",this.state.deaths,0,0,0,15)}
+                {getDataBlock("data",formatInteger(this.state.confirmedCases),0,0,15)}
+                {getDataBlock("data",formatInteger(this.state.newCasesToday))}
+                {getDataBlock("data",formatInteger(this.state.negativeCases))}
+                {getDataBlock("data",this.state.deaths,)}
+                {getDataBlock("data",formatInteger(this.state.newDeathsToday),0,0,0,15)}
+
               </div>
             </div>
+          </div>
+          <div style={{display: 'flex',flexDirection: 'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
                 {getDataBlock("label","Porciento Positivo",15)}
@@ -209,24 +264,30 @@ class Home extends Component{
               <div style={{display:'flex',flexDirection:'row'}}>
                 {getDataBlock("data",getPercent(this.state.confirmedCases,this.state.conductedTests,1),0,0,15)}
                 {getDataBlock("data",getPercent(this.state.negativeCases,this.state.conductedTests,1))}
-                {getDataBlock("data",getPercent(this.state.deaths,this.state.conductedTests,3),0,0,0,15)}
+                {getDataBlock("data",getPercent(this.state.deaths,this.state.confirmedCases,2),0,0,0,15)}
               </div>
             </div>
           </div>
-          <div style={{display: 'flex',flexDirection: 'column'}}>
-            <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-              {getDataBlock("label","Pruebas en proceso",15)}
-              {getDataBlock("label","Pruebas realizadas",0,15)}
+          <div style ={{display:'flex',flexDirection:'row'}}>
+            <div style={{display: 'flex',flexDirection: 'column'}}>
+              <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
+                {getDataBlock("label","Porciento de puertorriqueños infectados",15,0,0,0,13)}
+                {getDataBlock("label","Pruebas en proceso")}
+                {getDataBlock("label","Pruebas realizadas",0,15)}
+
+              </div>
+
+              <div style={{display:'flex',flexDirection:'row'}}>
+                {getDataBlock("data",this.state.PRpopulation ? getPercent(this.state.confirmedCases,this.state.PRpopulation,3) : 0,0,0,15)}
+                {getDataBlock("data",formatInteger(this.state.testsInProgress))}
+                {getDataBlock("data",formatInteger(this.state.conductedTests),0,0,0,15)}
+              </div>
             </div>
 
-            <div style={{display:'flex',flexDirection:'row'}}>
-              {getDataBlock("data",this.state.testsInProgress,0,0,15)}
-              {getDataBlock("data",this.state.conductedTests,0,0,0,15)}
-            </div>
           </div>
         </div>
         <div style={{display:'flex',flexDirection:'row'}}>
-          <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature.replace("\n","") : ""}`}</div>
+          <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature.replace("al","obtenidos del Departmento de Salud de Puerto Rico el") : ""}`}</div>
         </div>
         <div style={{display:'flex',flexDirection:'row'}}>
           <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
@@ -237,8 +298,8 @@ class Home extends Component{
 
         </div>
 
-        <div style={{height:500,width:800,justifyContent: 'center'}}>
-          {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel)}
+        <div style={{height:500,width:"70%",justifyContent: 'center'}}>
+          {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
         </div>
 
       </div>
