@@ -3,7 +3,8 @@ import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
 const BLOCK_WIDTH = "10vw"
-const BLOCK_HEIGHT = 60
+const LABEL_BLOCK_HEIGHT = 60
+const DATA_BLOCK_HEIGHT = 40
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
 const DATA_LABEL_BACKGROUND_COLOR = "#8e44ad"
@@ -37,10 +38,17 @@ function formatInteger(number){
 
 function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
   var text = formatInteger(confirmedCases)
-  console.log("saludTimeSignature",saludTimeSignature)
-  const startOfNumber = saludTimeSignature.indexOf("al ")
-  const endOfNumber = saludTimeSignature.substring(startOfNumber).indexOf(" ")
-  const saludDayOfMonth = saludTimeSignature.substring(startOfNumber,endOfNumber)
+  const splitBySpaces = saludTimeSignature.split(' ')
+  var dateIndex = 0
+  for (var i = 0; i < splitBySpaces.length; i++) {
+    const word = splitBySpaces[i]
+    if (isNaN(word) == false){
+      dateIndex = i
+      break
+    }
+  }
+
+  const saludDayOfMonth = splitBySpaces[dateIndex]
   console.log("saludDayOfMonth",saludDayOfMonth)
   const dateFromToday = saludDayOfMonth == (new Date).getDate()
 
@@ -100,17 +108,19 @@ function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=
   if (blockType == "label"){
     var backgroundColor = DATA_LABEL_BACKGROUND_COLOR
     fontSize = fontSize ? fontSize : LABEL_FONT_SIZE
+    var blockHeight = LABEL_BLOCK_HEIGHT
     var fontColor = DATA_VALUE_TEXT_COLOR
   }
   else if (blockType == "data"){
     var backgroundColor = DATA_VALUE_BACKGROUND_COLOR
     fontSize = fontSize ? fontSize : DATA_FONT_SIZE
+    var blockHeight = DATA_BLOCK_HEIGHT
     var fontColor = "black"
   }
 
 
   return (
-    <div style={{width: "20vw",maxWidth: "160px",minWidth: "100px",height: BLOCK_HEIGHT,
+    <div style={{width: "20vw",maxWidth: "160px",minWidth: "100px",height: blockHeight,
       borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
       backgroundColor: backgroundColor,color:fontColor,
       alignItems:'center',justifyContent:'center',textAlign: 'center',fontSize: fontSize}}>
@@ -270,9 +280,9 @@ class Home extends Component{
                 {getDataBlock("label","Porciento de muertes",0,15)}
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",getPercent(this.state.confirmedCases,this.state.conductedTests,1),0,0,15)}
-                {getDataBlock("data",getPercent(this.state.negativeCases,this.state.conductedTests,1))}
-                {getDataBlock("data",getPercent(this.state.deaths,this.state.confirmedCases,2),0,0,0,15)}
+                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.confirmedCases,this.state.conductedTests,1) : 0,0,0,15)}
+                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.negativeCases,this.state.conductedTests,1) : 0)}
+                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
               </div>
             </div>
           </div>
