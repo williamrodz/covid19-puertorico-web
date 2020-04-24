@@ -35,6 +35,19 @@ function formatInteger(number){
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
+  var text = formatInteger(confirmedCases)
+  console.log("saludTimeSignature",saludTimeSignature)
+  const startOfNumber = saludTimeSignature.indexOf("al ")
+  const endOfNumber = saludTimeSignature.substring(startOfNumber).indexOf(" ")
+  const saludDayOfMonth = saludTimeSignature.substring(startOfNumber,endOfNumber)
+  console.log("saludDayOfMonth",saludDayOfMonth)
+  const dateFromToday = saludDayOfMonth == (new Date).getDate()
+
+  text =  dateFromToday ? text + `${formatInteger(newCasesToday)} hoy` : text
+  return text
+}
+
 function createDataObject(data,xKey,yKey){
   var formattedData = []
   var formattedDeltaData = []
@@ -118,7 +131,7 @@ class Home extends Component{
             negativeCases:0,
             testsInProgress:0,
             timestamp:0,
-            saludTimeSignature:0,
+            saludTimeSignature:'',
             historicalData:defaultXY,
             attributeToGraph:'confirmedCases',
             PRpopulation:3.194*(10**6),
@@ -243,9 +256,9 @@ class Home extends Component{
 
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",`${formatInteger(this.state.confirmedCases)}\n(${formatInteger(this.state.newCasesToday)} hoy)`,0,0,15)}
+                {getDataBlock("data",getFigureWithTodaysCount(this.state.confirmedCases,this.state.saludTimeSignature,this.state.newCasesToday),0,0,15)}
                 {getDataBlock("data",formatInteger(this.state.negativeCases))}
-                {getDataBlock("data",`${this.state.deaths}\n(${formatInteger(this.state.newDeathsToday)} hoy)`,0,0,0,15)}
+                {getDataBlock("data",getFigureWithTodaysCount(this.state.deaths,this.state.saludTimeSignature,this.state.newDeathsToday),0,0,0,15)}
               </div>
             </div>
           </div>
