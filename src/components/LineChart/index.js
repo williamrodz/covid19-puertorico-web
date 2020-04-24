@@ -2,11 +2,21 @@ import React from 'react';
 import { ResponsiveLine } from '@nivo/line'
 
 
-const lineGraphSettings = {
-theme: {
-fontSize: '16px',
-textColor: 'blue',
-},
+const theme = {
+  axis: {
+    legend:{
+      text:{
+        fontSize:20
+      }
+    }
+  },
+  grid: {
+  },
+  legends:{
+    text:{
+      fontSize: 14,
+    }
+  }
 };
 
 const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
@@ -15,11 +25,11 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
       <ResponsiveLine
           data={data}
           // animate={lineGraphSettings.animate == false ? lineGraphSettings.animate : true}
-          // theme={lineGraphSettings.theme}
+          theme={theme}
           enableArea={false}
           margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
           xScale={{ type: 'point' }}
-          yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
+          yScale={{ type: 'linear', min: 0, max: 'auto', stacked: false, reverse: false }}
           axisTop={null}
           axisRight={null}
           axisBottom={{
@@ -28,7 +38,7 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
               tickPadding: 5,
               tickRotation: 0,
               legend: xAxisLabel,
-              legendOffset: 36,
+              legendOffset: 40,
               legendPosition: 'middle'
           }}
           axisLeft={{
@@ -37,7 +47,7 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
               tickPadding: 5,
               tickRotation: 0,
               legend: yAxisLabel,
-              legendOffset: -40,
+              legendOffset: -50,
               legendPosition: 'middle'
           }}
           lineWidth={"4px"}
@@ -50,6 +60,34 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
           pointLabel={`${yAxisLabel}`}
           pointLabelYOffset={-12}
           useMesh={true}
+          crosshairType="bottom"
+          enableSlices='x'
+          // legends={[
+          //     {
+          //         anchor: 'top-left',
+          //         direction: 'column',
+          //         justify: false,
+          //         translateX: 0,
+          //         translateY: 0,
+          //         itemsSpacing: 0,
+          //         itemDirection: 'left-to-right',
+          //         itemWidth: 210,
+          //         itemHeight: 20,
+          //         itemOpacity: 0.75,
+          //         symbolSize: 12,
+          //         symbolShape: 'circle',
+          //         symbolBorderColor: 'rgba(0, 0, 0, .5)',
+          //         effects: [
+          //             {
+          //                 on: 'hover',
+          //                 style: {
+          //                     itemBackground: 'rgba(0, 0, 0, .03)',
+          //                     itemOpacity: 1
+          //                 }
+          //             }
+          //         ]
+          //     }]}
+
 
       />
   )

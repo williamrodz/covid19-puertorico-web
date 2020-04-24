@@ -7,7 +7,7 @@ const LABEL_BLOCK_HEIGHT = 60
 const DATA_BLOCK_HEIGHT = 40
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
-const DATA_LABEL_BACKGROUND_COLOR = "#8e44ad"
+const DATA_LABEL_BACKGROUND_COLOR = "#3498db"
 const BACKGROUND_COLOR = "#bdc3c7"
 
 const LABEL_FONT_SIZE = 18.5
@@ -19,13 +19,50 @@ const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInPr
 const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','secondary','danger']
 
 
-const BOOTSTRAP_BUTTON_CLASSES_TO_COLORS = {'warning':'rgb(255, 193, 7)','primary':'rgb(0, 123, 255)','success':'rgb(40, 167, 69)','secondary':'rgb(108, 117, 125)','danger':'rgb(220, 53, 69)'}
+const BOOTSTRAP_BUTTON_CLASSES_TO_COLORS = {'warning':'rgb(255, 193, 7)','primary':'rgb(0, 123, 255)','success':'rgb(40, 167, 69)','secondary':'rgb(108, 117, 125)','danger':'rgb(220, 53, 69)',}
 
 // const ATTRIBUTES_TO_CLASSES =
 var ATTRIBUTES_TO_CLASSES = []
 ATTRIBUTES.forEach((item, i) => {
   ATTRIBUTES_TO_CLASSES[item] = ATTRIBUTE_CLASS_ORDER[i]
 });
+
+const DELTA_LINE_COLOR = 'purple'
+
+const attributeToChartOptions = {
+  'confirmedCases':{
+    xKey: 'timestamp',
+    yKey: 'confirmedCases',
+    xAxisLabel: 'Fecha',
+    yAxisLabel: 'Casos confirmados'
+  },
+  'conductedTests':{
+    xKey: 'timestamp',
+    yKey: 'conductedTests',
+    xAxisLabel: 'Fecha',
+    yAxisLabel: 'Pruebas administradas'
+  },
+  'negativeCases':{
+    xKey: 'timestamp',
+    yKey: 'negativeCases',
+    xAxisLabel: 'Fecha',
+    yAxisLabel: 'Casos negativos'
+  },
+  'testsInProgress':{
+    xKey: 'timestamp',
+    yKey: 'testsInProgress',
+    xAxisLabel: 'Fecha',
+    yAxisLabel: 'Pruebas en progreso'
+  },
+  'deaths':{
+    xKey: 'timestamp',
+    yKey: 'deaths',
+    xAxisLabel: 'Fecha',
+    yAxisLabel: 'Muertes'
+  },
+
+}
+
 
 function getPercent(amount,total,decimals){
   var quotient = amount / total * 100
@@ -56,7 +93,8 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
   return text
 }
 
-function createDataObject(data,xKey,yKey){
+
+function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
   var formattedData = []
   var formattedDeltaData = []
   for (var i = 0; i < data.length; i++) {
@@ -77,6 +115,10 @@ function createDataObject(data,xKey,yKey){
       const prevYvalue = prevEntry[yKey]
       console.log(`prevY value is ${prevYvalue}`)
       const delta = yValue - prevYvalue
+      if (isNaN(delta)){
+        console.log("SKIPPING delta:",delta)
+        continue
+      }
       const formattedDelta = {"x":xShorthand,"y":delta}
       formattedDeltaData.push(formattedDelta)
     }
@@ -86,21 +128,28 @@ function createDataObject(data,xKey,yKey){
   }
 
   // formattedDeltaData = [formattedDeltaData[0]].concat(formattedDeltaData)
-
   const dataObject = {
-  "id": yKey,
-  "color":Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS)[0],
+  "id": attributeToChartOptions[yKey].yAxisLabel,
+  "color":BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[yKey]],
   "data": formattedData}
 
   const deltaObject = {
-  "id": "delta",
-  "color":Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS)[1],
+  "id": "Cambio ese día",
+  "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
   console.log("formattedData",formattedData)
   console.log("formattedDeltaData",formattedDeltaData)
 
+  var dataList = []
+  if (graphOptionAbsolute){
+    dataList.push(dataObject)
+  }
 
-  return [dataObject]
+  if (graphOptionChange){
+    dataList.push(deltaObject)
+  }
+
+  return dataList
 }
 
 
@@ -145,9 +194,11 @@ class Home extends Component{
             historicalData:defaultXY,
             attributeToGraph:'confirmedCases',
             PRpopulation:3.194*(10**6),
-            graphColors:Object.values(BOOTSTRAP_BUTTON_CLASSES_TO_COLORS),
+            graphColors:[BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES['confirmedCases']],DELTA_LINE_COLOR],
             newCasesToday:0,
             newDeathsToday:0,
+            graphOptionAbsolute:true,
+            graphOptionChange:false,
           }
     for (var i = 0; i < ATTRIBUTES.length; i++) {
       const attribute = ATTRIBUTES[i]
@@ -202,7 +253,7 @@ class Home extends Component{
         const variantClass = ATTRIBUTES_TO_CLASSES[attribute]
         newState[stateItem] = variantClass
         newState.attributeToGraph = attribute
-        // newState.graphColors = [BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[variantClass],'purple']
+        this.state.graphColors = [BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[attribute]],DELTA_LINE_COLOR]
       } else{
         newState[stateItem] = 'light'
       }
@@ -210,43 +261,29 @@ class Home extends Component{
     this.setState({...newState})
   }
 
-  render (){
-    const attributeToChartOptions = {
-      'confirmedCases':{
-        xKey: 'timestamp',
-        yKey: 'confirmedCases',
-        xAxisLabel: 'Fecha',
-        yAxisLabel: 'Casos confirmados'
-      },
-      'conductedTests':{
-        xKey: 'timestamp',
-        yKey: 'conductedTests',
-        xAxisLabel: 'Fecha',
-        yAxisLabel: 'Pruebas administradas'
-      },
-      'negativeCases':{
-        xKey: 'timestamp',
-        yKey: 'negativeCases',
-        xAxisLabel: 'Fecha',
-        yAxisLabel: 'Casos negativos'
-      },
-      'testsInProgress':{
-        xKey: 'timestamp',
-        yKey: 'testsInProgress',
-        xAxisLabel: 'Fecha',
-        yAxisLabel: 'Pruebas en progreso'
-      },
-      'deaths':{
-        xKey: 'timestamp',
-        yKey: 'deaths',
-        xAxisLabel: 'Fecha',
-        yAxisLabel: 'Muertes'
-      },
+  toggleGraphOption = (option) =>{
+    const absoluteCurrentToggle = this.state.graphOptionAbsolute
+    const changeCurrentToggle = this.state.graphOptionChange
 
+    if (option == 'absolute'){
+      if (changeCurrentToggle){
+        this.setState({graphOptionAbsolute:!absoluteCurrentToggle})
+      }
     }
+    else if (option == 'change'){
+      if (absoluteCurrentToggle){
+        this.setState({graphOptionChange:!changeCurrentToggle})
+      }
+    }
+
+  }
+
+  render (){
+
     const attributeToGraph = this.state.attributeToGraph
 
-    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[attributeToGraph].xKey,attributeToChartOptions[attributeToGraph].yKey)
+    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[attributeToGraph].xKey,attributeToChartOptions[attributeToGraph].yKey,
+          this.state.graphOptionAbsolute,this.state.graphOptionChange)
     const xAxisLabel = attributeToChartOptions[attributeToGraph].xAxisLabel
     const yAxisLabel = attributeToChartOptions[attributeToGraph].yAxisLabel
 
@@ -304,20 +341,25 @@ class Home extends Component{
 
           </div>
         </div>
-        <div style={{display:'flex',flexDirection:'row',textAlign: 'center'}}>
-          <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature.replace("al","obtenidos del Departmento de Salud de Puerto Rico el") : ""}`}</div>
-        </div>
+
+        <div style={{textAlign:'center'}}>Qué graficar:</div>
         <div style={{display:'flex',flexDirection:'row'}}>
+          <Button onClick={()=>this.toggleGraphOption('absolute')} variant={this.state.graphOptionAbsolute ? 'primary' : 'light'}>Data por día</Button>{' '}
+          <Button onClick={()=>this.toggleGraphOption('change')} variant={this.state.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}
+        </div>
+        <div style={{display:'flex',flexDirection:'row',padding:10}}>
           <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
           <Button onClick={()=>this.chooseButton('conductedTests')} variant={this.state.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
           <Button onClick={()=>this.chooseButton('negativeCases')} variant={this.state.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
           <Button onClick={()=>this.chooseButton('testsInProgress')} variant={this.state.testsInProgressButtonVariant}>Pruebas en proceso</Button>{' '}
           <Button onClick={()=>this.chooseButton('deaths')} variant={this.state.deathsButtonVariant}>Muertes</Button>{' '}
-
         </div>
 
-        <div style={{height:500,width:"70%",minWidth: "600px",justifyContent: 'center'}}>
+        <div style={{height:500,width:"80%",justifyContent: 'center',backgroundColor: 'white',borderRadius: 15}}>
           {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
+        </div>
+        <div style={{display:'flex',flexDirection:'row',textAlign: 'center',height: 100}}>
+          <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature : ""}`}</div>
         </div>
 
       </div>
