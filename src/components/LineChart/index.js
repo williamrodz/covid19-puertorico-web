@@ -50,7 +50,7 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
               legendOffset: -50,
               legendPosition: 'middle'
           }}
-          lineWidth={"4px"}
+          lineWidth={4}
           colors={graphColors }
           enablePoints={false}
           pointSize={10}

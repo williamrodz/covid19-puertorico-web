@@ -2,13 +2,11 @@ import React, {Component} from 'react';
 import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
-const BLOCK_WIDTH = "10vw"
 const LABEL_BLOCK_HEIGHT = 60
 const DATA_BLOCK_HEIGHT = 40
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
 const DATA_LABEL_BACKGROUND_COLOR = "#3498db"
-const BACKGROUND_COLOR = "#bdc3c7"
 
 const LABEL_FONT_SIZE = 18.5
 const DATA_FONT_SIZE = 24
@@ -79,7 +77,7 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
   var dateIndex = 0
   for (var i = 0; i < splitBySpaces.length; i++) {
     const word = splitBySpaces[i]
-    if (isNaN(word) == false){
+    if (isNaN(word) === false){
       dateIndex = i
       break
     }
@@ -87,7 +85,7 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
 
   const saludDayOfMonth = splitBySpaces[dateIndex]
   console.log("saludDayOfMonth",saludDayOfMonth)
-  const dateFromToday = saludDayOfMonth == (new Date).getDate()
+  const dateFromToday = saludDayOfMonth === (new Date()).getDate()
 
   text =  dateFromToday ? text + `${formatInteger(newCasesToday)} hoy` : text
   return text
@@ -100,7 +98,7 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
     var xShorthand = entry[xKey]
-    if (xKey == "timestamp"){
+    if (xKey === "timestamp"){
       const dateObj = new Date(entry[xKey])
       xShorthand = `${dateObj.getDate()}-${MONTHS_ES[dateObj.getMonth()+1]}`
     }
@@ -109,14 +107,11 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
     if (!yValue){
       continue
     }
-    console.log(`Y value is ${yValue}`)
     if (i >= 1){
       const prevEntry = data[i-1]
       const prevYvalue = prevEntry[yKey]
-      console.log(`prevY value is ${prevYvalue}`)
       const delta = yValue - prevYvalue
       if (isNaN(delta)){
-        console.log("SKIPPING delta:",delta)
         continue
       }
       const formattedDelta = {"x":xShorthand,"y":delta}
@@ -134,7 +129,7 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
   "data": formattedData}
 
   const deltaObject = {
-  "id": "Cambio ese día",
+  "id": "Cambio",
   "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
   console.log("formattedData",formattedData)
@@ -154,13 +149,13 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
 
 
 function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=0,borderBottomLeftRadius=0,borderBottomRightRadius=0,fontSize=null){
-  if (blockType == "label"){
+  if (blockType === "label"){
     var backgroundColor = DATA_LABEL_BACKGROUND_COLOR
     fontSize = fontSize ? fontSize : LABEL_FONT_SIZE
     var blockHeight = LABEL_BLOCK_HEIGHT
     var fontColor = DATA_VALUE_TEXT_COLOR
   }
-  else if (blockType == "data"){
+  else if (blockType === "data"){
     var backgroundColor = DATA_VALUE_BACKGROUND_COLOR
     fontSize = fontSize ? fontSize : DATA_FONT_SIZE
     var blockHeight = DATA_BLOCK_HEIGHT
@@ -203,7 +198,7 @@ class Home extends Component{
     for (var i = 0; i < ATTRIBUTES.length; i++) {
       const attribute = ATTRIBUTES[i]
       var defaultButtonVariant = 'light'
-      if (attribute == "confirmedCases"){
+      if (attribute === "confirmedCases"){
         defaultButtonVariant = 'warning'
       }
 
@@ -249,7 +244,7 @@ class Home extends Component{
       const attribute = ATTRIBUTES[i];
       const stateItem = `${attribute}ButtonVariant`
 
-      if (attribute == attributeToGraph){
+      if (attribute === attributeToGraph){
         const variantClass = ATTRIBUTES_TO_CLASSES[attribute]
         newState[stateItem] = variantClass
         newState.attributeToGraph = attribute
@@ -265,12 +260,12 @@ class Home extends Component{
     const absoluteCurrentToggle = this.state.graphOptionAbsolute
     const changeCurrentToggle = this.state.graphOptionChange
 
-    if (option == 'absolute'){
+    if (option === 'absolute'){
       if (changeCurrentToggle){
         this.setState({graphOptionAbsolute:!absoluteCurrentToggle})
       }
     }
-    else if (option == 'change'){
+    else if (option === 'change'){
       if (absoluteCurrentToggle){
         this.setState({graphOptionChange:!changeCurrentToggle})
       }
@@ -290,7 +285,7 @@ class Home extends Component{
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',paddingTop: 0}}>
         <div style={{display:'flex',flexDirection:'row',paddingTop: 2}}>
-          <div style={{fontSize: 30,fontWeight: 'bold',divAlign:'center'}}>{"COVID-19 en\n Puerto Rico🇵🇷"}</div>
+          <div style={{fontSize: 30,fontWeight: 'bold',textAlign: 'justify',}}>{"COVID-19 en Puerto Rico"}</div>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
@@ -317,9 +312,9 @@ class Home extends Component{
                 {getDataBlock("label","Porciento de muertes",0,15)}
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.confirmedCases,this.state.conductedTests,1) : 0,0,0,15)}
-                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.negativeCases,this.state.conductedTests,1) : 0)}
-                {getDataBlock("data",this.state.conductedTests != 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
+                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.confirmedCases,this.state.conductedTests,1) : 0,0,0,15)}
+                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.negativeCases,this.state.conductedTests,1) : 0)}
+                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
               </div>
             </div>
           </div>
@@ -360,6 +355,9 @@ class Home extends Component{
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',height: 100}}>
           <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature : ""}`}</div>
+        </div>
+        <div style={{display: 'flex',flexDirection: 'column',height: 50}}>
+          <div style={{fontSize: 13}}>Made with <span style={{color: '#e25555'}}>&#9829;</span> by <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
         </div>
 
       </div>

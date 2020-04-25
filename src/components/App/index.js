@@ -1,13 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router,Route } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 
-import Navigation from '../Navigation';
 import HomePage from '../Home';
-import LineChart from '../LineChart';
-
-
-import * as ROUTES from '../../constants/routes';
 
 const App = () => (
     <div>
