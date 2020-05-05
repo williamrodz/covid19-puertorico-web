@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Button} from 'react-bootstrap';
 import LineChart from '../LineChart';
 
-const LABEL_BLOCK_HEIGHT = 60
+const LABEL_BLOCK_HEIGHT = "6vh"
 const DATA_BLOCK_HEIGHT = 40
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
@@ -84,7 +84,6 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
   }
 
   const saludDayOfMonth = splitBySpaces[dateIndex]
-  console.log("saludDayOfMonth",saludDayOfMonth)
   const dateFromToday = saludDayOfMonth === (new Date()).getDate()
 
   text =  dateFromToday ? text + `${formatInteger(newCasesToday)} hoy` : text
@@ -164,7 +163,7 @@ function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=
 
 
   return (
-    <div style={{width: "20vw",maxWidth: "160px",minWidth: "100px",height: blockHeight,
+    <div style={{width: "17vw",minWidth: "100px",height: blockHeight,
       borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
       backgroundColor: backgroundColor,color:fontColor,
       alignItems:'center',justifyContent:'center',textAlign: 'center',fontSize: fontSize}}>
@@ -179,11 +178,13 @@ class Home extends Component{
     const defaultXY = [{confirmedCases:100,timestamp:0},{confirmedCases:200,timestamp:1}]
 
     const initialState = {
-            conductedTests:0,
+            // conductedTests:0,
             confirmedCases:0,
             deaths:0,
-            negativeCases:0,
-            testsInProgress:0,
+            // negativeCases:0,
+            // testsInProgress:0,
+            molecularTests:0,
+            serologicalTests:0,
             timestamp:0,
             saludTimeSignature:'',
             historicalData:defaultXY,
@@ -218,9 +219,9 @@ class Home extends Component{
         this.setState({
         conductedTests:data.conductedTests,
         confirmedCases:data.confirmedCases,
+        molecularTests:data.molecularTests,
+        serologicalTests:data.serologicalTests,
         deaths:data.deaths,
-        negativeCases:data.negativeCases,
-        testsInProgress:data.testsInProgress,
         timestamp:data.timestamp,
         saludTimeSignature:data.saludTimeSignature,
       })
@@ -233,7 +234,9 @@ class Home extends Component{
       const lengthOfData = historicalData.length
       this.setState({historicalData:historicalData,
                     newCasesToday:historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases,
-                    newDeathsToday:historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths
+                    newDeathsToday:historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths,
+                    newMolecularTestsToday:historicalData[lengthOfData-1].molecularTests - historicalData[lengthOfData-2].molecularTests,
+                    newSerologicaltestsToday:historicalData[lengthOfData-1].serologicalTests - historicalData[lengthOfData-2].serologicalTests,
                   })
 
     }
@@ -292,14 +295,17 @@ class Home extends Component{
 
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 5}}>
-                {getDataBlock("label","Casos positivos",15)}
-                {getDataBlock("label","Casos negativos")}
+                {getDataBlock("label","Casos positivos únicos",15)}
+                {getDataBlock("label","Prueba molecular")}
+                {getDataBlock("label","Prueba serológica")}
+
                 {getDataBlock("label","Muertes",0,15)}
 
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
                 {getDataBlock("data",getFigureWithTodaysCount(this.state.confirmedCases,this.state.saludTimeSignature,this.state.newCasesToday),0,0,15)}
-                {getDataBlock("data",formatInteger(this.state.negativeCases))}
+                {getDataBlock("data",getFigureWithTodaysCount(this.state.molecularTests,this.state.saludTimeSignature,this.state.newMolecularTestsToday))}
+                {getDataBlock("data",getFigureWithTodaysCount(this.state.serologicalTests,this.state.saludTimeSignature,this.state.newSerologicaltestsToday))}
                 {getDataBlock("data",getFigureWithTodaysCount(this.state.deaths,this.state.saludTimeSignature,this.state.newDeathsToday),0,0,0,15)}
               </div>
             </div>
@@ -307,30 +313,24 @@ class Home extends Component{
           <div style={{display: 'flex',flexDirection: 'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                {getDataBlock("label","Porciento Positivo",15)}
-                {getDataBlock("label","Porciento Negativo")}
-                {getDataBlock("label","Porciento de muertes",0,15)}
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.confirmedCases,this.state.conductedTests,1) : 0,0,0,15)}
-                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.negativeCases,this.state.conductedTests,1) : 0)}
-                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
               </div>
             </div>
           </div>
           <div style ={{display:'flex',flexDirection:'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                {getDataBlock("label","Porciento de puertorriqueños infectados",15,0,0,0,13)}
-                {getDataBlock("label","Pruebas en proceso")}
-                {getDataBlock("label","Pruebas realizadas",0,15)}
+                {getDataBlock("label","Porciento de puertorriqueños infectados",15,0,0,0,15)}
+                {getDataBlock("label","Porciento de muertes",0,15)}
 
               </div>
 
               <div style={{display:'flex',flexDirection:'row'}}>
                 {getDataBlock("data",this.state.PRpopulation ? getPercent(this.state.confirmedCases,this.state.PRpopulation,3) : 0,0,0,15)}
-                {getDataBlock("data",formatInteger(this.state.testsInProgress))}
-                {getDataBlock("data",formatInteger(this.state.conductedTests),0,0,0,15)}
+                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
+
+
               </div>
             </div>
 
