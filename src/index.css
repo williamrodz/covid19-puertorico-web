@@ -26,5 +26,8 @@ code {
   .attributeToGraphSelection{
     flex-direction: column;
   }
+  .btn{
+    width:100%;
+  }
 
 }

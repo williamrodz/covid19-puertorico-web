@@ -390,7 +390,7 @@ class Home extends Component{
           </div>
         </div>
 
-        <div style={{textAlign:'center'}}>Qué graficar:</div>
+        <div style={{textAlign:'center',marginTop: 10}}>Qué graficar:</div>
         <div style={{display:'flex',flexDirection:'row'}}>
           <Button onClick={()=>this.toggleGraphOption('absolute')} variant={this.state.graphOptionAbsolute ? 'primary' : 'light'}>Data por día</Button>{' '}
           <Button onClick={()=>this.toggleGraphOption('change')} variant={this.state.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}

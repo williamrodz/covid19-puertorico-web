@@ -1,3 +1,9 @@
+## Web Tracker for COVID-19 in Puerto Rico
+
+![Desktop Demo](demoImages/desktop_demo.png)
+![Mobile Demo](demoImages/mobile_demo.png) 
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
