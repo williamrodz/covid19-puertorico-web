@@ -326,7 +326,7 @@ class Home extends Component{
     const yAxisLabel = attributeToChartOptions[this.state.attributeToGraph].yAxisLabel
 
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',paddingTop: 0}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10}}>
         <div style={{display:'flex',flexDirection:'column',paddingTop: 2,alignItems: 'center'}}>
           <div style={{fontSize: 30,fontWeight: 'bold',textAlign: 'justify',}}>
             COVID-19 en Puerto Rico
