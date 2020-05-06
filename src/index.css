@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.attributeToGraphSelection {
+  flex-direction:row;
+  display:flex;
+  padding:10;
+  width: 100vw;
+  align-items:center;
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .attributeToGraphSelection{
+    flex-direction: column;
+  }
+
+}

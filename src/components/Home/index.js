@@ -4,7 +4,8 @@ import LineChart from '../LineChart';
 import { CSVLink, CSVDownload } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 
-const LABEL_BLOCK_HEIGHT = "8vh"
+const BLOCK_WIDTH = "12vw"
+const LABEL_BLOCK_HEIGHT = "9vh"
 const DATA_BLOCK_HEIGHT = "6vh"
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
@@ -179,7 +180,7 @@ function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=
 
 
   return (
-    <div style={{width: "17vw",minWidth: "100px",height: blockHeight,
+    <div style={{width: BLOCK_WIDTH,minWidth: "85px",height: blockHeight,
       borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
       backgroundColor: backgroundColor,color:fontColor,
       alignItems:'center',justifyContent:'center',textAlign: 'center',fontSize: fontSize}}>
@@ -193,10 +194,10 @@ const AlertHeader = (props) =>
   <Alert style={{width: "80%"}}variant="warning" onClose={props.onClose} dismissible>
          <Alert.Heading>Cambio de datos disponibles</Alert.Heading>
          <p>
-         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salud no publicó data<br/>
-         (2) Desde el 5 de mayo del 2020, el Departmento de Salud sólo publica el número de casos positivos únicos,
-         pruebas moleculares, pruebas serológicas y muertes en su página oficial.Seguiremos manteniendo el historial
-         de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril.
+         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salud no publicó data en su sitio web del coronavirus<br/>
+         (2) Desde el 5 de mayo del 2020, el Departmento de Salud sólo publica el número de casos positivos únicos (a diferencia de número de pruebas positivos totales),
+         pruebas moleculares, pruebas serológicas y muertes en su página oficial. Seguiremos manteniendo el historial
+         de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril, que fue el último día en cual se ofrecieron estos datos.
          </p>
   </Alert>
 )
@@ -394,7 +395,7 @@ class Home extends Component{
           <Button onClick={()=>this.toggleGraphOption('absolute')} variant={this.state.graphOptionAbsolute ? 'primary' : 'light'}>Data por día</Button>{' '}
           <Button onClick={()=>this.toggleGraphOption('change')} variant={this.state.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}
         </div>
-        <div style={{display:'flex',flexDirection:'row',padding:10}}>
+        <div class="attributeToGraphSelection">
           <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
           <Button onClick={()=>this.chooseButton('conductedTests')} variant={this.state.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
           <Button onClick={()=>this.chooseButton('negativeCases')} variant={this.state.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
@@ -402,7 +403,7 @@ class Home extends Component{
           <Button onClick={()=>this.chooseButton('deaths')} variant={this.state.deathsButtonVariant}>Muertes</Button>{' '}
         </div>
 
-        <div style={{height:500,width:"80%",justifyContent: 'center',backgroundColor: 'white',borderRadius: 15}}>
+        <div style={{height:"70vh",width:"90vw",minWidth: "550px",justifyContent: 'center',backgroundColor: 'white',borderRadius: 15}}>
           {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
@@ -413,8 +414,10 @@ class Home extends Component{
             <Button variant="success">Bajar data <Icon.Download /></Button>
           </CSVLink>
         </div>
-        <div style={{display: 'flex',flexDirection: 'column',height: 50}}>
-          <div style={{fontSize: 13}}>Made with <span style={{color: '#e25555'}}>&#9829;</span> by <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
+        <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center'}}>
+          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salud del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación</div>
+          <div style={{fontSize: 13,margin:10}}>Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
+
         </div>
 
       </div>
