@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import { Button} from 'react-bootstrap';
+import { Button, Alert} from 'react-bootstrap';
 import LineChart from '../LineChart';
+import { CSVLink, CSVDownload } from "react-csv";
+import * as Icon from 'react-bootstrap-icons';
 
-const LABEL_BLOCK_HEIGHT = "6vh"
-const DATA_BLOCK_HEIGHT = 40
+const LABEL_BLOCK_HEIGHT = "8vh"
+const DATA_BLOCK_HEIGHT = "6vh"
 const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
 const DATA_VALUE_TEXT_COLOR = "white"
 const DATA_LABEL_BACKGROUND_COLOR = "#3498db"
@@ -69,6 +71,20 @@ function getPercent(amount,total,decimals){
 
 function formatInteger(number){
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function removeParentheses(string){
+  var output = ""
+  for (var i = 0; i < string.length; i++) {
+    let char = string[i]
+    if (char == ")" || char == "("){
+      continue
+    }
+    else{
+      output+=char
+    }
+  }
+  return output
 }
 
 function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
@@ -172,6 +188,19 @@ function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=
   )
 }
 
+const AlertHeader = (props) =>
+   (
+  <Alert style={{width: "80%"}}variant="warning" onClose={props.onClose} dismissible>
+         <Alert.Heading>Cambio de datos disponibles</Alert.Heading>
+         <p>
+         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salud no publicó data<br/>
+         (2) Desde el 5 de mayo del 2020, el Departmento de Salud sólo publica el número de casos positivos únicos,
+         pruebas moleculares, pruebas serológicas y muertes en su página oficial.Seguiremos manteniendo el historial
+         de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril.
+         </p>
+  </Alert>
+)
+
 class Home extends Component{
   constructor(props){
     super(props)
@@ -212,11 +241,13 @@ class Home extends Component{
 
 
 
+
   async componentDidMount(){
     var todaysData = await this.props.firebase.getTodaysData()
     if (todaysData.exists){
         var data = todaysData.data()
         this.setState({
+        alertVisible:true,
         conductedTests:data.conductedTests,
         confirmedCases:data.confirmedCases,
         molecularTests:data.molecularTests,
@@ -276,20 +307,41 @@ class Home extends Component{
 
   }
 
+  getDataForDownload = () =>{
+    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[this.state.attributeToGraph].xKey,
+                                                attributeToChartOptions[this.state.attributeToGraph].yKey,
+                                                this.state.graphOptionAbsolute,this.state.graphOptionChange)
+    var csv = [["fecha",this.state.attributeToGraph]]
+    for (var i = 0; i < dataObjectForChart.length; i++) {
+      let data = dataObjectForChart[i].data
+      if (i == 1){
+        csv.push(["fecha","Cambio en "+this.state.attributeToGraph])
+      }
+      for (var j = 0; j < data.length; j++) {
+        let date = data[j].x
+        let value = data[j].y
+        csv.push([date,value])
+      }
+    }
+    return csv
+  }
+
   render (){
 
-    const attributeToGraph = this.state.attributeToGraph
 
-    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[attributeToGraph].xKey,attributeToChartOptions[attributeToGraph].yKey,
+    const dataObjectForChart = createDataObject(this.state.historicalData,attributeToChartOptions[this.state.attributeToGraph].xKey,attributeToChartOptions[this.state.attributeToGraph].yKey,
           this.state.graphOptionAbsolute,this.state.graphOptionChange)
-    const xAxisLabel = attributeToChartOptions[attributeToGraph].xAxisLabel
-    const yAxisLabel = attributeToChartOptions[attributeToGraph].yAxisLabel
+    const xAxisLabel = attributeToChartOptions[this.state.attributeToGraph].xAxisLabel
+    const yAxisLabel = attributeToChartOptions[this.state.attributeToGraph].yAxisLabel
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',paddingTop: 0}}>
-        <div style={{display:'flex',flexDirection:'row',paddingTop: 2}}>
-          <div style={{fontSize: 30,fontWeight: 'bold',textAlign: 'justify',}}>{"COVID-19 en Puerto Rico"}</div>
+        <div style={{display:'flex',flexDirection:'column',paddingTop: 2,alignItems: 'center'}}>
+          <div style={{fontSize: 30,fontWeight: 'bold',textAlign: 'justify',}}>
+            COVID-19 en Puerto Rico
+          </div>
         </div>
+        {this.state.alertVisible ? <AlertHeader onClose={()=>this.setState({alertVisible:false})}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
 
@@ -321,14 +373,14 @@ class Home extends Component{
           <div style ={{display:'flex',flexDirection:'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                {getDataBlock("label","Porciento de puertorriqueños infectados",15,0,0,0,15)}
+                {getDataBlock("label","% de puertorriqueños infectados",15,0,0,0,15)}
                 {getDataBlock("label","Porciento de muertes",0,15)}
 
               </div>
 
               <div style={{display:'flex',flexDirection:'row'}}>
                 {getDataBlock("data",this.state.PRpopulation ? getPercent(this.state.confirmedCases,this.state.PRpopulation,3) : 0,0,0,15)}
-                {getDataBlock("data",this.state.conductedTests !== 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
+                {getDataBlock("data",this.state.confirmedCases !== 0 ? getPercent(this.state.deaths,this.state.confirmedCases,2) : 0,0,0,0,15)}
 
 
               </div>
@@ -353,8 +405,13 @@ class Home extends Component{
         <div style={{height:500,width:"80%",justifyContent: 'center',backgroundColor: 'white',borderRadius: 15}}>
           {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
         </div>
-        <div style={{display:'flex',flexDirection:'row',textAlign: 'center',height: 100}}>
+        <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
           <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature : ""}`}</div>
+        </div>
+        <div style={{margin: 5,marginBottom: 20}}>
+          <CSVLink data={this.getDataForDownload()} filename={`${this.state.attributeToGraph}${removeParentheses(this.state.saludTimeSignature)}.csv`}>
+            <Button variant="success">Bajar data <Icon.Download /></Button>
+          </CSVLink>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: 50}}>
           <div style={{fontSize: 13}}>Made with <span style={{color: '#e25555'}}>&#9829;</span> by <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
