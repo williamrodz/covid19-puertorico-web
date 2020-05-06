@@ -1,18 +1,10 @@
 import React, {Component} from 'react';
 import { Button, Alert} from 'react-bootstrap';
 import LineChart from '../LineChart';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 
-const BLOCK_WIDTH = "12vw"
-const LABEL_BLOCK_HEIGHT = "9vh"
-const DATA_BLOCK_HEIGHT = "6vh"
-const DATA_VALUE_BACKGROUND_COLOR = "#ecf0f1"
-const DATA_VALUE_TEXT_COLOR = "white"
-const DATA_LABEL_BACKGROUND_COLOR = "#3498db"
 
-const LABEL_FONT_SIZE = 18.5
-const DATA_FONT_SIZE = 24
 
 const MONTHS_ES = {1:"enero",2:"febrero",3:"marzo",4:"abril",5:"mayo",6:"junio",7:"julio",8:"agosto",9:"septiembre",10:"octubre",11:"noviembre",12:"diciembre"}
 
@@ -78,7 +70,7 @@ function removeParentheses(string){
   var output = ""
   for (var i = 0; i < string.length; i++) {
     let char = string[i]
-    if (char == ")" || char == "("){
+    if (char === ")" || char === "("){
       continue
     }
     else{
@@ -165,25 +157,22 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
 
 
 function getDataBlock(blockType,text,borderTopLeftRadius=0,borderTopRightRadius=0,borderBottomLeftRadius=0,borderBottomRightRadius=0,fontSize=null){
+  var classForBlock = ""
   if (blockType === "label"){
-    var backgroundColor = DATA_LABEL_BACKGROUND_COLOR
-    fontSize = fontSize ? fontSize : LABEL_FONT_SIZE
-    var blockHeight = LABEL_BLOCK_HEIGHT
-    var fontColor = DATA_VALUE_TEXT_COLOR
+    classForBlock = 'labelBlock'
   }
   else if (blockType === "data"){
-    var backgroundColor = DATA_VALUE_BACKGROUND_COLOR
-    fontSize = fontSize ? fontSize : DATA_FONT_SIZE
-    var blockHeight = DATA_BLOCK_HEIGHT
-    var fontColor = "black"
+    classForBlock = 'dataBlock'
   }
 
 
   return (
-    <div style={{width: BLOCK_WIDTH,minWidth: "85px",height: blockHeight,
-      borderTopLeftRadius: borderTopLeftRadius,borderTopRightRadius:borderTopRightRadius,borderBottomLeftRadius: borderBottomLeftRadius,borderBottomRightRadius:borderBottomRightRadius,
-      backgroundColor: backgroundColor,color:fontColor,
-      alignItems:'center',justifyContent:'center',textAlign: 'center',fontSize: fontSize}}>
+    <div className={`dashboardBlock ${classForBlock}`} style={{
+      borderTopLeftRadius: borderTopLeftRadius,
+      borderTopRightRadius:borderTopRightRadius,
+      borderBottomLeftRadius: borderBottomLeftRadius,
+      borderBottomRightRadius:borderBottomRightRadius,
+    }}>
       {text}
     </div>
   )
@@ -244,6 +233,7 @@ class Home extends Component{
 
 
   async componentDidMount(){
+    this.props.firebase.logEvent("Visited site")
     var todaysData = await this.props.firebase.getTodaysData()
     if (todaysData.exists){
         var data = todaysData.data()
@@ -315,7 +305,7 @@ class Home extends Component{
     var csv = [["fecha",this.state.attributeToGraph]]
     for (var i = 0; i < dataObjectForChart.length; i++) {
       let data = dataObjectForChart[i].data
-      if (i == 1){
+      if (i === 1){
         csv.push(["fecha","Cambio en "+this.state.attributeToGraph])
       }
       for (var j = 0; j < data.length; j++) {
@@ -351,7 +341,6 @@ class Home extends Component{
                 {getDataBlock("label","Casos positivos únicos",15)}
                 {getDataBlock("label","Prueba molecular")}
                 {getDataBlock("label","Prueba serológica")}
-
                 {getDataBlock("label","Muertes",0,15)}
 
               </div>
@@ -374,7 +363,7 @@ class Home extends Component{
           <div style ={{display:'flex',flexDirection:'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                {getDataBlock("label","% de puertorriqueños infectados",15,0,0,0,15)}
+                {getDataBlock("label","Porciento de puertorriqueños infectados",15,0,0,0,15)}
                 {getDataBlock("label","Porciento de muertes",0,15)}
 
               </div>
@@ -395,7 +384,7 @@ class Home extends Component{
           <Button onClick={()=>this.toggleGraphOption('absolute')} variant={this.state.graphOptionAbsolute ? 'primary' : 'light'}>Data por día</Button>{' '}
           <Button onClick={()=>this.toggleGraphOption('change')} variant={this.state.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}
         </div>
-        <div class="attributeToGraphSelection">
+        <div className="attributeToGraphSelection">
           <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
           <Button onClick={()=>this.chooseButton('conductedTests')} variant={this.state.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
           <Button onClick={()=>this.chooseButton('negativeCases')} variant={this.state.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
@@ -414,10 +403,9 @@ class Home extends Component{
             <Button variant="success">Bajar data <Icon.Download /></Button>
           </CSVLink>
         </div>
-        <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center'}}>
+        <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salud del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación</div>
-          <div style={{fontSize: 13,margin:10}}>Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
-
+          <div style={{fontSize: 13,margin:20,}}>Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
         </div>
 
       </div>

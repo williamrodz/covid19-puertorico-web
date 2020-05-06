@@ -32,15 +32,15 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
           yScale={{ type: 'linear', min: 0, max: 'auto', stacked: false, reverse: false }}
           axisTop={null}
           axisRight={null}
-          axisBottom={{
+          axisBottom={window.innerWidth > 767 ? {
               orient: 'bottom',
               tickSize: 5,
               tickPadding: 5,
               tickRotation: 0,
               legend: xAxisLabel,
               legendOffset: 40,
-              legendPosition: 'middle'
-          }}
+              legendPosition: 'middle',
+          }: null}
           axisLeft={{
               orient: 'left',
               tickSize: 5,

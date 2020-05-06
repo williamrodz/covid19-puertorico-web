@@ -1,3 +1,16 @@
+:root{
+  --BLOCK_WIDTH:10vw;
+  --DATA_LABEL_BACKGROUND_COLOR: #3498db;
+  --DATA_VALUE_TEXT_COLOR: white;
+  --DATA_VALUE_BACKGROUND_COLOR: #ecf0f1;
+  --LABEL_BLOCK_HEIGHT: 12vh;
+  --DATA_BLOCK_HEIGHT: 8vh;
+
+  --LABEL_FONT_SIZE: 3vh;
+  --DATA_FONT_SIZE: 4vh;
+
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -20,9 +33,46 @@ code {
   width: 100vw;
   align-items:center;
   justify-content: center;
+  margin-top: 2vh;
+}
+
+.dashboardBlock {
+  width: var(--BLOCK_WIDTH);
+  min-width: 85px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+  text-align: center;
+}
+
+.labelBlock{
+  background-color: var(--DATA_LABEL_BACKGROUND_COLOR);
+  font-size: var(--LABEL_FONT_SIZE);
+  height: var(--LABEL_BLOCK_HEIGHT);
+  color: var(--DATA_VALUE_TEXT_COLOR)
+}
+
+.dataBlock{
+  background-color: var(--DATA_VALUE_BACKGROUND_COLOR);
+  font-size:  var(--DATA_FONT_SIZE);
+  height: var(--DATA_BLOCK_HEIGHT);
+  color: black;
 }
 
 @media (max-width: 767px) {
+  :root{
+    --LABEL_BLOCK_HEIGHT: 17vh;
+    --BLOCK_WIDTH:22vw;
+    --DATA_FONT_SIZE:5vh;
+    --LABEL_FONT_SIZE:2.5vh;
+  }
+
+
+  .dashboardBlock{
+    height: 12vh;
+    font-weight: bold;
+  }
   .attributeToGraphSelection{
     flex-direction: column;
   }
