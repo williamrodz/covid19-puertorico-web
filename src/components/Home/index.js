@@ -27,7 +27,7 @@ const attributeToChartOptions = {
     xKey: 'timestamp',
     yKey: 'confirmedCases',
     xAxisLabel: 'Fecha',
-    yAxisLabel: 'Casos confirmados'
+    yAxisLabel: 'Casos positivos únicos'
   },
   'conductedTests':{
     xKey: 'timestamp',
@@ -186,7 +186,7 @@ const AlertHeader = (props) =>
   <Alert style={{width: "80%"}}variant="warning" onClose={props.onClose} dismissible>
          <Alert.Heading>Cambio de datos disponibles</Alert.Heading>
          <p>
-         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus<br/>
+         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus.<br/>
          (2) Desde el 5 de mayo del 2020, el Departmento de Salúd sólo publica el número de casos positivos únicos (a diferencia de número de pruebas positivos totales),
          pruebas moleculares, pruebas serológicas y muertes en su página oficial. Seguiremos manteniendo el historial
          de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril, que fue el último día en cual se ofrecieron estos datos.
@@ -346,18 +346,18 @@ class Home extends Component{
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10}}>
-        <div style={{display:'flex',flexDirection:'column',paddingTop: 2,alignItems: 'center'}}>
+        <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <div className="title">
             COVID-19 en Puerto Rico
           </div>
           <InfoModal modalVisible={this.state.modalVisible} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} handleShow={()=>this.setState({modalVisible:true})} handleClose={()=>this.setState({modalVisible:false})}/>
         </div>
         {this.state.alertVisible ? <AlertHeader onClose={()=>this.setState({alertVisible:false})}/> : <div/>}
-        <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
+        <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
 
             <div style={{display: 'flex',flexDirection: 'column'}}>
-              <div style={{display:'flex',flexDirection:'row',paddingTop: 5}}>
+              <div style={{display:'flex',flexDirection:'row'}}>
                 <DataBlock blockType="label" text="Casos positivos únicos" borderTopLeftRadius={15} fontSize='2.7vh'
                   onClick={()=>this.setState({modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
 
@@ -417,7 +417,7 @@ class Home extends Component{
           <Button onClick={()=>this.toggleGraphOption('change')} variant={this.state.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}
         </div>
         <div className="attributeToGraphSelection">
-          <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos</Button>{' '}
+          <Button onClick={()=>this.chooseButton('confirmedCases')} variant={this.state.confirmedCasesButtonVariant}>Casos positivos únicos</Button>{' '}
           <Button onClick={()=>this.chooseButton('conductedTests')} variant={this.state.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
           <Button onClick={()=>this.chooseButton('negativeCases')} variant={this.state.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
           <Button onClick={()=>this.chooseButton('testsInProgress')} variant={this.state.testsInProgressButtonVariant}>Pruebas en proceso</Button>{' '}
@@ -436,7 +436,7 @@ class Home extends Component{
           </CSVLink>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
-          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación</div>
+          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>
           <div style={{fontSize: 13,margin:20,}}>Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
         </div>
 
