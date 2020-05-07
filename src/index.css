@@ -25,6 +25,11 @@ code {
     monospace;
 }
 
+.title{
+  font-size: 5vh;
+  font-weight: bold;
+  text-align: center;
+}
 
 .attributeToGraphSelection {
   flex-direction:row;
@@ -46,12 +51,26 @@ code {
   text-align: center;
 }
 
+
+
 .labelBlock{
   background-color: var(--DATA_LABEL_BACKGROUND_COLOR);
   font-size: var(--LABEL_FONT_SIZE);
   height: var(--LABEL_BLOCK_HEIGHT);
   color: var(--DATA_VALUE_TEXT_COLOR);
   cursor: pointer;
+}
+
+@keyframes labelHoverAnimation {
+  from {background-color: var(--DATA_LABEL_BACKGROUND_COLOR);}
+  to {background-color: aqua; color:black;}
+}
+
+.labelBlock:hover{
+  animation-name: labelHoverAnimation;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+
 }
 
 .dataBlock{
@@ -69,6 +88,7 @@ code {
     --DATA_FONT_SIZE:3.4vh;
     --LABEL_FONT_SIZE:2.2vh;
   }
+
 
 
   .dashboardBlock{
