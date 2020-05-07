@@ -50,7 +50,8 @@ code {
   background-color: var(--DATA_LABEL_BACKGROUND_COLOR);
   font-size: var(--LABEL_FONT_SIZE);
   height: var(--LABEL_BLOCK_HEIGHT);
-  color: var(--DATA_VALUE_TEXT_COLOR)
+  color: var(--DATA_VALUE_TEXT_COLOR);
+  cursor: pointer;
 }
 
 .dataBlock{
@@ -63,9 +64,10 @@ code {
 @media (max-width: 767px) {
   :root{
     --LABEL_BLOCK_HEIGHT: 17vh;
+    --DATA_BLOCK_HEIGHT: 10vh;
     --BLOCK_WIDTH:100%;
     --DATA_FONT_SIZE:3.4vh;
-    --LABEL_FONT_SIZE:2.5vh;
+    --LABEL_FONT_SIZE:2.2vh;
   }
 
 
