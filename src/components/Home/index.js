@@ -183,7 +183,7 @@ function DataBlock(props){
 
 const AlertHeader = (props) =>
    (
-  <Alert style={{width: "80%"}}variant="warning" onClose={props.onClose} dismissible>
+  <Alert style={{width: "80%"}}variant="primary" onClose={props.onClose} dismissible>
          <Alert.Heading>Cambio de datos disponibles</Alert.Heading>
          <p>
          (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus.<br/>
@@ -345,7 +345,7 @@ class Home extends Component{
     const yAxisLabel = attributeToChartOptions[this.state.attributeToGraph].yAxisLabel
 
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10,backgroundColor: 'white'}}>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <div className="title">
             COVID-19 en Puerto Rico
@@ -437,7 +437,8 @@ class Home extends Component{
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>
-          <div style={{fontSize: 13,margin:20,}}>Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
+          <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">Licencia</a></div>
+          <div style={{fontSize: 13,margin:20,}}> Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
         </div>
 
       </div>
