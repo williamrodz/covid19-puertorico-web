@@ -82,21 +82,28 @@ function removeParentheses(string){
 
 function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
   var text = formatInteger(confirmedCases)
-  const splitBySpaces = saludTimeSignature.split(' ')
-  var dateIndex = 0
-  for (var i = 0; i < splitBySpaces.length; i++) {
-    const word = splitBySpaces[i]
-    if (isNaN(word) === false){
-      dateIndex = i
-      break
-    }
+
+  const locationOfAl = saludTimeSignature.indexOf("al ")
+  const dateNumberStart = locationOfAl + 3
+  const dateNumberEnd = saludTimeSignature[dateNumberStart+1] === " " ? dateNumberStart+1 : dateNumberStart+2
+
+
+  const saludDayOfMonth = parseInt(saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
+  const todaysDayOfMonth = (new Date()).getDate()
+  console.log("saludDayOfMonth",saludDayOfMonth)
+  console.log("todaysDayOfMonth",todaysDayOfMonth)
+
+  const dateFromToday = saludDayOfMonth === todaysDayOfMonth
+  console.log("dateFromToday",dateFromToday)
+  console.log("newCasesToday",newCasesToday)
+  if (dateFromToday){
+    return (<div style={{display:'flex',flexDirection:'column'}}>
+              <div>{text}</div>
+              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? 'hoy)' : ')'}</div>
+            </div>)
+  } else{
+    return text
   }
-
-  const saludDayOfMonth = splitBySpaces[dateIndex]
-  const dateFromToday = saludDayOfMonth === (new Date()).getDate()
-
-  text =  dateFromToday ? text + `${formatInteger(newCasesToday)} hoy` : text
-  return text
 }
 
 
@@ -229,6 +236,8 @@ class Home extends Component{
             graphColors:[BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES['confirmedCases']],DELTA_LINE_COLOR],
             newCasesToday:0,
             newDeathsToday:0,
+            newMolecularTestsToday:0,
+            newSerologicaltestsToday:0,
             graphOptionAbsolute:true,
             graphOptionChange:false,
           }
@@ -358,7 +367,7 @@ class Home extends Component{
 
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="label" text="Casos positivos únicos" borderTopLeftRadius={15} fontSize='2.7vh'
+                <DataBlock blockType="label" text="Casos positivos únicos" borderTopLeftRadius={15}
                   onClick={()=>this.setState({modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
 
                 <DataBlock blockType="label" text="Prueba molecular"
@@ -424,8 +433,8 @@ class Home extends Component{
           <Button onClick={()=>this.chooseButton('deaths')} variant={this.state.deathsButtonVariant}>Muertes</Button>{' '}
         </div>
 
-        <div style={{height:"70vh",width:"90vw",minWidth: "550px",justifyContent: 'center',backgroundColor: 'white',borderRadius: 15}}>
-          {LineChart(dataObjectForChart,xAxisLabel,yAxisLabel,this.state.graphColors)}
+        <div className="chartContainer">
+          <LineChart data={dataObjectForChart} xAxisLabel={xAxisLabel} yAxisLabel={yAxisLabel} graphColors={this.state.graphColors}/>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
           <div>{`${this.state.saludTimeSignature ? this.state.saludTimeSignature : ""}`}</div>

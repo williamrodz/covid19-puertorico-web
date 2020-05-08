@@ -20,13 +20,13 @@ const theme = {
 };
 
 const toolTipElement = (props: PointTooltipProps) => {
-    Object.keys(props).forEach((item, i) => {
-      console.log("Prop is",item)
-      Object.keys(props[item]).forEach((item2, i) => {
-        console.log("-prob val for ",item2,props[item][item2])
-      });
-
-    });
+    // Object.keys(props).forEach((item, i) => {
+    //   console.log("Prop is",item)
+    //   Object.keys(props[item]).forEach((item2, i) => {
+    //     console.log("-prob val for ",item2,props[item][item2])
+    //   });
+    //
+    // });
 
     return (
       <div className="toolTipElement">
@@ -44,11 +44,11 @@ const toolTipElement = (props: PointTooltipProps) => {
       </div>)
 };
 
-const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
+const App = (props) =>
 
   (
       <ResponsiveLine
-          data={data}
+          data={props.data}
           // animate={lineGraphSettings.animate == false ? lineGraphSettings.animate : true}
           theme={theme}
           enableArea={false}
@@ -62,7 +62,7 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
               tickSize: 5,
               tickPadding: 5,
               tickRotation: 0,
-              legend: xAxisLabel,
+              legend: props.xAxisLabel ? props.xAxisLabel : "x",
               legendOffset: 40,
               legendPosition: 'middle',
           }: null}
@@ -71,18 +71,18 @@ const App = (data,xAxisLabel="x",yAxisLabel="y",graphColors="blue") =>
               tickSize: 5,
               tickPadding: 5,
               tickRotation: 0,
-              legend: yAxisLabel,
+              legend: props.yAxisLabel ? props.yAxisLabel : "y",
               legendOffset: -50,
               legendPosition: 'middle'
           }}
           lineWidth={4}
-          colors={graphColors }
+          colors={props.graphColors ? props.graphColors : "blue" }
           enablePoints={false}
           pointSize={10}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={2}
           pointBorderColor={{ from: 'serieColor' }}
-          pointLabel={`${yAxisLabel}`}
+          pointLabel={`${props.yAxisLabel ? props.yAxisLabel : "y"}`}
           pointLabelYOffset={-12}
           useMesh={true}
           crosshairType="bottom"
