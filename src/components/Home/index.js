@@ -1,4 +1,4 @@
-import React, {Component,useState} from 'react';
+import React, {Component} from 'react';
 import { Button, Alert,Modal} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
@@ -179,11 +179,12 @@ function DataBlock(props){
       borderTopRightRadius:props.borderTopRightRadius ? props.borderTopRightRadius: 0,
       borderBottomLeftRadius: props.borderBottomLeftRadius ? props.borderBottomLeftRadius: 0,
       borderBottomRightRadius:props.borderBottomRightRadius ? props.borderBottomRightRadius : 0,
-      fontSize: props.fontSize ? props.fontSize : ""
+      fontSize: props.fontSize ? props.fontSize : "",
+      position: 'relative',
     }}
-      onClick={props.onClick}
     >
       {props.text}
+      {props.blockType === "label" ? <Icon.InfoCircle onClick={props.infoClick} className="infoCircle"/>: null }
     </div>
   )
 }
@@ -210,6 +211,9 @@ function InfoModal(props) {
           <Modal.Title>{props.modalHeader}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{props.modalBody}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={()=>props.handleClose()}>OK</Button>
+        </Modal.Footer>
       </Modal>
     </>
   );
@@ -301,7 +305,7 @@ class Home extends Component{
         const variantClass = ATTRIBUTES_TO_CLASSES[attribute]
         newState[stateItem] = variantClass
         newState.attributeToGraph = attribute
-        this.state.graphColors = [BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[attribute]],DELTA_LINE_COLOR]
+        newState.graphColors = [BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[attribute]],DELTA_LINE_COLOR]
       } else{
         newState[stateItem] = 'light'
       }
@@ -368,16 +372,16 @@ class Home extends Component{
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row'}}>
                 <DataBlock blockType="label" text="Casos positivos únicos" borderTopLeftRadius={15}
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
 
                 <DataBlock blockType="label" text="Prueba molecular"
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Prueba molecular",modalBody:"Este dato es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Prueba molecular",modalBody:"Este dato es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente."})}/>
 
                 <DataBlock blockType="label" text="Prueba serológica"
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Prueba serológica",modalBody:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Prueba serológica",modalBody:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos."})}/>
 
                 <DataBlock blockType="label" text="Muertes" borderTopRightRadius={15}
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Muertes",modalBody:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Muertes",modalBody:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico."})}/>
 
 
               </div>
@@ -401,10 +405,10 @@ class Home extends Component{
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
                 <DataBlock blockType="label" text="Porciento de puertorriqueños infectados" borderTopLeftRadius={15} fontSize="2.5vh"
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Porciento de puertorriqueños infectados",modalBody:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico)."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Porciento de puertorriqueños infectados",modalBody:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico)."})}/>
 
                 <DataBlock blockType="label" text="Porciento de muertes" borderTopRightRadius={15}
-                  onClick={()=>this.setState({modalVisible:true,modalHeader:"Porciento de muertes",modalBody:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos."})}/>
+                  infoClick={()=>this.setState({modalVisible:true,modalHeader:"Porciento de muertes",modalBody:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos."})}/>
 
 
               </div>
@@ -445,9 +449,9 @@ class Home extends Component{
           </CSVLink>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
-          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>
+          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>
           <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">Licencia</a></div>
-          <div style={{fontSize: 13,margin:20,}}> Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
+          <div style={{fontSize: 13,margin:20,}}> Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
         </div>
 
       </div>
