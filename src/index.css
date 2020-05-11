@@ -71,7 +71,7 @@ code {
 
 @keyframes infoCircleHoverAnimation {
   from {fill: white; transform: scale(0.7);}
-  to {fill:black;transform: scale(1.2);}
+  to {fill:black;transform: scale(1.1);}
 }
 
 .infoCircle:hover{
