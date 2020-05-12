@@ -3,6 +3,7 @@ import { Button, Alert,Modal} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
+import { useCookies } from 'react-cookie';
 
 
 
@@ -223,6 +224,10 @@ function InfoModal(props) {
 }
 
 export default function Home(props) {
+
+    const [cookie, setCookie] = useCookies();
+    console.log("cookie",cookie)
+
     var buttonVariants = {}
 
     for (var i = 0; i < ATTRIBUTES.length; i++) {
@@ -240,22 +245,22 @@ export default function Home(props) {
                 graphOptionAbsolute:true,
                 graphOptionChange:false,
                 ...buttonVariants,
-                alertVisible:true,
+                alertVisible:cookie.ui ? cookie.ui.alertVisible : true,
               })
     const [historicalData,setHistoricalData] = useState({
       all:[],
-      newCasesToday:0,
+      newCasesToday: 0,
       newDeathsToday:0,
-      newMolecularTestsToday:0,
-      newSerologicalTestsToday:0,
+      newMolecularTestsToday: 0,
+      newSerologicalTestsToday: 0,
     })
     const [today,setTodaysData] = useState({
-      confirmedCases:0,
-      molecularTests:0,
-      serologicalTests:0,
-      deaths:0,
-      saludTimeSignature:'',
-      timestamp:'',
+      confirmedCases: cookie.today ? cookie.today.confirmedCases : 0,
+      molecularTests:cookie.today ? cookie.today.molecularTests : 0,
+      serologicalTests:cookie.today ? cookie.today.serologicalTests : 0,
+      deaths:cookie.today ? cookie.today.deaths : 0,
+      saludTimeSignature:cookie.today ? cookie.today.saludTimeSignature : "",
+      timestamp:cookie.today ? cookie.today.timestamp : "",
 
     });
 
@@ -263,11 +268,19 @@ export default function Home(props) {
 
   useEffect(()=>{
     const fetchFirebaseData = async ()=>{
-      console.log("FETCHING REMOTE DATA")
-      var todaysDataRef = await props.firebase.getTodaysData()
-      const todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
+
+      var todaysDataFromFireBase = {}
+      if (cookie.today && (new Date(cookie.today.timestamp)).getDate() === (new Date()).getDate() ){
+        todaysDataFromFireBase = cookie.today
+      } else{
+        console.log("FETCHING TODAYS DATA")
+        var todaysDataRef = await props.firebase.getTodaysData()
+        todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
+      }
+
 
       const historicalDataRef = await props.firebase.getHistoricalData()
+      console.log("FETCHING HISTORICAL DATA")
       var historicalDataFromFireBase = {}
       if (historicalDataRef.exists){
         const historicalData = historicalDataRef.data().all
@@ -277,11 +290,19 @@ export default function Home(props) {
           newCasesToday:historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases,
           newDeathsToday:historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths,
           newMolecularTestsToday:historicalData[lengthOfData-1].molecularTests - historicalData[lengthOfData-2].molecularTests,
-          newSerologicaltestsToday:historicalData[lengthOfData-1].serologicalTests - historicalData[lengthOfData-2].serologicalTests,
+          newSerologicalTestsToday:historicalData[lengthOfData-1].serologicalTests - historicalData[lengthOfData-2].serologicalTests,
           }
       }
       setHistoricalData({...historicalDataFromFireBase})
       setTodaysData({...todaysDataFromFireBase})
+
+      const today = new Date()
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0,0,0,0)
+
+      setCookie("today",{...todaysDataFromFireBase,expirationDate:tomorrow},{expires:tomorrow})
+
     }
 
     fetchFirebaseData();
@@ -344,6 +365,12 @@ export default function Home(props) {
   }
 
 
+  const closeAlert = async () =>{
+    setUIState({...UIstate,alertVisible:false})
+    setCookie("ui",{...UIstate,alertVisible:false})
+  }
+
+
 
     const dataObjectForChart = createDataObject(historicalData.all,attributeToChartOptions[UIstate.attributeToGraph].xKey,attributeToChartOptions[UIstate.attributeToGraph].yKey,
           UIstate.graphOptionAbsolute,UIstate.graphOptionChange)
@@ -358,7 +385,7 @@ export default function Home(props) {
           </div>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
-        {UIstate.alertVisible ? <AlertHeader onClose={()=>setUIState({...UIstate,alertVisible:false})}/> : <div/>}
+        {UIstate.alertVisible ? <AlertHeader onClose={closeAlert}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
 
@@ -368,7 +395,7 @@ export default function Home(props) {
                   infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
 
                 <DataBlock blockType="label" text="Prueba molecular"
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Prueba molecular",modalBody:"Este dato es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente."})}/>
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Prueba molecular",modalBody:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente."})}/>
 
                 <DataBlock blockType="label" text="Prueba serológica"
                   infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Prueba serológica",modalBody:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos."})}/>
@@ -381,7 +408,7 @@ export default function Home(props) {
               <div style={{display:'flex',flexDirection:'row'}}>
                 <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday)} borderBottomLeftRadius={15}/>
                 <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicaltestsToday)}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday)}/>
                 <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday)} borderBottomRightRadius={15} />
               </div>
             </div>
