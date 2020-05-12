@@ -58,16 +58,24 @@ code {
   font-size: var(--LABEL_FONT_SIZE);
   height: var(--LABEL_BLOCK_HEIGHT);
   color: var(--DATA_VALUE_TEXT_COLOR);
+}
+
+.infoCircle{
+  position: absolute;
+  top:0;
+  right:0;
+  transform:scale(0.7);
   cursor: pointer;
+
 }
 
-@keyframes labelHoverAnimation {
-  from {background-color: var(--DATA_LABEL_BACKGROUND_COLOR);}
-  to {background-color: aqua; color:black;}
+@keyframes infoCircleHoverAnimation {
+  from {fill: white; transform: scale(0.7);}
+  to {fill:black;transform: scale(1.1);}
 }
 
-.labelBlock:hover{
-  animation-name: labelHoverAnimation;
+.infoCircle:hover{
+  animation-name: infoCircleHoverAnimation;
   animation-duration: 1s;
   animation-fill-mode: forwards;
 
