@@ -5,6 +5,13 @@ import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+} from "react-share";
+
 const ALERT_HEADER = {'en-us':'All historical data available','es-pr':'Historial completo'}
 const ALERT_BODY_ES =
 (<p> La data para el número de casos positivos y número de muertes está disponible desde la fecha del primer caso reportado (13 de marzo del 2020) hasta hoy.
@@ -112,6 +119,10 @@ function Navigation(props){
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
+            <FacebookButton/>
+            <TwitterButton/>
+
+
           </Nav>
           <Nav>
             <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
@@ -239,6 +250,22 @@ function DataBlock(props){
       {props.text}
       {props.blockType === "label" ? <Icon.InfoCircle onClick={props.infoClick} className="infoCircle"/>: null }
     </div>
+  )
+}
+
+const FacebookButton = (props)=>{
+  return(
+  <FacebookShareButton url="covidtrackerpr.com">
+    <FacebookIcon size={'25px'} round={true}/>
+  </FacebookShareButton>
+  )
+}
+
+const TwitterButton = (props)=>{
+  return(
+  <TwitterShareButton url="https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com">
+    <TwitterIcon size={'25px'} round={true}/>
+  </TwitterShareButton>
   )
 }
 
@@ -440,6 +467,8 @@ export default function Home(props) {
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
+
+
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
