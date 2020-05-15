@@ -1,13 +1,58 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal} from 'react-bootstrap';
+import { Button, Alert,Modal,NavDropdown,Navbar,Nav,} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 
+const ALERT_HEADER = {'en-us':'Change of available information','es-pr':'Cambio de datos disponibles'}
+const ALERT_BODY_ES =
+(<p>(1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus.<br/>
+(2) Desde el 5 de mayo del 2020, el Departmento de Salúd sólo publica el número de casos positivos únicos (a diferencia de número de pruebas positivos totales),
+pruebas moleculares, pruebas serológicas y muertes en su página oficial. Seguiremos manteniendo el historial
+de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril, que fue el último día en cual se ofrecieron estos datos.
+</p>)
+const ALERT_BODY_EN =
+(<p>(1) There was a lapse of time between April 23 and May 5, 2020 in which the Health Department did not publish data on its coronavirus website.<br/>
+(2) As of May 5, 2020, the Health Department only publishes the number of unique positive cases (as opposed to the number of total positive tests), molecular tests, serological tests and deaths on its official website. We will continue to keep track of the numbers of tests performed, negative cases and tests in process until the date of April 23, which was the last day that this data was offered.
+</p>)
 
+const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}
 
 const MONTHS_ES = {1:"enero",2:"febrero",3:"marzo",4:"abril",5:"mayo",6:"junio",7:"julio",8:"agosto",9:"septiembre",10:"octubre",11:"noviembre",12:"diciembre"}
+const MONTHS_EN = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9 : "September", 10: "October", 11: "November", 12: "December"}
+const MONTHS = {'en-us':MONTHS_EN,'es-pr':MONTHS_ES}
+
+const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
+                  percentInfected:"Porciento de puertorriqueños infectados",deathRate:"Porciento de muertes",date:"Fecha",
+                  confirmedCasesExplanation:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19.",
+                  molecularTestsExplanation:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente.",
+                  serologicalTestsExplanation:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos.",
+                  deathsExplanation:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico.",
+                  percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
+                  deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
+                  today:'hoy', change:"Cambio",
+                  inPuertoRico:" en Puerto Rico",}
+const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
+                  percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
+                  confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
+                  molecularTestsExplanation: "This is the number of positive cases of COVID-19 according to molecular tests. These directly detect RNA (ribonucleic acid), the genetic material of the virus, in samples taken from the patient's respiratory secretions." ,
+                  serologicalTestsExplanation: "This data represents the number of positive cases of COVID-19 according to serological tests. The serological test detects our immune response against the pathogen. These are referred to as \"quick tests\", as they offer results in 10 minutes. ",
+                  deathsExplanation: "This represents the number of deaths attributed to COVID-19 in Puerto Rico.",
+                  percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
+                  deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
+                  today:'today',change:"Change",
+                  inPuertoRico:" in Puerto Rico"}
+
+
+const LABELS = {'en-us':LABELS_EN,'es-pr':LABELS_ES}
+const GRAPHING_DESCRIPTION_ES = {instructions:"Qué graficar:",dataPerDay:"Data por día",changePerDay:"Cambio por día"}
+const GRAPHING_DESCRIPTION_EN = {instructions:"What to graph:",dataPerDay:"Data per day",changePerDay:"Change per day"}
+const GRAPHING_DESCRIPTION = {'en-us':GRAPHING_DESCRIPTION_EN,'es-pr':GRAPHING_DESCRIPTION_ES}
+
+const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>)
+const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) and is subject to change and/or clarification</div>)
+const DISCLAIMER_DIV = {'en-us':DISCLAIMER_EN,'es-pr':DISCLAIMER_ES}
 
 const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInProgress',"deaths"]
 const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','secondary','danger']
@@ -23,43 +68,22 @@ ATTRIBUTES.forEach((item, i) => {
 
 const DELTA_LINE_COLOR = 'purple'
 
-const attributeToChartOptions = {
-  'confirmedCases':{
-    xKey: 'timestamp',
-    yKey: 'confirmedCases',
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Casos positivos únicos'
-  },
-  'conductedTests':{
-    xKey: 'timestamp',
-    yKey: 'conductedTests',
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Pruebas administradas'
-  },
-  'negativeCases':{
-    xKey: 'timestamp',
-    yKey: 'negativeCases',
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Casos negativos'
-  },
-  'testsInProgress':{
-    xKey: 'timestamp',
-    yKey: 'testsInProgress',
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Pruebas en progreso'
-  },
-  'deaths':{
-    xKey: 'timestamp',
-    yKey: 'deaths',
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Muertes'
-  },
-
-}
-
 const PR_POPULATION = 3.194*(10**6)
 
 
+function anglifySaludTimeSignature(saludTimeSignature){
+  const currentMonth = (new Date ()).getMonth() + 1
+  const currentMonthES = MONTHS_ES[currentMonth]
+  const currentMonthEN = MONTHS_EN[currentMonth]
+
+  var anglified = saludTimeSignature.replace("Datos al","Updated")
+  anglified = anglified.replace("de",currentMonthEN)
+  anglified = anglified.replace(`${currentMonthES}`,'')
+  anglified = anglified.replace("de ","")
+
+  return anglified
+
+}
 
 function getPercent(amount,total,decimals){
   var quotient = amount / total * 100
@@ -84,7 +108,29 @@ function removeParentheses(string){
   return output
 }
 
-function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
+function Navigation(props){
+  return (
+    <div style={{width: "100%"}}>
+      <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+        <Navbar.Brand href="#home"><div style={{display: 'flex',flexDirection: 'row'}}><div style={{color: 'yellow',fontWeight: 'bold'}}>COVID-19</div><div style={{marginLeft: 5}}>{props.inPuertoRico}</div></div></Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto">
+          </Nav>
+          <Nav>
+            <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
+            <Nav.Link eventKey={1} onClick={()=>props.clickEnglishButton()}>
+              English
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </div>
+  )
+}
+
+
+function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday,locale){
   var text = formatInteger(confirmedCases)
 
   const locationOfAl = saludTimeSignature.indexOf("al ")
@@ -103,15 +149,23 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
   if (dateFromToday){
     return (<div style={{display:'flex',flexDirection:'column'}}>
               <div>{text}</div>
-              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? 'hoy)' : ')'}</div>
+              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? `${LABELS[locale].today})` : ')'}</div>
             </div>)
   } else{
     return text
   }
 }
 
+function createDataObject(data,UIstate){
 
-function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
+  let xKey = 'timestamp'
+  let yKey = `${UIstate.attributeToGraph}`
+  let graphOptionAbsolute = UIstate.graphOptionAbsolute
+  let graphOptionChange = UIstate.graphOptionChange
+  let locale = UIstate.locale
+
+
+
   var formattedData = []
   var formattedDeltaData = []
   for (var i = 0; i < data.length; i++) {
@@ -119,7 +173,7 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
     var xShorthand = entry[xKey]
     if (xKey === "timestamp"){
       const dateObj = new Date(entry[xKey])
-      xShorthand = `${dateObj.getDate()}-${MONTHS_ES[dateObj.getMonth()+1]}`
+      xShorthand = `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}`
     }
 
     var yValue = entry[yKey]
@@ -141,14 +195,13 @@ function createDataObject(data,xKey,yKey,graphOptionAbsolute,graphOptionChange){
     formattedData.push(formattedEntry)
   }
 
-  // formattedDeltaData = [formattedDeltaData[0]].concat(formattedDeltaData)
   const dataObject = {
-  "id": attributeToChartOptions[yKey].yAxisLabel,
+  "id": LABELS[UIstate.locale][UIstate.attributeToGraph],
   "color":BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[yKey]],
   "data": formattedData}
 
   const deltaObject = {
-  "id": "Cambio",
+  "id": LABELS[UIstate.locale].change,
   "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
   console.log("formattedData",formattedData)
@@ -196,13 +249,8 @@ function DataBlock(props){
 const AlertHeader = (props) =>
    (
   <Alert style={{width: "80%"}}variant="primary" onClose={props.onClose} dismissible>
-         <Alert.Heading>Cambio de datos disponibles</Alert.Heading>
-         <p>
-         (1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus.<br/>
-         (2) Desde el 5 de mayo del 2020, el Departmento de Salúd sólo publica el número de casos positivos únicos (a diferencia de número de pruebas positivos totales),
-         pruebas moleculares, pruebas serológicas y muertes en su página oficial. Seguiremos manteniendo el historial
-         de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril, que fue el último día en cual se ofrecieron estos datos.
-         </p>
+         <Alert.Heading>{props.header}</Alert.Heading>
+         {props.body}
   </Alert>
 )
 
@@ -223,10 +271,20 @@ function InfoModal(props) {
   );
 }
 
+const LoveStatement = (props) =>{
+  const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
+  const by = props.locale === "es-pr" ? "por" : "by"
+  return (
+    <div>
+    {madeWith}<span style={{color: '#e25555'}}>&#9829;</span> {by} <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a>
+    </div>
+  )
+}
+
 export default function Home(props) {
 
     const [cookie, setCookie] = useCookies();
-    console.log("cookie",cookie)
+    // console.log("cookie",cookie)
 
     var buttonVariants = {}
 
@@ -246,6 +304,7 @@ export default function Home(props) {
                 graphOptionChange:false,
                 ...buttonVariants,
                 alertVisible:cookie.ui ? cookie.ui.alertVisible : true,
+                locale:'es-pr'
               })
     const [historicalData,setHistoricalData] = useState({
       all:[],
@@ -346,9 +405,8 @@ export default function Home(props) {
 
   const getDataForDownload = () =>{
     console.log("--Preparing data for future download--")
-    const dataObjectForChart = createDataObject(historicalData.all,attributeToChartOptions[UIstate.attributeToGraph].xKey,
-                                                attributeToChartOptions[UIstate.attributeToGraph].yKey,
-                                                UIstate.graphOptionAbsolute,UIstate.graphOptionChange)
+
+    const dataObjectForChart = createDataObject(historicalData.all,UIstate)
     var csv = [["fecha",UIstate.attributeToGraph]]
     for (var i = 0; i < dataObjectForChart.length; i++) {
       let data = dataObjectForChart[i].data
@@ -370,46 +428,47 @@ export default function Home(props) {
     setCookie("ui",{...UIstate,alertVisible:false})
   }
 
+  const saveNewLocale = (newLocale) =>{
+    setUIState({...UIstate,locale:newLocale})
+    setCookie("ui",{...UIstate,locale:newLocale})
+
+  }
 
 
-    const dataObjectForChart = createDataObject(historicalData.all,attributeToChartOptions[UIstate.attributeToGraph].xKey,attributeToChartOptions[UIstate.attributeToGraph].yKey,
-          UIstate.graphOptionAbsolute,UIstate.graphOptionChange)
-    const xAxisLabel = attributeToChartOptions[UIstate.attributeToGraph].xAxisLabel
-    const yAxisLabel = attributeToChartOptions[UIstate.attributeToGraph].yAxisLabel
+
+    const dataObjectForChart = createDataObject(historicalData.all,UIstate)
 
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10,backgroundColor: 'white'}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
+        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
-          <div className="title">
-            COVID-19 en Puerto Rico
-          </div>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
-        {UIstate.alertVisible ? <AlertHeader onClose={closeAlert}/> : <div/>}
+        {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
           <div style={{display: 'flex',flexDirection: 'column'}}>
 
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="label" text="Casos positivos únicos" borderTopLeftRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Casos positivos únicos",modalBody:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].confirmedCases} borderTopLeftRadius={15}
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].confirmedCases,modalBody:LABELS[UIstate.locale].confirmedCasesExplanation})}/>
 
-                <DataBlock blockType="label" text="Prueba molecular"
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Prueba molecular",modalBody:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].molecularTests}
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].molecularTests,modalBody:LABELS[UIstate.locale].molecularTestsExplanation})}/>
 
-                <DataBlock blockType="label" text="Prueba serológica"
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Prueba serológica",modalBody:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].serologicalTests}
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].serologicalTests,modalBody:LABELS[UIstate.locale].serologicalTestsExplanation})}/>
 
-                <DataBlock blockType="label" text="Muertes" borderTopRightRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Muertes",modalBody:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].deaths} borderTopRightRadius={15}
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deaths,modalBody:LABELS[UIstate.locale].deathsExplanation})}/>
 
 
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday)} borderBottomLeftRadius={15}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday)} borderBottomRightRadius={15} />
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday,UIstate.locale)} borderBottomLeftRadius={15}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday,UIstate.locale)}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday,UIstate.locale)}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday,UIstate.locale)} borderBottomRightRadius={15} />
               </div>
             </div>
           </div>
@@ -424,11 +483,11 @@ export default function Home(props) {
           <div style ={{display:'flex',flexDirection:'row'}}>
             <div style={{display: 'flex',flexDirection: 'column'}}>
               <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                <DataBlock blockType="label" text="Porciento de puertorriqueños infectados" borderTopLeftRadius={15} fontSize="2.5vh"
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Porciento de puertorriqueños infectados",modalBody:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico)."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].percentInfected} borderTopLeftRadius={15} fontSize="2.5vh"
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].percentInfected,modalBody:LABELS[UIstate.locale].percentInfectedExplanation})}/>
 
-                <DataBlock blockType="label" text="Porciento de muertes" borderTopRightRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:"Porciento de muertes",modalBody:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos."})}/>
+                <DataBlock blockType="label" text={LABELS[UIstate.locale].deathRate} borderTopRightRadius={15}
+                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deathRate,modalBody:LABELS[UIstate.locale].deathRateExplanation})}/>
 
 
               </div>
@@ -444,34 +503,34 @@ export default function Home(props) {
           </div>
         </div>
 
-        <div style={{textAlign:'center',marginTop: 10}}>Qué graficar:</div>
+        <div style={{textAlign:'center',marginTop: 10}}>{GRAPHING_DESCRIPTION[UIstate.locale].instructions}</div>
         <div style={{display:'flex',flexDirection:'row'}}>
-          <Button onClick={()=>toggleGraphOption('absolute')} variant={UIstate.graphOptionAbsolute ? 'primary' : 'light'}>Data por día</Button>{' '}
-          <Button onClick={()=>toggleGraphOption('change')} variant={UIstate.graphOptionChange ? 'primary' : 'light'}>Cambio por día</Button>{' '}
+          <Button onClick={()=>toggleGraphOption('absolute')} variant={UIstate.graphOptionAbsolute ? 'primary' : 'light'}>{GRAPHING_DESCRIPTION[UIstate.locale].dataPerDay}</Button>{' '}
+          <Button onClick={()=>toggleGraphOption('change')} variant={UIstate.graphOptionChange ? 'primary' : 'light'}>{GRAPHING_DESCRIPTION[UIstate.locale].changePerDay}</Button>{' '}
         </div>
         <div className="attributeToGraphSelection">
-          <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>Casos positivos únicos</Button>{' '}
-          <Button onClick={()=>chooseButton('conductedTests')} variant={UIstate.conductedTestsButtonVariant}>Pruebas administradas</Button>{' '}
-          <Button onClick={()=>chooseButton('negativeCases')} variant={UIstate.negativeCasesButtonVariant}>Casos negativos</Button>{' '}
-          <Button onClick={()=>chooseButton('testsInProgress')} variant={UIstate.testsInProgressButtonVariant}>Pruebas en proceso</Button>{' '}
-          <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>Muertes</Button>{' '}
+          <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].confirmedCases}</Button>{' '}
+          <Button onClick={()=>chooseButton('conductedTests')} variant={UIstate.conductedTestsButtonVariant}>{UIstate.locale === 'es-pr'? 'Pruebas administradas':'Administered tests'}</Button>{' '}
+          <Button onClick={()=>chooseButton('negativeCases')} variant={UIstate.negativeCasesButtonVariant}>{UIstate.locale === 'es-pr'? 'Casos negativos' : 'Negative cases'}</Button>{' '}
+          <Button onClick={()=>chooseButton('testsInProgress')} variant={UIstate.testsInProgressButtonVariant}>{UIstate.locale === 'es-pr'? 'Pruebas en proceso' : 'Tests in progress'}</Button>{' '}
+          <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>{LABELS[UIstate.locale].deaths}</Button>{' '}
         </div>
 
         <div className="chartContainer">
-          <LineChart data={dataObjectForChart} xAxisLabel={xAxisLabel} yAxisLabel={yAxisLabel} graphColors={UIstate.graphColors}/>
+          <LineChart data={dataObjectForChart} xAxisLabel={LABELS[UIstate.locale].date} yAxisLabel={LABELS[UIstate.locale][UIstate.attributeToGraph]} graphColors={UIstate.graphColors}/>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
-          <div>{`${today.saludTimeSignature ? today.saludTimeSignature : ""}`}</div>
+          <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
         </div>
         <div style={{margin: 5,marginBottom: 20}}>
           <CSVLink data={getDataForDownload()} filename={`${UIstate.attributeToGraph}${removeParentheses(today.saludTimeSignature)}.csv`}>
-            <Button variant="success">Bajar data <Icon.Download /></Button>
+            <Button variant="success">{UIstate.locale === 'es-pr' ? 'Bajar data ' : "Download data "}<Icon.Download /></Button>
           </CSVLink>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
-          <div style={{fontSize: 13}}>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>
-          <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">Licencia</a></div>
-          <div style={{fontSize: 13,margin:20,}}> Hecho con <span style={{color: '#e25555'}}>&#9829;</span> por <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a></div>
+          <div style={{fontSize: 13}}>{DISCLAIMER_DIV[UIstate.locale]}</div>
+          <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
+          <LoveStatement style={{fontSize: 13,margin:20,}} locale={UIstate.locale}/>
         </div>
 
       </div>

@@ -2,7 +2,7 @@
 
 :root{
   --BLOCK_WIDTH:16vw;
-  --DATA_LABEL_BACKGROUND_COLOR: #3498db;
+  --DATA_LABEL_BACKGROUND_COLOR: rgb(0, 123, 255);
   --DATA_VALUE_TEXT_COLOR: white;
   --DATA_VALUE_BACKGROUND_COLOR: #ecf0f1;
   --LABEL_BLOCK_HEIGHT: 12vh;
@@ -25,11 +25,6 @@ code {
     monospace;
 }
 
-.title{
-  font-size: 5vh;
-  font-weight: bold;
-  text-align: center;
-}
 
 .attributeToGraphSelection {
   flex-direction:row;
@@ -116,11 +111,6 @@ code {
     --DATA_FONT_SIZE:3.2vh;
     --LABEL_FONT_SIZE:2.1vh;
   }
-
-  .title{
-    font-size: 6vh;
-  }
-
 
   .dashboardBlock{
     height: 12vh;

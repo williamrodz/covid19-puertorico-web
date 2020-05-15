@@ -19,34 +19,31 @@ const theme = {
   }
 };
 
-const toolTipElement = (props: PointTooltipProps) => {
-    // Object.keys(props).forEach((item, i) => {
-    //   console.log("Prop is",item)
-    //   Object.keys(props[item]).forEach((item2, i) => {
-    //     console.log("-prob val for ",item2,props[item][item2])
-    //   });
-    //
-    // });
 
-    return (
-      <div className="toolTipElement">
-        <div style={{margin:5}}>
-          <div style={{display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
-            <div style={{backgroundColor: props.point.serieColor,borderRadius: '5px',height: '1.5vw',width: '1.5vw',margin: "5px"}}/>
-            <div>{props.point.serieId}:<span style={{fontWeight: 'bold'}}> {props.point.data.y}</span></div>
+
+const App = (props) => {
+
+  const toolTipElement = (tooltipProps: PointTooltipProps) => {
+
+
+      return (
+        <div className="toolTipElement">
+          <div style={{margin:5}}>
+            <div style={{display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
+              <div style={{backgroundColor: tooltipProps.point.serieColor,borderRadius: '5px',height: '1.5vw',width: '1.5vw',margin: "5px"}}/>
+              <div>{tooltipProps.point.serieId}:<span style={{fontWeight: 'bold'}}> {tooltipProps.point.data.y}</span></div>
+            </div>
+            <div style={{textAlign: 'right',display: 'flex',flexDirection: 'row-reverse'}}>
+              <span style={{fontWeight: 'bold'}}><span style={{color:'white'}}>_</span>{tooltipProps.point.data.x}</span>
+              <div><span>{props.xAxisLabel}:</span></div>
+
+            </div>
           </div>
-          <div style={{textAlign: 'right',display: 'flex',flexDirection: 'row-reverse'}}>
-            <span style={{fontWeight: 'bold'}}><span style={{color:'white'}}>_</span>{props.point.data.x}</span>
-            <div><span>Fecha:</span></div>
+        </div>)
+  };
 
-          </div>
-        </div>
-      </div>)
-};
 
-const App = (props) =>
-
-  (
+  return (
       <ResponsiveLine
           data={props.data}
           // animate={lineGraphSettings.animate == false ? lineGraphSettings.animate : true}
@@ -117,6 +114,7 @@ const App = (props) =>
 
       />
   )
+}
 
 
 
