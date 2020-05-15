@@ -5,16 +5,12 @@ import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 
-const ALERT_HEADER = {'en-us':'Change of available information','es-pr':'Cambio de datos disponibles'}
+const ALERT_HEADER = {'en-us':'All historical data available','es-pr':'Historial completo'}
 const ALERT_BODY_ES =
-(<p>(1) Hubo un lapso de tiempo entre el 23 de abril y el 5 de mayo 2020 en lo cual el Departmento de Salúd no publicó data en su sitio web del coronavirus.<br/>
-(2) Desde el 5 de mayo del 2020, el Departmento de Salúd sólo publica el número de casos positivos únicos (a diferencia de número de pruebas positivos totales),
-pruebas moleculares, pruebas serológicas y muertes en su página oficial. Seguiremos manteniendo el historial
-de los números de pruebas realizadas, casos negativos y pruebas en procesamiento hasta la fecha del 23 de abril, que fue el último día en cual se ofrecieron estos datos.
+(<p> La data para el número de casos positivos y número de muertes está disponible desde la fecha del primer caso reportado (13 de marzo del 2020) hasta hoy.
 </p>)
 const ALERT_BODY_EN =
-(<p>(1) There was a lapse of time between April 23 and May 5, 2020 in which the Health Department did not publish data on its coronavirus website.<br/>
-(2) As of May 5, 2020, the Health Department only publishes the number of unique positive cases (as opposed to the number of total positive tests), molecular tests, serological tests and deaths on its official website. We will continue to keep track of the numbers of tests performed, negative cases and tests in process until the date of April 23, which was the last day that this data was offered.
+(<p> All historical data for positive cases and number of deaths is now available.
 </p>)
 
 const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}

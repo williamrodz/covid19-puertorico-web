@@ -54,7 +54,7 @@ const App = (props) => {
           yScale={{ type: 'linear', min: 0, max: 'auto', stacked: false, reverse: false }}
           axisTop={null}
           axisRight={null}
-          axisBottom={window.innerWidth > 767 ? {
+          axisBottom={false ? {
               orient: 'bottom',
               tickSize: 5,
               tickPadding: 5,
