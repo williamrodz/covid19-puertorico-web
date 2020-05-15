@@ -27,6 +27,10 @@ const toolTipElement = (props: PointTooltipProps) => {
     //   });
     //
     // });
+    let pointKeys = Object.keys(props.point)
+    for (var i = 0; i < pointKeys.length; i++) {
+      console.log(pointKeys[i],props.point[pointKeys[i]])
+    }
 
     return (
       <div className="toolTipElement">
@@ -37,7 +41,7 @@ const toolTipElement = (props: PointTooltipProps) => {
           </div>
           <div style={{textAlign: 'right',display: 'flex',flexDirection: 'row-reverse'}}>
             <span style={{fontWeight: 'bold'}}><span style={{color:'white'}}>_</span>{props.point.data.x}</span>
-            <div><span>Fecha:</span></div>
+            <div><span>{props.xAxisLabel}</span></div>
 
           </div>
         </div>
