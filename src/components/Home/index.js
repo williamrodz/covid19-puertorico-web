@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal,NavDropdown,Navbar,Nav,Form,FormControl} from 'react-bootstrap';
+import { Button, Alert,Modal,NavDropdown,Navbar,Nav,} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
@@ -30,7 +30,9 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   serologicalTestsExplanation:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos.",
                   deathsExplanation:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico.",
                   percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
-                  deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos."}
+                  deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
+                  today:'hoy', change:"Cambio",
+                  navbarTitle:"COVID-19 en Puerto Rico",}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -38,7 +40,10 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   serologicalTestsExplanation: "This data represents the number of positive cases of COVID-19 according to serological tests. The serological test detects our immune response against the pathogen. These are referred to as \"quick tests\", as they offer results in 10 minutes. ",
                   deathsExplanation: "This represents the number of deaths attributed to COVID-19 in Puerto Rico.",
                   percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
-                  deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases."}
+                  deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
+                  today:'today',change:"Change",
+                  navbarTitle:"COVID-19 in Puerto Rico"}
+
 
 const LABELS = {'en-us':LABELS_EN,'es-pr':LABELS_ES}
 const GRAPHING_DESCRIPTION_ES = {instructions:"Qué graficar:",dataPerDay:"Data por día",changePerDay:"Cambio por día"}
@@ -107,7 +112,7 @@ function Navigation(props){
   return (
     <div style={{width: "100%"}}>
       <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home">COVID-19 en Puerto Rico</Navbar.Brand>
+        <Navbar.Brand href="#home">{props.navbarTitle}</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
@@ -134,7 +139,7 @@ function Navigation(props){
 }
 
 
-function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
+function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday,locale){
   var text = formatInteger(confirmedCases)
 
   const locationOfAl = saludTimeSignature.indexOf("al ")
@@ -153,7 +158,7 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
   if (dateFromToday){
     return (<div style={{display:'flex',flexDirection:'column'}}>
               <div>{text}</div>
-              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? 'hoy)' : ')'}</div>
+              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? `${LABELS[locale].today})` : ')'}</div>
             </div>)
   } else{
     return text
@@ -205,7 +210,7 @@ function createDataObject(data,UIstate){
   "data": formattedData}
 
   const deltaObject = {
-  "id": "Cambio",
+  "id": LABELS[UIstate.locale].change,
   "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
   console.log("formattedData",formattedData)
@@ -444,7 +449,7 @@ export default function Home(props) {
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
-        <Navigation clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
+        <Navigation navbarTitle={LABELS[UIstate.locale].navbarTitle} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
@@ -469,10 +474,10 @@ export default function Home(props) {
 
               </div>
               <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday)} borderBottomLeftRadius={15}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday)} borderBottomRightRadius={15} />
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday,UIstate.locale)} borderBottomLeftRadius={15}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday,UIstate.locale)}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday,UIstate.locale)}/>
+                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday,UIstate.locale)} borderBottomRightRadius={15} />
               </div>
             </div>
           </div>
@@ -528,7 +533,7 @@ export default function Home(props) {
         </div>
         <div style={{margin: 5,marginBottom: 20}}>
           <CSVLink data={getDataForDownload()} filename={`${UIstate.attributeToGraph}${removeParentheses(today.saludTimeSignature)}.csv`}>
-            <Button variant="success">{UIstate.locale === 'es-pr' ? 'Bajar data' : "Download data"}<Icon.Download /></Button>
+            <Button variant="success">{UIstate.locale === 'es-pr' ? 'Bajar data ' : "Download data "}<Icon.Download /></Button>
           </CSVLink>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
