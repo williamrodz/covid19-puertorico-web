@@ -24,17 +24,7 @@ const theme = {
 const App = (props) => {
 
   const toolTipElement = (tooltipProps: PointTooltipProps) => {
-      // Object.keys(props).forEach((item, i) => {
-      //   console.log("Prop is",item)
-      //   Object.keys(props[item]).forEach((item2, i) => {
-      //     console.log("-prob val for ",item2,props[item][item2])
-      //   });
-      //
-      // });
-      let pointKeys = Object.keys(tooltipProps.point)
-      for (var i = 0; i < pointKeys.length; i++) {
-        console.log(pointKeys[i],tooltipProps.point[pointKeys[i]])
-      }
+
 
       return (
         <div className="toolTipElement">

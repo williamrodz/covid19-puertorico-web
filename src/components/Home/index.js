@@ -32,7 +32,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
                   deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
                   today:'hoy', change:"Cambio",
-                  navbarTitle:"COVID-19 en Puerto Rico",}
+                  inPuertoRico:" en Puerto Rico",}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -42,7 +42,7 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
                   deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
                   today:'today',change:"Change",
-                  navbarTitle:"COVID-19 in Puerto Rico"}
+                  inPuertoRico:" in Puerto Rico"}
 
 
 const LABELS = {'en-us':LABELS_EN,'es-pr':LABELS_ES}
@@ -112,19 +112,10 @@ function Navigation(props){
   return (
     <div style={{width: "100%"}}>
       <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home">{props.navbarTitle}</Navbar.Brand>
+        <Navbar.Brand href="#home"><div style={{display: 'flex',flexDirection: 'row'}}><div style={{color: 'yellow',fontWeight: 'bold'}}>COVID-19</div><div style={{marginLeft: 5}}>{props.inPuertoRico}</div></div></Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
-            <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-            </NavDropdown>
           </Nav>
           <Nav>
             <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
@@ -449,7 +440,7 @@ export default function Home(props) {
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
-        <Navigation navbarTitle={LABELS[UIstate.locale].navbarTitle} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
+        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
