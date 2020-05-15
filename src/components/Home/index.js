@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal} from 'react-bootstrap';
+import { Button, Alert,Modal,NavDropdown,Navbar,Nav,Form,FormControl} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
@@ -83,6 +83,37 @@ function removeParentheses(string){
   }
   return output
 }
+
+function Navigation(props){
+  return (
+    <div style={{width: "100%"}}>
+      <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+        <Navbar.Brand href="#home">COVID-19 en Puerto Rico</Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link href="#features">Features</Nav.Link>
+            <Nav.Link href="#pricing">Pricing</Nav.Link>
+            <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+          <Nav>
+            <Nav.Link href="#deets">Español</Nav.Link>
+            <Nav.Link eventKey={2} href="#memes">
+              English
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </div>
+  )
+}
+
 
 function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday){
   var text = formatInteger(confirmedCases)
@@ -226,7 +257,7 @@ function InfoModal(props) {
 export default function Home(props) {
 
     const [cookie, setCookie] = useCookies();
-    console.log("cookie",cookie)
+    // console.log("cookie",cookie)
 
     var buttonVariants = {}
 
@@ -378,7 +409,8 @@ export default function Home(props) {
     const yAxisLabel = attributeToChartOptions[UIstate.attributeToGraph].yAxisLabel
 
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',marginTop:10,backgroundColor: 'white'}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
+        <Navigation/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <div className="title">
             COVID-19 en Puerto Rico
