@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal,NavDropdown,Navbar,Nav,} from 'react-bootstrap';
+import { Button, Alert,Modal,NavDropdown,Navbar,Nav,Dropdown} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
@@ -14,12 +14,14 @@ import {
   TwitterIcon,
 } from "react-share";
 
-const ALERT_HEADER = {'en-us':'All historical data available','es-pr':'Historial completo'}
+const ALERT_HEADER = {'en-us':'Select Time Range Available (5/18/20)','es-pr':'Selección de rango de tiempo disponible (18-mayo-20)'}
 const ALERT_BODY_ES =
-(<p> La data para el número de casos positivos y número de muertes está disponible desde la fecha del primer caso reportado (13 de marzo del 2020) hasta hoy.
+(<p>  Ahora puedes seleccionar el rango de tiempo de la data que quieres ver. Puedes escoger ver los últimos
+  7 días, 14 días, 30 días o desde el comienzo.
 </p>)
 const ALERT_BODY_EN =
-(<p> All historical data for positive cases and number of deaths is now available.
+(<p>  You can now select the time range from which you'd like to see the data. You can select between the last 7 days,
+  last 14 days, 30 days, or from the very beginning.
 </p>)
 
 const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}
@@ -37,7 +39,12 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
                   deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
                   today:'hoy', change:"Cambio",
-                  inPuertoRico:" en Puerto Rico",}
+                  inPuertoRico:" en Puerto Rico",
+                  last7daysText:'Últimos 7 días',
+                  last14daysText:'Últimos 14 días',
+                  last30daysText:'Últimos 30 días',
+                  last0daysText:"Desde el comienzo",
+                  timeRangeSelectionText:'Rango de tiempo'}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -47,7 +54,13 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
                   deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
                   today:'today',change:"Change",
-                  inPuertoRico:" in Puerto Rico"}
+                  inPuertoRico:" in Puerto Rico",
+                  last7daysText:'Last 7 days',
+                  last14daysText:'Last 14 days',
+                  last30daysText:'Last 30 days',
+                  last0daysText:"From the beginning",
+                  timeRangeSelectionText:'Time range'}
+
 
 
 const LABELS = {'en-us':LABELS_EN,'es-pr':LABELS_ES}
@@ -189,6 +202,8 @@ function createDataObject(data,UIstate){
   let graphOptionChange = UIstate.graphOptionChange
   let locale = UIstate.locale
 
+  let today = new Date()
+  let lowerTimeBound =  today.setDate(today.getDate()-UIstate.graphLastXdays);
 
 
   var formattedData = []
@@ -198,6 +213,10 @@ function createDataObject(data,UIstate){
     var xShorthand = entry[xKey]
     if (xKey === "timestamp"){
       const dateObj = new Date(entry[xKey])
+      if (UIstate.graphLastXdays !== 0 && dateObj < lowerTimeBound){
+        continue
+      }
+
       xShorthand = `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}`
     }
 
@@ -312,6 +331,29 @@ function InfoModal(props) {
   );
 }
 
+const TimeRangeSelector = (props) =>{
+
+return (
+  <>
+    <div>
+      {props.timeRangeSelectionText}:
+    </div>
+    <Dropdown>
+      <Dropdown.Toggle variant="primary" id="dropdown-basic">
+        {props[`last${props.graphLastXdays}daysText`]}
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(7)}>{props.last7daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(14)}>{props.last14daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(30)}>{props.last30daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(0)}>{props.last0daysText}</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  </>
+  )
+}
+
 const LoveStatement = (props) =>{
   const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
   const by = props.locale === "es-pr" ? "por" : "by"
@@ -345,7 +387,8 @@ export default function Home(props) {
                 graphOptionChange:false,
                 ...buttonVariants,
                 alertVisible:cookie.ui ? cookie.ui.alertVisible : true,
-                locale:'es-pr'
+                locale:'es-pr',
+                graphLastXdays:30,
               })
     const [historicalData,setHistoricalData] = useState({
       all:[],
@@ -474,6 +517,9 @@ export default function Home(props) {
     setCookie("ui",{...UIstate,locale:newLocale})
 
   }
+  const chooseTimeRange = (days) =>{
+    setUIState({...UIstate,graphLastXdays:days})
+  }
 
 
 
@@ -551,6 +597,18 @@ export default function Home(props) {
           <Button onClick={()=>toggleGraphOption('absolute')} variant={UIstate.graphOptionAbsolute ? 'primary' : 'light'}>{GRAPHING_DESCRIPTION[UIstate.locale].dataPerDay}</Button>{' '}
           <Button onClick={()=>toggleGraphOption('change')} variant={UIstate.graphOptionChange ? 'primary' : 'light'}>{GRAPHING_DESCRIPTION[UIstate.locale].changePerDay}</Button>{' '}
         </div>
+        <TimeRangeSelector graphLastXdays={UIstate.graphLastXdays}
+          last0daysText={LABELS[UIstate.locale]['last0daysText']}
+          last7daysText={LABELS[UIstate.locale]['last7daysText']}
+          last14daysText={LABELS[UIstate.locale]['last14daysText']}
+          last30daysText={LABELS[UIstate.locale]['last30daysText']}
+          timeRangeSelectionText={LABELS[UIstate.locale]['timeRangeSelectionText']}
+          timeRangeSelectionFunction={chooseTimeRange}
+
+
+          />
+
+
         <div className="attributeToGraphSelection">
           <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].confirmedCases}</Button>{' '}
           <Button onClick={()=>chooseButton('conductedTests')} variant={UIstate.conductedTestsButtonVariant}>{UIstate.locale === 'es-pr'? 'Pruebas administradas':'Administered tests'}</Button>{' '}
