@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal,NavDropdown,Navbar,Nav,Dropdown} from 'react-bootstrap';
+import { Button, Alert,Modal,Navbar,Nav,Dropdown} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
@@ -72,7 +72,7 @@ const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Dep
 const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) and is subject to change and/or clarification</div>)
 const DISCLAIMER_DIV = {'en-us':DISCLAIMER_EN,'es-pr':DISCLAIMER_ES}
 
-const ATTRIBUTES = ["conductedTests","confirmedCases","negativeCases",'testsInProgress',"deaths"]
+const ATTRIBUTES = ["serologicalTests","confirmedCases","molecularTests",'testsInProgress',"deaths"]
 const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','secondary','danger']
 
 
@@ -611,9 +611,8 @@ export default function Home(props) {
 
         <div className="attributeToGraphSelection">
           <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].confirmedCases}</Button>{' '}
-          <Button onClick={()=>chooseButton('conductedTests')} variant={UIstate.conductedTestsButtonVariant}>{UIstate.locale === 'es-pr'? 'Pruebas administradas':'Administered tests'}</Button>{' '}
-          <Button onClick={()=>chooseButton('negativeCases')} variant={UIstate.negativeCasesButtonVariant}>{UIstate.locale === 'es-pr'? 'Casos negativos' : 'Negative cases'}</Button>{' '}
-          <Button onClick={()=>chooseButton('testsInProgress')} variant={UIstate.testsInProgressButtonVariant}>{UIstate.locale === 'es-pr'? 'Pruebas en proceso' : 'Tests in progress'}</Button>{' '}
+          <Button onClick={()=>chooseButton('serologicalTests')} variant={UIstate.serologicalTestsButtonVariant}>{LABELS[UIstate.locale].serologicalTests}</Button>{' '}
+          <Button onClick={()=>chooseButton('molecularTests')} variant={UIstate.molecularTestsButtonVariant}>{LABELS[UIstate.locale].molecularTests}</Button>{' '}
           <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>{LABELS[UIstate.locale].deaths}</Button>{' '}
         </div>
 
