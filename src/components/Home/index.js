@@ -1,6 +1,7 @@
 import React, {useState,useEffect} from 'react';
 import { Button, Alert,Modal,Navbar,Nav,Dropdown} from 'react-bootstrap';
 import LineChart from '../LineChart';
+import Tableau from '../Tableau'
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
@@ -44,7 +45,9 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   last14daysText:'Últimos 14 días',
                   last30daysText:'Últimos 30 días',
                   last0daysText:"Desde el comienzo",
-                  timeRangeSelectionText:'Rango de tiempo'}
+                  timeRangeSelectionText:'Rango de tiempo',
+                  excessDeathsTableTitle:"Visualiza exceso de muertes semanal",
+                  excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\"."}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -59,7 +62,9 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   last14daysText:'Last 14 days',
                   last30daysText:'Last 30 days',
                   last0daysText:"From the beginning",
-                  timeRangeSelectionText:'Time range'}
+                  timeRangeSelectionText:'Time range',
+                  excessDeathsTableTitle:"Visualize weekly excess deaths ",
+                  excessDeathsTableDescription:""}
 
 
 
@@ -622,15 +627,16 @@ export default function Home(props) {
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
           <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
         </div>
-        <div style={{margin: 5,marginBottom: 20}}>
+        <div style={{margin: 5,marginBottom: 20,display: 'flex',flexDirection: 'column',textAlign: 'center'}}>
           <CSVLink data={getDataForDownload()} filename={`${UIstate.attributeToGraph}${removeParentheses(today.saludTimeSignature)}.csv`}>
             <Button variant="success">{UIstate.locale === 'es-pr' ? 'Bajar data ' : "Download data "}<Icon.Download /></Button>
           </CSVLink>
-        </div>
-        <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13}}>{DISCLAIMER_DIV[UIstate.locale]}</div>
+        </div>
+        <Tableau title={LABELS[UIstate.locale].excessDeathsTableTitle} description={LABELS[UIstate.locale].excessDeathsTableDescription}/>
+        <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
-          <LoveStatement style={{fontSize: 13,margin:20,}} locale={UIstate.locale}/>
+          <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
         </div>
 
       </div>
