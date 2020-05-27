@@ -17,10 +17,10 @@ class Test extends Component {
 
   render() {
     return (
-      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
+      <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: '100%',textAlign: 'center'}}>
         <h1>{this.props.title}</h1>
         <p style={{marginLeft: "15px",marginRight: "15px",textAlign: 'center',fontSize: "13px"}}>{this.props.description}</p>
-        <div ref={(div) => { this.vizContainer = div }}>
+        <div style={{width: '100%'}}ref={(div) => { this.vizContainer = div }}>
         </div>
       </div>
     )

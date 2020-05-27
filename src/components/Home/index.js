@@ -11,18 +11,16 @@ import logo from '../../logo192.png'; // Tell webpack this JS file uses this ima
 import {
   FacebookShareButton,
   FacebookIcon,
-  TwitterShareButton,
   TwitterIcon,
 } from "react-share";
 
-const ALERT_HEADER = {'en-us':'Select Time Range Available (5/18/20)','es-pr':'Selección de rango de tiempo disponible (18-mayo-20)'}
+const ALERT_HEADER = {'en-us':'Excess deaths visualization added (5/23/20)','es-pr':'Visualización de muertes en exceso (23-mayo-20)'}
 const ALERT_BODY_ES =
-(<p>  Ahora puedes seleccionar el rango de tiempo de la data que quieres ver. Puedes escoger ver los últimos
-  7 días, 14 días, 30 días o desde el comienzo.
+(<p>  Se ha incorporado una visualización creada por el <a href="https://www.cdc.gov/nchs/nvss/vsrr/covid19/excess_deaths.htm">CDC</a> donde se puede discernir las muertes en exceso a causa probable del COVID-19.
 </p>)
 const ALERT_BODY_EN =
-(<p>  You can now select the time range from which you'd like to see the data. You can select between the last 7 days,
-  last 14 days, 30 days, or from the very beginning.
+(<p>  The site now has a <a href="https://www.cdc.gov/nchs/nvss/vsrr/covid19/excess_deaths.htm">CDC</a> published visualization tool in which you are able to identify projected deaths versus their actual count as a means
+      to potentially identify excess deaths caused by COVID-19.
 </p>)
 
 const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}
@@ -46,7 +44,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   last30daysText:'Últimos 30 días',
                   last0daysText:"Desde el comienzo",
                   timeRangeSelectionText:'Rango de tiempo',
-                  excessDeathsTableTitle:"Visualiza exceso de muertes semanal",
+                  excessDeathsTableTitle:"Ilustración del exceso de muertes semanal",
                   excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\"."}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
@@ -96,15 +94,20 @@ const PR_POPULATION = 3.194*(10**6)
 
 function anglifySaludTimeSignature(saludTimeSignature){
   const currentMonth = (new Date ()).getMonth() + 1
-  const currentMonthES = MONTHS_ES[currentMonth]
   const currentMonthEN = MONTHS_EN[currentMonth]
 
-  var anglified = saludTimeSignature.replace("Datos al","Updated")
-  anglified = anglified.replace("de",currentMonthEN)
-  anglified = anglified.replace(`${currentMonthES}`,'')
-  anglified = anglified.replace("de ","")
+  var anglified = saludTimeSignature.trim()
+  anglified = anglified.replace(/\s/g,"_")
 
-  return anglified
+  var splitUp = anglified.split("_")
+  var dayNumber = splitUp[2]
+  var year = splitUp[6].replace(",","")
+  var time = splitUp[7]
+  var ampm = splitUp[8].replace(")","")
+
+
+
+  return `Updated ${currentMonthEN} ${dayNumber}, ${year}, ${time} ${ampm}`
 
 }
 
@@ -135,7 +138,7 @@ function Navigation(props){
   return (
     <div style={{width: "100%"}}>
       <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home"><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
+        <Navbar.Brand href="#home" style={{fontSize: "20px"}}><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
@@ -146,7 +149,7 @@ function Navigation(props){
 
 
           </Nav>
-          <Nav>
+          <Nav style={{fontSize: "15px"}}>
             <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
             <Nav.Link eventKey={1} onClick={()=>props.clickEnglishButton()}>
               English
@@ -222,7 +225,7 @@ function createDataObject(data,UIstate){
         continue
       }
 
-      xShorthand = `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}`
+      xShorthand = UIstate.locale === "es-pr" ? `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}` : `${MONTHS[locale][dateObj.getMonth()+1]}-${dateObj.getDate()}`
     }
 
     var yValue = entry[yKey]
@@ -305,9 +308,9 @@ const FacebookButton = (props)=>{
 
 const TwitterButton = (props)=>{
   return(
-  <TwitterShareButton url="https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com">
+  <a href="https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com">
     <TwitterIcon size={'35px'} round={true}/>
-  </TwitterShareButton>
+  </a>
   )
 }
 
