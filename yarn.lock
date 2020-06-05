@@ -9396,6 +9396,11 @@ react-measure@^2.2.4:
     prop-types "^15.6.2"
     resize-observer-polyfill "^1.5.0"
 
+react-minimal-pie-chart@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/react-minimal-pie-chart/-/react-minimal-pie-chart-8.0.1.tgz#163224967809d1d2e729c8f5d114d5ba1977b74f"
+  integrity sha512-XbWpt3dLuQn0PDLbrTkdkZh21pf5sraJ2fy37VeeCi9+5ndf+Adnr0alBZ0NaA45tMjPhcSig7pB9afrMm/VDQ==
+
 react-motion@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/react-motion/-/react-motion-0.5.2.tgz#0dd3a69e411316567927917c6626551ba0607316"

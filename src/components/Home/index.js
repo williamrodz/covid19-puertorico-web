@@ -6,6 +6,7 @@ import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import logo from '../../logo192.png'; // Tell webpack this JS file uses this image
+import { PieChart } from 'react-minimal-pie-chart';
 
 
 import {
@@ -30,13 +31,13 @@ const MONTHS_EN = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May"
 const MONTHS = {'en-us':MONTHS_EN,'es-pr':MONTHS_ES}
 
 const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
-                  percentInfected:"Porciento de puertorriqueños infectados",deathRate:"Porciento de muertes",date:"Fecha",
+                  percentInfected:"Porciento de puertorriqueños infectados",fatalityRate:"Tasa de muertes",date:"Fecha",
                   confirmedCasesExplanation:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19.",
                   molecularTestsExplanation:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente.",
                   serologicalTestsExplanation:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos.",
                   deathsExplanation:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico.",
                   percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
-                  deathRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
+                  fatalityRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
                   today:'hoy', change:"Cambio",
                   inPuertoRico:" en Puerto Rico",
                   last7daysText:'Últimos 7 días',
@@ -47,13 +48,13 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   excessDeathsTableTitle:"Ilustración del exceso de muertes semanal",
                   excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\"."}
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
-                  percentInfected:"Percent of PR population infected ",deathRate:"Death rate",date:"Date",
+                  percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
                   molecularTestsExplanation: "This is the number of positive cases of COVID-19 according to molecular tests. These directly detect RNA (ribonucleic acid), the genetic material of the virus, in samples taken from the patient's respiratory secretions." ,
                   serologicalTestsExplanation: "This data represents the number of positive cases of COVID-19 according to serological tests. The serological test detects our immune response against the pathogen. These are referred to as \"quick tests\", as they offer results in 10 minutes. ",
                   deathsExplanation: "This represents the number of deaths attributed to COVID-19 in Puerto Rico.",
                   percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
-                  deathRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
+                  fatalityRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
                   today:'today',change:"Change",
                   inPuertoRico:" in Puerto Rico",
                   last7daysText:'Last 7 days',
@@ -362,6 +363,67 @@ return (
   )
 }
 
+const CaseDistributionChart = (props) =>{
+
+  return (
+        <div style={{borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', maxWidth: "300px"}}>
+          <PieChart
+            data={[
+              { title: "moleculares", value:props.molecularTests, color: '#8e44ad' },
+              { title: "serológicas", value:props.serologicalTests , color: '#2980b9' },
+
+            ]}
+            totalValue={props.molecularTests+props.serologicalTests}
+
+            animate={true}
+            // lineWidth={30} // Adjusts "donut" width
+            label={({ dataEntry }) => dataEntry.title}
+            labelStyle={(index) => ({
+                    fill: "white",
+                    fontSize: '10px',
+                    fontFamily: 'sans-serif',
+                  })}
+            // labelPosition={60}
+            style={{height: "140px"}}
+
+          />
+          <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold'}}>{props.description}</text>
+
+        </div>
+  )
+}
+
+const FatalityRateChart = (props) =>{
+
+  return (
+    <div style={{borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', maxWidth: "300px"}}>
+      <PieChart
+        data={[
+          { title: 'Casos positivos resultando en muertes', value: parseInt(props.deaths*100/props.confirmedCases), color: 'red' },
+          { title: 'Casos positivos sobrevientes', value: 100-parseInt(props.deaths*100/props.confirmedCases), color: '#ecf0f1' }
+
+        ]}
+        totalValue={100}
+
+        animate={true}
+        lineWidth={30} // Adjusts "donut" width
+        label={({ dataEntry }) => getPercent(props.deaths,props.confirmedCases,2)}
+        labelStyle={{
+          fontSize: '12px',
+          fontFamily: 'sans-serif',
+          fill: 'red',
+        }}
+        labelPosition={0}
+        style={{height: "140px"}}
+
+
+      />
+      <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold'}}>{props.description}</text>
+
+    </div>
+  )
+}
+
 const LoveStatement = (props) =>{
   const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
   const by = props.locale === "es-pr" ? "por" : "by"
@@ -538,6 +600,7 @@ export default function Home(props) {
         <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
+
         </div>
 
 
@@ -569,34 +632,9 @@ export default function Home(props) {
               </div>
             </div>
           </div>
-          <div style={{display: 'flex',flexDirection: 'row'}}>
-            <div style={{display: 'flex',flexDirection: 'column'}}>
-              <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-              </div>
-              <div style={{display:'flex',flexDirection:'row'}}>
-              </div>
-            </div>
-          </div>
           <div style ={{display:'flex',flexDirection:'row'}}>
-            <div style={{display: 'flex',flexDirection: 'column'}}>
-              <div style={{display:'flex',flexDirection:'row',paddingTop: 10}}>
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].percentInfected} borderTopLeftRadius={15} fontSize="2.5vh"
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].percentInfected,modalBody:LABELS[UIstate.locale].percentInfectedExplanation})}/>
-
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].deathRate} borderTopRightRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deathRate,modalBody:LABELS[UIstate.locale].deathRateExplanation})}/>
-
-
-              </div>
-
-              <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="data" text={PR_POPULATION ? getPercent(today.confirmedCases,PR_POPULATION,3) : 0} borderBottomLeftRadius={15}/>
-                <DataBlock blockType="data" text={today.confirmedCases !== 0 ? getPercent(today.deaths,today.confirmedCases,2) : 0} borderBottomRightRadius={15}/>
-
-
-              </div>
-            </div>
-
+            <CaseDistributionChart molecularTests={today.molecularTests} serologicalTests={today.serologicalTests} description={"Distribución de casos"}/>
+            <FatalityRateChart deaths={today.deaths} confirmedCases={today.confirmedCases} description={LABELS[UIstate.locale].fatalityRate}/>
           </div>
         </div>
 
