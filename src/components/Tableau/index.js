@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// eslint-disable-next-line
 import tableau from 'tableau-api';
 
 
@@ -11,6 +12,7 @@ class Test extends Component {
   initViz() {
     const vizUrl = 'https://public.tableau.com/shared/6JD4G3286?:toolbar=n&:tabs=n&:display_count=n&:origin=viz_share_link&:embed=y';
     const vizContainer = this.vizContainer;
+    // eslint-disable-next-line
     let viz = new window.tableau.Viz(vizContainer, vizUrl)
   }
 

@@ -15,13 +15,12 @@ import {
   TwitterIcon,
 } from "react-share";
 
-const ALERT_HEADER = {'en-us':'Excess deaths visualization added (5/23/20)','es-pr':'Visualización de muertes en exceso (23-mayo-20)'}
+const ALERT_HEADER = {'en-us':'New look (6/05/20)','es-pr':'Nuevo \'look\' (5-junio-20)'}
 const ALERT_BODY_ES =
-(<p>  Se ha incorporado una visualización creada por el <a href="https://www.cdc.gov/nchs/nvss/vsrr/covid19/excess_deaths.htm">CDC</a> donde se puede discernir las muertes en exceso a causa probable del COVID-19.
+(<p> Se ha rediseñado la interfaz de las estadísticas claves con gráficas circulares.
 </p>)
 const ALERT_BODY_EN =
-(<p>  The site now has a <a href="https://www.cdc.gov/nchs/nvss/vsrr/covid19/excess_deaths.htm">CDC</a> published visualization tool in which you are able to identify projected deaths versus their actual count as a means
-      to potentially identify excess deaths caused by COVID-19.
+(<p>  The site has gotten a face lift, with a new look for visualizing key statistics and pie charts.
 </p>)
 
 const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}
@@ -46,7 +45,10 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   last0daysText:"Desde el comienzo",
                   timeRangeSelectionText:'Rango de tiempo',
                   excessDeathsTableTitle:"Ilustración del exceso de muertes semanal",
-                  excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\"."}
+                  excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\".",
+                  testDistribution:"Distribución de pruebas",
+                  serological:"Serológica",
+                  }
 const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -63,7 +65,9 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   last0daysText:"From the beginning",
                   timeRangeSelectionText:'Time range',
                   excessDeathsTableTitle:"Visualize weekly excess deaths ",
-                  excessDeathsTableDescription:""}
+                  excessDeathsTableDescription:"",
+                  testDistribution:"Test distribution",
+                  serological:"Serological"}
 
 
 
@@ -90,6 +94,7 @@ ATTRIBUTES.forEach((item, i) => {
 
 const DELTA_LINE_COLOR = 'purple'
 
+// eslint-disable-next-line
 const PR_POPULATION = 3.194*(10**6)
 
 
@@ -177,8 +182,8 @@ const Logo = (props) =>{
 
 
 
-function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToday,locale){
-  var text = formatInteger(confirmedCases)
+function getFigureWithTodaysCount(color,label,figure,saludTimeSignature,newToday,locale){
+  var number = formatInteger(figure)
 
   const locationOfAl = saludTimeSignature.indexOf("al ")
   const dateNumberStart = locationOfAl + 3
@@ -187,19 +192,18 @@ function getFigureWithTodaysCount(confirmedCases,saludTimeSignature,newCasesToda
 
   const saludDayOfMonth = parseInt(saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
   const todaysDayOfMonth = (new Date()).getDate()
-  // console.log("saludDayOfMonth",saludDayOfMonth)
-  // console.log("todaysDayOfMonth",todaysDayOfMonth)
 
   const dateFromToday = saludDayOfMonth === todaysDayOfMonth
-  // console.log("dateFromToday",dateFromToday)
-  // console.log("newCasesToday",newCasesToday)
+
+
   if (dateFromToday){
     return (<div style={{display:'flex',flexDirection:'column'}}>
-              <div>{text}</div>
-              <div>{`(+${formatInteger(newCasesToday)}`} {window.innerWidth > 767 ? `${LABELS[locale].today})` : ')'}</div>
+              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
+              <text>{`(+${formatInteger(newToday)}`} { `${LABELS[locale].today})`}</text>
+              <text style={{color: 'grey'}}>{label}</text>
             </div>)
   } else{
-    return text
+    return number
   }
 }
 
@@ -257,8 +261,8 @@ function createDataObject(data,UIstate){
   "id": LABELS[UIstate.locale].change,
   "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
-  console.log("formattedData",formattedData)
-  console.log("formattedDeltaData",formattedDeltaData)
+  // console.log("formattedData",formattedData)
+  // console.log("formattedDeltaData",formattedDeltaData)
 
   var dataList = []
   if (graphOptionAbsolute){
@@ -272,32 +276,6 @@ function createDataObject(data,UIstate){
   return dataList
 }
 
-
-function DataBlock(props){
-  var classForBlock = ""
-  if (props.blockType === "label"){
-    classForBlock = 'labelBlock'
-  }
-  else if (props.blockType === "data"){
-    classForBlock = 'dataBlock'
-  }
-
-
-  return (
-    <div className={`${classForBlock} dashboardBlock`} style={{
-      borderTopLeftRadius: props.borderTopLeftRadius ? props.borderTopLeftRadius : 0,
-      borderTopRightRadius:props.borderTopRightRadius ? props.borderTopRightRadius: 0,
-      borderBottomLeftRadius: props.borderBottomLeftRadius ? props.borderBottomLeftRadius: 0,
-      borderBottomRightRadius:props.borderBottomRightRadius ? props.borderBottomRightRadius : 0,
-      fontSize: props.fontSize ? props.fontSize : "",
-      position: 'relative',
-    }}
-    >
-      {props.text}
-      {props.blockType === "label" ? <Icon.InfoCircle onClick={props.infoClick} className="infoCircle"/>: null }
-    </div>
-  )
-}
 
 const FacebookButton = (props)=>{
   return(
@@ -323,6 +301,7 @@ const AlertHeader = (props) =>
   </Alert>
 )
 
+
 function InfoModal(props) {
 
   return (
@@ -338,6 +317,45 @@ function InfoModal(props) {
       </Modal>
     </>
   );
+}
+
+const MainDataBlock = (props) =>{
+  for (var i = 0; i < props.length; i++) {
+    console.log("prop",props[i])
+  }
+
+
+  return (
+    <div className="statsBlock">
+        <div style={{display: 'flex',flexDirection: 'column'}}>
+          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].confirmedCases,modalBody:LABELS[UIstate.locale].confirmedCasesExplanation})"} className="infoCircle"/>
+          {getFigureWithTodaysCount("#fdcb6e",props.confirmedCasesLabel,props.confirmedCases,props.saludTimeSignature,props.newCasesToday,props.locale)}
+        </div>
+        <div style={{display: 'flex',flexDirection: 'column'}}>
+          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deaths,modalBody:LABELS[UIstate.locale].deathsExplanation})"} className="infoCircle"/>
+          {getFigureWithTodaysCount("red",props.deathsLabel,props.deaths,props.saludTimeSignature,props.newDeathsToday,props.locale)}
+        </div>
+    </div>
+  )
+}
+
+const TestsNumbersBlock = (props) =>{
+  for (var i = 0; i < props.length; i++) {
+    console.log("prop",props[i])
+  }
+
+  return (
+    <div className="statsBlock">
+        <div style={{display: 'flex',flexDirection: 'column'}}>
+          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].serologicalTests,modalBody:LABELS[UIstate.locale].serologicalTestsExplanation})"} className="infoCircle"/>
+          {getFigureWithTodaysCount("#a29bfe",props.serologicalTestsLabel,props.serologicalTests,props.saludTimeSignature,props.newSerologicalTestsToday,props.locale)}
+        </div>
+        <div style={{display: 'flex',flexDirection: 'column'}}>
+          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].molecularTests,modalBody:LABELS[UIstate.locale].molecularTestsExplanation})"} className="infoCircle"/>
+          {getFigureWithTodaysCount("#a29bfe",props.molecularTestsLabel,props.molecularTests,props.saludTimeSignature,props.newMolecularTestsToday,props.locale)}
+        </div>
+    </div>
+  )
 }
 
 const TimeRangeSelector = (props) =>{
@@ -363,31 +381,35 @@ return (
   )
 }
 
-const CaseDistributionChart = (props) =>{
+
+
+const TestDistributionChart = (props) =>{
 
   return (
-        <div style={{borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', maxWidth: "300px"}}>
+        <div className="statsBlock" style={{borderColor:"#cbd5e0", borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', minWidth: "410px"}}>
           <PieChart
+            startAngle={-90}
             data={[
-              { title: "moleculares", value:props.molecularTests, color: '#8e44ad' },
-              { title: "serológicas", value:props.serologicalTests , color: '#2980b9' },
+              { title: props.molecular, value:props.molecularTests, color: '#8e44ad' },
+              { title: props.serological, value:props.serologicalTests , color: '#2980b9' },
 
             ]}
             totalValue={props.molecularTests+props.serologicalTests}
 
             animate={true}
-            // lineWidth={30} // Adjusts "donut" width
-            label={({ dataEntry }) => dataEntry.title}
+            lineWidth={30} // Adjusts "donut" width
+            label={({ dataEntry }) => `${dataEntry.title}`}
             labelStyle={(index) => ({
-                    fill: "white",
+                    fill: "black",
                     fontSize: '10px',
                     fontFamily: 'sans-serif',
+                    whiteSpace: "pre-line",
                   })}
-            // labelPosition={60}
+            labelPosition={112} // 112= outer
             style={{height: "140px"}}
 
           />
-          <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold'}}>{props.description}</text>
+          <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold',marginRight: "18px"}}>{props.description}</text>
 
         </div>
   )
@@ -396,7 +418,7 @@ const CaseDistributionChart = (props) =>{
 const FatalityRateChart = (props) =>{
 
   return (
-    <div style={{borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', maxWidth: "300px"}}>
+    <div className="statsBlock" style={{borderStyle: 'solid',borderColor: "#cbd5e0",borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
       <PieChart
         data={[
           { title: 'Casos positivos resultando en muertes', value: parseInt(props.deaths*100/props.confirmedCases), color: 'red' },
@@ -409,7 +431,7 @@ const FatalityRateChart = (props) =>{
         lineWidth={30} // Adjusts "donut" width
         label={({ dataEntry }) => getPercent(props.deaths,props.confirmedCases,2)}
         labelStyle={{
-          fontSize: '12px',
+          fontSize: '20px',
           fontFamily: 'sans-serif',
           fill: 'red',
         }}
@@ -418,9 +440,20 @@ const FatalityRateChart = (props) =>{
 
 
       />
-      <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold'}}>{props.description}</text>
+      <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold',marginRight: "18px"}}>{props.description}</text>
 
     </div>
+  )
+}
+
+const CoffeeButton = (props) =>{
+  return (
+    <a href="https://buymeacoff.ee/williama">
+      <div id="bmc-wbtn"
+        style={{display: 'flex', alignItems: 'center', justifyContent: 'center',width: "64px",height: "64px", background: 'rgb(255, 129, 63)',color: "white",borderRadius: "32px", position: 'fixed', left: "18px", bottom: "18px",boxShadow: "rgba(0, 0, 0, 0.4) 0px 4px 8px",zIndex: 999,cursor: 'pointer', fontWeight: 600, transition: "all 0.2s ease 0s", transform: 'scale(1)'}}>
+          <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style={{height: "40px", width: "40px", margin: 0, padding: 0}}/>
+      </div>
+    </a>
   )
 }
 
@@ -519,6 +552,7 @@ export default function Home(props) {
     }
 
     fetchFirebaseData();
+// eslint-disable-next-line
   },[props.firebase])
 
 
@@ -600,41 +634,33 @@ export default function Home(props) {
         <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
-
         </div>
 
 
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
-          <div style={{display: 'flex',flexDirection: 'column'}}>
-
-            <div style={{display: 'flex',flexDirection: 'column'}}>
-              <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].confirmedCases} borderTopLeftRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].confirmedCases,modalBody:LABELS[UIstate.locale].confirmedCasesExplanation})}/>
-
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].molecularTests}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].molecularTests,modalBody:LABELS[UIstate.locale].molecularTestsExplanation})}/>
-
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].serologicalTests}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].serologicalTests,modalBody:LABELS[UIstate.locale].serologicalTestsExplanation})}/>
-
-                <DataBlock blockType="label" text={LABELS[UIstate.locale].deaths} borderTopRightRadius={15}
-                  infoClick={()=>setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deaths,modalBody:LABELS[UIstate.locale].deathsExplanation})}/>
-
-
-              </div>
-              <div style={{display:'flex',flexDirection:'row'}}>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.confirmedCases,today.saludTimeSignature,historicalData.newCasesToday,UIstate.locale)} borderBottomLeftRadius={15}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.molecularTests,today.saludTimeSignature,historicalData.newMolecularTestsToday,UIstate.locale)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.serologicalTests,today.saludTimeSignature,historicalData.newSerologicalTestsToday,UIstate.locale)}/>
-                <DataBlock blockType="data" text={getFigureWithTodaysCount(today.deaths,today.saludTimeSignature,historicalData.newDeathsToday,UIstate.locale)} borderBottomRightRadius={15} />
-              </div>
-            </div>
-          </div>
-          <div style ={{display:'flex',flexDirection:'row'}}>
-            <CaseDistributionChart molecularTests={today.molecularTests} serologicalTests={today.serologicalTests} description={"Distribución de casos"}/>
+          <div className="statsRow">
+            <MainDataBlock
+              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
+              molecularTests={today.molecularTests} newMolecularTestsToday={historicalData.newMolecularTestsToday} molecularTestsLabel={LABELS[UIstate.locale].molecularTests}
+              serologicalTests={today.serologicalTests} newSerologicalTestsToday={historicalData.newSerologicalTestsToday} serologicalTestsLabel={LABELS[UIstate.locale].serologicalTests}
+              deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
+              saludTimeSignature={today.saludTimeSignature}
+              locale={UIstate.locale}
+              />
             <FatalityRateChart deaths={today.deaths} confirmedCases={today.confirmedCases} description={LABELS[UIstate.locale].fatalityRate}/>
+          </div>
+          <div className="statsRow">
+            <TestsNumbersBlock
+              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
+              molecularTests={today.molecularTests} newMolecularTestsToday={historicalData.newMolecularTestsToday} molecularTestsLabel={LABELS[UIstate.locale].molecularTests}
+              serologicalTests={today.serologicalTests} newSerologicalTestsToday={historicalData.newSerologicalTestsToday} serologicalTestsLabel={LABELS[UIstate.locale].serologicalTests}
+              deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
+              saludTimeSignature={today.saludTimeSignature}
+              locale={UIstate.locale}
+              />
+            <TestDistributionChart molecularTests={today.molecularTests} serologicalTests={today.serologicalTests} description={LABELS[UIstate.locale].testDistribution}
+                                    molecular="Molecular" serological={LABELS[UIstate.locale].serological}/>
           </div>
         </div>
 
@@ -678,6 +704,7 @@ export default function Home(props) {
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
           <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
+          <CoffeeButton/>
         </div>
 
       </div>
