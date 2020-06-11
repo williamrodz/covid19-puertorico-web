@@ -20,6 +20,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-share": "^4.1.0",
+    "react-youtube-background": "^1.0.0",
     "tableau-api": "^2.2.3"
   },
   "scripts": {

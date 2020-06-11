@@ -13,12 +13,48 @@
 
 }
 
+html{
+  width:100%;
+  height: 100%;
+}
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width:100%;
+  height: 100%;
+
 }
+#root{
+  width:100%;
+  height: 100%;
+}
+
+.appContainer{
+  width:100%;
+  height: 100%;
+}
+
+.videoContainer{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+
+}
+
+.maintenanceMessageContainer{
+  display: flex;
+  flex-direction: row;
+  align-items:  center;
+  height: 100%;
+  width: 100%
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -135,6 +171,14 @@ code {
     --BLOCK_WIDTH:100%;
     --DATA_FONT_SIZE:3.2vh;
     --LABEL_FONT_SIZE:2.1vh;
+  }
+  .videoContainer{
+    flex-direction: column;
+    overflow: scroll;
+  }
+
+  .maintenanceMessageContainer{
+    flex-direction: column;
   }
 
   .statsRow{

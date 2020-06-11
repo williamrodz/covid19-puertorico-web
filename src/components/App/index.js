@@ -1,12 +1,14 @@
 import React from 'react';
 import { FirebaseContext } from '../Firebase';
 
-import HomePage from '../Home';
+//import HomePage from '../Home';
+import MaintenancePage from '../Maintenance';
+
 
 const App = () => (
-    <div>
+    <div className="appContainer">
       <FirebaseContext.Consumer>
-        {firebase => <HomePage firebase={firebase} />}
+        {firebase => <MaintenancePage firebase={firebase} />}
       </FirebaseContext.Consumer>
     </div>
 );

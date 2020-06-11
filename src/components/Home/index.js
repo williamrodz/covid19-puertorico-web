@@ -203,7 +203,10 @@ function getFigureWithTodaysCount(color,label,figure,saludTimeSignature,newToday
               <text style={{color: 'grey'}}>{label}</text>
             </div>)
   } else{
-    return number
+    return (<div style={{display:'flex',flexDirection:'column'}}>
+              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
+              <text style={{color: 'grey'}}>{label}</text>
+            </div>)
   }
 }
 
@@ -491,7 +494,7 @@ export default function Home(props) {
                 ...buttonVariants,
                 alertVisible:cookie.ui ? cookie.ui.alertVisible : true,
                 locale:'es-pr',
-                graphLastXdays:30,
+                graphLastXdays:14,
               })
     const [historicalData,setHistoricalData] = useState({
       all:[],
