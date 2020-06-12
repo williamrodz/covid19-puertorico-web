@@ -15,12 +15,21 @@ import {
   TwitterIcon,
 } from "react-share";
 
-const ALERT_HEADER = {'en-us':'New look (6/05/20)','es-pr':'Nuevo \'look\' (5-junio-20)'}
+const ALERT_HEADER = {'en-us':'Puerto Rico Department of Health changes definition of positive cases (6/11/20)',
+                    'es-pr':'Departamento de Salud cambia definición de casos positivos (11-junio-20)'}
 const ALERT_BODY_ES =
-(<p> Se ha rediseñado la interfaz de las estadísticas claves con gráficas circulares.
+(<p>
+  El 11 de junio de 2020 el Departmento de Salud de Puerto Rico comenzó a hacer una distincción
+  entre casos positivos 'confirmados' y casos positivos 'probables'. Antes combinaba ambas cifras
+  en el número de casos positivos únicos. También paró de proveer la distincción entre el origen
+  de las pruebas positivas (molecular o serológica).
 </p>)
 const ALERT_BODY_EN =
-(<p>  The site has gotten a face lift, with a new look for visualizing key statistics and pie charts.
+(<p>
+  On June 11th, 2020, the Puerto Rico Department of Health redefined its figure of positive COVID-19 cases,
+  now making a distinction between "confirmed" positive cases and "probable" positive cases, which were
+  before grouped into one figure, unique positive cases. It also stopped providing a breakdown of positive
+  cases from either a molecular test origin or a serological test origin.
 </p>)
 
 const ALERT_BODY = {'en-us':ALERT_BODY_EN,'es-pr':ALERT_BODY_ES}
@@ -29,7 +38,7 @@ const MONTHS_ES = {1:"enero",2:"febrero",3:"marzo",4:"abril",5:"mayo",6:"junio",
 const MONTHS_EN = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9 : "September", 10: "October", 11: "November", 12: "December"}
 const MONTHS = {'en-us':MONTHS_EN,'es-pr':MONTHS_ES}
 
-const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
+const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
                   percentInfected:"Porciento de puertorriqueños infectados",fatalityRate:"Tasa de muertes",date:"Fecha",
                   confirmedCasesExplanation:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19.",
                   molecularTestsExplanation:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente.",
@@ -48,8 +57,12 @@ const LABELS_ES = {confirmedCases:"Casos positivos únicos",molecularTests:"Prue
                   excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\".",
                   testDistribution:"Distribución de pruebas",
                   serological:"Serológica",
+                  probableCasesLabel:"Casos positivos probables",
+                  positiveCaseDistribution:"Distribución de casos positivos",
+                  totalPositiveCasesLabel:"Casos positivos totales",
+                  confirmed:"Confirmado"
                   }
-const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
+const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
                   molecularTestsExplanation: "This is the number of positive cases of COVID-19 according to molecular tests. These directly detect RNA (ribonucleic acid), the genetic material of the virus, in samples taken from the patient's respiratory secretions." ,
@@ -67,7 +80,13 @@ const LABELS_EN = {confirmedCases:"Unique positive cases",molecularTests:"Molecu
                   excessDeathsTableTitle:"Visualize weekly excess deaths ",
                   excessDeathsTableDescription:"",
                   testDistribution:"Test distribution",
-                  serological:"Serological"}
+                  serological:"Serological",
+                  probableCasesLabel:"Probable positive cases",
+                  positiveCaseDistribution:"Distribution of positive tests",
+                  totalPositiveCasesLabel:"Total positive cases",
+                  confirmed:"Confirmed"
+
+                }
 
 
 
@@ -236,7 +255,16 @@ function createDataObject(data,UIstate){
       xShorthand = UIstate.locale === "es-pr" ? `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}` : `${MONTHS[locale][dateObj.getMonth()+1]}-${dateObj.getDate()}`
     }
 
-    var yValue = entry[yKey]
+    var yValue = 0
+    if (yKey ==="confirmedCases"){
+      yValue = entry[yKey]
+      yValue += entry.probableCases ? entry.probableCases : 0
+
+    }
+    else{
+      yValue = entry[yKey]
+    }
+
     if (!yValue){
       continue
     }
@@ -256,7 +284,8 @@ function createDataObject(data,UIstate){
   }
 
   const dataObject = {
-  "id": LABELS[UIstate.locale][UIstate.attributeToGraph],
+  // Hacky
+  "id": UIstate.attributeToGraph === "confirmedCases" ? LABELS[UIstate.locale].totalPositiveCasesLabel : LABELS[UIstate.locale][UIstate.attributeToGraph],
   "color":BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[yKey]],
   "data": formattedData}
 
@@ -323,16 +352,13 @@ function InfoModal(props) {
 }
 
 const MainDataBlock = (props) =>{
-  for (var i = 0; i < props.length; i++) {
-    console.log("prop",props[i])
-  }
 
 
   return (
     <div className="statsBlock">
         <div style={{display: 'flex',flexDirection: 'column'}}>
           <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].confirmedCases,modalBody:LABELS[UIstate.locale].confirmedCasesExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("#fdcb6e",props.confirmedCasesLabel,props.confirmedCases,props.saludTimeSignature,props.newCasesToday,props.locale)}
+          {getFigureWithTodaysCount("#fdcb6e",props.totalPositiveCasesLabel,props.confirmedCases+props.probableCases,props.saludTimeSignature,props.newCasesToday+props.newProbableCasesToday,props.locale)}
         </div>
         <div style={{display: 'flex',flexDirection: 'column'}}>
           <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deaths,modalBody:LABELS[UIstate.locale].deathsExplanation})"} className="infoCircle"/>
@@ -351,11 +377,10 @@ const TestsNumbersBlock = (props) =>{
     <div className="statsBlock">
         <div style={{display: 'flex',flexDirection: 'column'}}>
           <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].serologicalTests,modalBody:LABELS[UIstate.locale].serologicalTestsExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("#a29bfe",props.serologicalTestsLabel,props.serologicalTests,props.saludTimeSignature,props.newSerologicalTestsToday,props.locale)}
+          {getFigureWithTodaysCount("#a29bfe",props.confirmedCasesLabel,props.confirmedCases,props.saludTimeSignature,props.newCasesToday,props.locale)}
         </div>
         <div style={{display: 'flex',flexDirection: 'column'}}>
-          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].molecularTests,modalBody:LABELS[UIstate.locale].molecularTestsExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("#a29bfe",props.molecularTestsLabel,props.molecularTests,props.saludTimeSignature,props.newMolecularTestsToday,props.locale)}
+          {getFigureWithTodaysCount("#a29bfe",props.probableCasesLabel,props.probableCases,props.saludTimeSignature,props.newProbableCasesToday,props.locale)}
         </div>
     </div>
   )
@@ -393,11 +418,11 @@ const TestDistributionChart = (props) =>{
           <PieChart
             startAngle={-90}
             data={[
-              { title: props.molecular, value:props.molecularTests, color: '#8e44ad' },
-              { title: props.serological, value:props.serologicalTests , color: '#2980b9' },
+              { title: props.confirmed, value:props.confirmedCases, color: '#8e44ad' },
+              { title: props.probable, value:props.probableCases , color: '#2980b9' },
 
             ]}
-            totalValue={props.molecularTests+props.serologicalTests}
+            totalValue={props.confirmedCases+props.probableCases}
 
             animate={true}
             lineWidth={30} // Adjusts "donut" width
@@ -500,13 +525,11 @@ export default function Home(props) {
       all:[],
       newCasesToday: 0,
       newDeathsToday:0,
-      newMolecularTestsToday: 0,
-      newSerologicalTestsToday: 0,
+      newProbableCasesToday: 0,
     })
     const [today,setTodaysData] = useState({
       confirmedCases: cookie.today ? cookie.today.confirmedCases : 0,
-      molecularTests:cookie.today ? cookie.today.molecularTests : 0,
-      serologicalTests:cookie.today ? cookie.today.serologicalTests : 0,
+      probableCases: cookie.today ? cookie.today.probableCases : 0,
       deaths:cookie.today ? cookie.today.deaths : 0,
       saludTimeSignature:cookie.today ? cookie.today.saludTimeSignature : "",
       timestamp:cookie.today ? cookie.today.timestamp : "",
@@ -536,10 +559,9 @@ export default function Home(props) {
         const lengthOfData = historicalData.length
         historicalDataFromFireBase = {
           all:historicalData,
-          newCasesToday:historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases,
-          newDeathsToday:historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths,
-          newMolecularTestsToday:historicalData[lengthOfData-1].molecularTests - historicalData[lengthOfData-2].molecularTests,
-          newSerologicalTestsToday:historicalData[lengthOfData-1].serologicalTests - historicalData[lengthOfData-2].serologicalTests,
+          newCasesToday:historicalData[lengthOfData-2].confirmedCases && historicalData[lengthOfData-1].confirmedCases ? historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases : 0,
+          newDeathsToday: historicalData[lengthOfData-1].deaths && historicalData[lengthOfData-2].deaths ? historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths : 0,
+          newProbableCasesToday:historicalData[lengthOfData-1].probableCases && historicalData[lengthOfData-2].probableCases ? historicalData[lengthOfData-1].probableCases - historicalData[lengthOfData-2].molecularTests : 0,
           }
       }
       setHistoricalData({...historicalDataFromFireBase})
@@ -644,26 +666,25 @@ export default function Home(props) {
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
           <div className="statsRow">
             <MainDataBlock
-              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
-              molecularTests={today.molecularTests} newMolecularTestsToday={historicalData.newMolecularTestsToday} molecularTestsLabel={LABELS[UIstate.locale].molecularTests}
-              serologicalTests={today.serologicalTests} newSerologicalTestsToday={historicalData.newSerologicalTestsToday} serologicalTestsLabel={LABELS[UIstate.locale].serologicalTests}
+              totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}
+              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday}
+              probableCases={today.probableCases} newProbableCasesToday={historicalData.newProbableCasesToday}
               deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <FatalityRateChart deaths={today.deaths} confirmedCases={today.confirmedCases} description={LABELS[UIstate.locale].fatalityRate}/>
+            <FatalityRateChart deaths={today.deaths} confirmedCases={today.confirmedCases+today.probableCases} description={LABELS[UIstate.locale].fatalityRate}/>
           </div>
           <div className="statsRow">
             <TestsNumbersBlock
               confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
-              molecularTests={today.molecularTests} newMolecularTestsToday={historicalData.newMolecularTestsToday} molecularTestsLabel={LABELS[UIstate.locale].molecularTests}
-              serologicalTests={today.serologicalTests} newSerologicalTestsToday={historicalData.newSerologicalTestsToday} serologicalTestsLabel={LABELS[UIstate.locale].serologicalTests}
+              probableCases={today.probableCases} newProbableCasesToday={0} probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
               deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <TestDistributionChart molecularTests={today.molecularTests} serologicalTests={today.serologicalTests} description={LABELS[UIstate.locale].testDistribution}
-                                    molecular="Molecular" serological={LABELS[UIstate.locale].serological}/>
+            <TestDistributionChart confirmedCases={today.confirmedCases} probableCases={today.probableCases} description={LABELS[UIstate.locale].positiveCaseDistribution}
+                                  confirmed={LABELS[UIstate.locale].confirmed} probable={'Probable'}/>
           </div>
         </div>
 
@@ -685,14 +706,14 @@ export default function Home(props) {
 
 
         <div className="attributeToGraphSelection">
-          <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].confirmedCases}</Button>{' '}
+          <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].totalPositiveCasesLabel}</Button>{' '}
           <Button onClick={()=>chooseButton('serologicalTests')} variant={UIstate.serologicalTestsButtonVariant}>{LABELS[UIstate.locale].serologicalTests}</Button>{' '}
           <Button onClick={()=>chooseButton('molecularTests')} variant={UIstate.molecularTestsButtonVariant}>{LABELS[UIstate.locale].molecularTests}</Button>{' '}
           <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>{LABELS[UIstate.locale].deaths}</Button>{' '}
         </div>
 
         <div className="chartContainer">
-          <LineChart data={dataObjectForChart} xAxisLabel={LABELS[UIstate.locale].date} yAxisLabel={LABELS[UIstate.locale][UIstate.attributeToGraph]} graphColors={UIstate.graphColors}/>
+          <LineChart data={dataObjectForChart} xAxisLabel={LABELS[UIstate.locale].date} yAxisLabel={UIstate.attributeToGraph === "confirmedCases" ? LABELS[UIstate.locale].totalPositiveCasesLabel : LABELS[UIstate.locale][UIstate.attributeToGraph]} graphColors={UIstate.graphColors}/>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
           <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
