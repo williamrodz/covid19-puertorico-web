@@ -1,27 +1,30 @@
 import React, {useState,useEffect} from 'react';
-import { Button, Alert,Modal,Navbar,Nav,Dropdown} from 'react-bootstrap';
+import { Button, Alert,Modal,Dropdown} from 'react-bootstrap';
 import LineChart from '../LineChart';
 import Tableau from '../Tableau'
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
-import logo from '../../logo192.png'; // Tell webpack this JS file uses this image
-import { PieChart } from 'react-minimal-pie-chart';
 
+import Navigation from '../NavigationBar'
 
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  TwitterIcon,
-} from "react-share";
+import MainDataBlock from '../MainDataBlock'
+import FatalityChartBlock from '../FatalityChartBlock'
+import TestNumbersBlock from '../TestNumbersBlock'
+import TestDistributionBlock from '../TestDistributionBlock'
+
+import {formatInteger, getLabels } from '../Common/index.js'
+
+let LABELS = getLabels()
+
 
 const ALERT_HEADER = {'en-us':'Puerto Rico Department of Health changes definition of positive cases (6/11/20)',
                     'es-pr':'Departamento de Salud cambia definición de casos positivos (11-junio-20)'}
 const ALERT_BODY_ES =
 (<p>
-  El 11 de junio de 2020 el Departmento de Salud de Puerto Rico comenzó a hacer una distincción
+  El 11 de junio de 2020 el Departmento de Salud de Puerto Rico comenzó a hacer una distinción
   entre casos positivos 'confirmados' y casos positivos 'probables'. Antes combinaba ambas cifras
-  en el número de casos positivos únicos. También paró de proveer la distincción entre el origen
+  en el número de casos positivos únicos. También paró de proveer la distinción entre el origen
   de las pruebas positivas (molecular o serológica).
 </p>)
 const ALERT_BODY_EN =
@@ -38,59 +41,6 @@ const MONTHS_ES = {1:"enero",2:"febrero",3:"marzo",4:"abril",5:"mayo",6:"junio",
 const MONTHS_EN = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9 : "September", 10: "October", 11: "November", 12: "December"}
 const MONTHS = {'en-us':MONTHS_EN,'es-pr':MONTHS_ES}
 
-const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
-                  percentInfected:"Porciento de puertorriqueños infectados",fatalityRate:"Tasa de muertes",date:"Fecha",
-                  confirmedCasesExplanation:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19.",
-                  molecularTestsExplanation:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente.",
-                  serologicalTestsExplanation:"Este dato representa el número de casos positivos del COVID-19 de acuerdo a pruebas serólogicas. La prueba serológica detecta nuestra respuesta inmunológica contra el patógeno. Éstas son referidas como \"pruebas rápidas\", pues ofrecen resultados en 10 minutos.",
-                  deathsExplanation:"Este número representa el número de muertes atribuídas a COVID-19 en Puerto Rico.",
-                  percentInfectedExplanation:"Este número representa el número de casos positivos dividido entre 3.194 millón (cifra de población de Puerto Rico).",
-                  fatalityRateExplanation:"Este número representa el número de muertes atribuidas al COVID-19 dividido entre los casos positivos únicos.",
-                  today:'hoy', change:"Cambio",
-                  inPuertoRico:" en Puerto Rico",
-                  last7daysText:'Últimos 7 días',
-                  last14daysText:'Últimos 14 días',
-                  last30daysText:'Últimos 30 días',
-                  last0daysText:"Desde el comienzo",
-                  timeRangeSelectionText:'Rango de tiempo',
-                  excessDeathsTableTitle:"Ilustración del exceso de muertes semanal",
-                  excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\".",
-                  testDistribution:"Distribución de pruebas",
-                  serological:"Serológica",
-                  probableCasesLabel:"Casos positivos probables",
-                  positiveCaseDistribution:"Distribución de casos positivos",
-                  totalPositiveCasesLabel:"Casos positivos totales",
-                  confirmed:"Confirmado"
-                  }
-const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
-                  percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
-                  confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
-                  molecularTestsExplanation: "This is the number of positive cases of COVID-19 according to molecular tests. These directly detect RNA (ribonucleic acid), the genetic material of the virus, in samples taken from the patient's respiratory secretions." ,
-                  serologicalTestsExplanation: "This data represents the number of positive cases of COVID-19 according to serological tests. The serological test detects our immune response against the pathogen. These are referred to as \"quick tests\", as they offer results in 10 minutes. ",
-                  deathsExplanation: "This represents the number of deaths attributed to COVID-19 in Puerto Rico.",
-                  percentInfectedExplanation:"This number represents the number of positive cases divided by 3.194 million (our figure of for the current population of Puerto Rico).",
-                  fatalityRateExplanation:"This number represents the percentage of deaths attributed to COVID-19 over the number of unique positive cases.",
-                  today:'today',change:"Change",
-                  inPuertoRico:" in Puerto Rico",
-                  last7daysText:'Last 7 days',
-                  last14daysText:'Last 14 days',
-                  last30daysText:'Last 30 days',
-                  last0daysText:"From the beginning",
-                  timeRangeSelectionText:'Time range',
-                  excessDeathsTableTitle:"Visualize weekly excess deaths ",
-                  excessDeathsTableDescription:"",
-                  testDistribution:"Test distribution",
-                  serological:"Serological",
-                  probableCasesLabel:"Probable positive cases",
-                  positiveCaseDistribution:"Distribution of positive tests",
-                  totalPositiveCasesLabel:"Total positive cases",
-                  confirmed:"Confirmed"
-
-                }
-
-
-
-const LABELS = {'en-us':LABELS_EN,'es-pr':LABELS_ES}
 const GRAPHING_DESCRIPTION_ES = {instructions:"Qué graficar:",dataPerDay:"Data por día",changePerDay:"Cambio por día"}
 const GRAPHING_DESCRIPTION_EN = {instructions:"What to graph:",dataPerDay:"Data per day",changePerDay:"Change per day"}
 const GRAPHING_DESCRIPTION = {'en-us':GRAPHING_DESCRIPTION_EN,'es-pr':GRAPHING_DESCRIPTION_ES}
@@ -136,14 +86,8 @@ function anglifySaludTimeSignature(saludTimeSignature){
 
 }
 
-function getPercent(amount,total,decimals){
-  var quotient = amount / total * 100
-  return quotient.toFixed(decimals) + '%'
-}
 
-function formatInteger(number){
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+
 
 function removeParentheses(string){
   var output = ""
@@ -157,45 +101,6 @@ function removeParentheses(string){
     }
   }
   return output
-}
-
-function Navigation(props){
-  return (
-    <div style={{width: "100%"}}>
-      <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home" style={{fontSize: "20px"}}><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mr-auto">
-            <div style={{display: 'flex',flexDirection: 'row'}}>
-              <FacebookButton/>
-              <TwitterButton/>
-            </div>
-
-
-          </Nav>
-          <Nav style={{fontSize: "15px"}}>
-            <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
-            <Nav.Link eventKey={1} onClick={()=>props.clickEnglishButton()}>
-              English
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-    </div>
-  )
-}
-
-
-const Logo = (props) =>{
-
-  return (
-    <div style={{display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
-      <img src={logo} alt="Logo" width='54px' title="Logo COVID Tracker PR &copy; Lissette Rodríguez "/>
-      <div style={{color: 'yellow',fontWeight: 'bold'}}>COVID-19</div>
-      <div style={{marginLeft: 5}}>{props.inPuertoRico}</div>
-    </div>
-  )
 }
 
 
@@ -309,21 +214,7 @@ function createDataObject(data,UIstate){
 }
 
 
-const FacebookButton = (props)=>{
-  return(
-  <FacebookShareButton url="covidtrackerpr.com">
-    <FacebookIcon size={'35px'} round={true}/>
-  </FacebookShareButton>
-  )
-}
 
-const TwitterButton = (props)=>{
-  return(
-  <a href="https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com">
-    <TwitterIcon size={'35px'} round={true}/>
-  </a>
-  )
-}
 
 const AlertHeader = (props) =>
    (
@@ -351,40 +242,7 @@ function InfoModal(props) {
   );
 }
 
-const MainDataBlock = (props) =>{
 
-
-  return (
-    <div className="statsBlock">
-        <div style={{display: 'flex',flexDirection: 'column'}}>
-          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].confirmedCases,modalBody:LABELS[UIstate.locale].confirmedCasesExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("#fdcb6e",props.totalPositiveCasesLabel,props.confirmedCases+props.probableCases,props.saludTimeSignature,props.newCasesToday+props.newProbableCasesToday,props.locale)}
-        </div>
-        <div style={{display: 'flex',flexDirection: 'column'}}>
-          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].deaths,modalBody:LABELS[UIstate.locale].deathsExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("red",props.deathsLabel,props.deaths,props.saludTimeSignature,props.newDeathsToday,props.locale)}
-        </div>
-    </div>
-  )
-}
-
-const TestsNumbersBlock = (props) =>{
-  for (var i = 0; i < props.length; i++) {
-    console.log("prop",props[i])
-  }
-
-  return (
-    <div className="statsBlock">
-        <div style={{display: 'flex',flexDirection: 'column'}}>
-          <Icon.InfoCircle onClick={()=>"setUIState({...UIstate,modalVisible:true,modalHeader:LABELS[UIstate.locale].serologicalTests,modalBody:LABELS[UIstate.locale].serologicalTestsExplanation})"} className="infoCircle"/>
-          {getFigureWithTodaysCount("#a29bfe",props.confirmedCasesLabel,props.confirmedCases,props.saludTimeSignature,props.newCasesToday,props.locale)}
-        </div>
-        <div style={{display: 'flex',flexDirection: 'column'}}>
-          {getFigureWithTodaysCount("#a29bfe",props.probableCasesLabel,props.probableCases,props.saludTimeSignature,props.newProbableCasesToday,props.locale)}
-        </div>
-    </div>
-  )
-}
 
 const TimeRangeSelector = (props) =>{
 
@@ -410,69 +268,6 @@ return (
 }
 
 
-
-const TestDistributionChart = (props) =>{
-
-  return (
-        <div className="statsBlock" style={{borderColor:"#cbd5e0", borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', minWidth: "410px"}}>
-          <PieChart
-            startAngle={-90}
-            data={[
-              { title: props.confirmed, value:props.confirmedCases, color: '#8e44ad' },
-              { title: props.probable, value:props.probableCases , color: '#2980b9' },
-
-            ]}
-            totalValue={props.confirmedCases+props.probableCases}
-
-            animate={true}
-            lineWidth={30} // Adjusts "donut" width
-            label={({ dataEntry }) => `${dataEntry.title}`}
-            labelStyle={(index) => ({
-                    fill: "black",
-                    fontSize: '10px',
-                    fontFamily: 'sans-serif',
-                    whiteSpace: "pre-line",
-                  })}
-            labelPosition={112} // 112= outer
-            style={{height: "140px"}}
-
-          />
-          <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold',marginRight: "18px"}}>{props.description}</text>
-
-        </div>
-  )
-}
-
-const FatalityRateChart = (props) =>{
-
-  return (
-    <div className="statsBlock" style={{borderStyle: 'solid',borderColor: "#cbd5e0",borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
-      <PieChart
-        data={[
-          { title: 'Casos positivos resultando en muertes', value: parseInt(props.deaths*100/props.confirmedCases), color: 'red' },
-          { title: 'Casos positivos sobrevientes', value: 100-parseInt(props.deaths*100/props.confirmedCases), color: '#ecf0f1' }
-
-        ]}
-        totalValue={100}
-
-        animate={true}
-        lineWidth={30} // Adjusts "donut" width
-        label={({ dataEntry }) => getPercent(props.deaths,props.confirmedCases,2)}
-        labelStyle={{
-          fontSize: '20px',
-          fontFamily: 'sans-serif',
-          fill: 'red',
-        }}
-        labelPosition={0}
-        style={{height: "140px"}}
-
-
-      />
-      <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold',marginRight: "18px"}}>{props.description}</text>
-
-    </div>
-  )
-}
 
 const CoffeeButton = (props) =>{
   return (
@@ -561,7 +356,7 @@ export default function Home(props) {
           all:historicalData,
           newCasesToday:historicalData[lengthOfData-2].confirmedCases && historicalData[lengthOfData-1].confirmedCases ? historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases : 0,
           newDeathsToday: historicalData[lengthOfData-1].deaths && historicalData[lengthOfData-2].deaths ? historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths : 0,
-          newProbableCasesToday:historicalData[lengthOfData-1].probableCases && historicalData[lengthOfData-2].probableCases ? historicalData[lengthOfData-1].probableCases - historicalData[lengthOfData-2].molecularTests : 0,
+          newProbableCasesToday:historicalData[lengthOfData-2].probableCases && historicalData[lengthOfData-1].probableCases ? historicalData[lengthOfData-1].probableCases - historicalData[lengthOfData-2].probableCases : 0,
           }
       }
       setHistoricalData({...historicalDataFromFireBase})
@@ -673,17 +468,17 @@ export default function Home(props) {
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <FatalityRateChart deaths={today.deaths} confirmedCases={today.confirmedCases+today.probableCases} description={LABELS[UIstate.locale].fatalityRate}/>
+            <FatalityChartBlock deaths={today.deaths} confirmedCases={today.confirmedCases+today.probableCases} description={LABELS[UIstate.locale].fatalityRate}/>
           </div>
           <div className="statsRow">
-            <TestsNumbersBlock
+            <TestNumbersBlock
               confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
               probableCases={today.probableCases} newProbableCasesToday={0} probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
               deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <TestDistributionChart confirmedCases={today.confirmedCases} probableCases={today.probableCases} description={LABELS[UIstate.locale].positiveCaseDistribution}
+            <TestDistributionBlock confirmedCases={today.confirmedCases} probableCases={today.probableCases} description={LABELS[UIstate.locale].positiveCaseDistribution}
                                   confirmed={LABELS[UIstate.locale].confirmed} probable={'Probable'}/>
           </div>
         </div>
