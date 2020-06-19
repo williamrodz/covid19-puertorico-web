@@ -19,10 +19,15 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   excessDeathsTableDescription:"El CDC produjo la siguiente visualización que ilustra el número de muertes semanales que se espera (en azúl) en comparación con el número actual. Si hay más muertes que lo anticipado, el número actual sobrepasará la curva amarilla y conllevará un signo rojo de más (+). Puede comparar esta visualización con otras jurisdicciones de EEUU bajo \"Select a jurisdiction\".",
                   testDistribution:"Distribución de pruebas",
                   serological:"Serológica",
-                  probableCasesLabel:"Casos positivos probables",
+                  confirmedCasesLabel:"Casos confirmados por prueba molecular",
+                  probableCasesLabel:"Casos probables por prueba serológica",
                   positiveCaseDistribution:"Distribución de casos positivos",
                   totalPositiveCasesLabel:"Casos positivos totales",
-                  confirmed:"Confirm."
+                  confirmed:"Confirm.",
+                  excessDeaths:"Muertes en exceso",
+                  totalPositive:"Total de pruebas positivas",
+                  molecularPositive:"Positivos por prueba molecular",
+                  serologicalPositive:"Positivos por prueba serológica"
                   }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
@@ -43,11 +48,15 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   excessDeathsTableDescription:"",
                   testDistribution:"Test distribution",
                   serological:"Serological",
-                  probableCasesLabel:"Probable positive cases",
+                  probableCasesLabel:"Probable positive cases by serelogical test",
+                  confirmedCasesLabel:"Confirmed cases by molecular test",
                   positiveCaseDistribution:"Distribution of positive tests",
                   totalPositiveCasesLabel:"Total positive cases",
-                  confirmed:"Confirmed"
-
+                  confirmed:"Confirmed",
+                  excessDeaths:"Excess Deaths",
+                  totalPositive:"Total positive tests",
+                  molecularPositive:"Positives by molecular test",
+                  serologicalPositive:"Positives by serological test"
                 }
 
 
@@ -92,4 +101,25 @@ export const getFigureWithTodaysCount = (color,label,figure,saludTimeSignature,n
               <text style={{color: 'grey'}}>{label}</text>
             </div>)
   }
+}
+
+export const CoffeeButton = (props) =>{
+  return (
+    <a href="https://buymeacoff.ee/williama">
+      <div id="bmc-wbtn"
+        style={{display: 'flex', alignItems: 'center', justifyContent: 'center',width: "64px",height: "64px", background: 'rgb(255, 129, 63)',color: "white",borderRadius: "32px", position: 'fixed', left: "18px", bottom: "18px",boxShadow: "rgba(0, 0, 0, 0.4) 0px 4px 8px",zIndex: 999,cursor: 'pointer', fontWeight: 600, transition: "all 0.2s ease 0s", transform: 'scale(1)'}}>
+          <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style={{height: "40px", width: "40px", margin: 0, padding: 0}}/>
+      </div>
+    </a>
+  )
+}
+
+export const LoveStatement = (props) =>{
+  const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
+  const by = props.locale === "es-pr" ? "por" : "by"
+  return (
+    <div>
+    {madeWith}<span style={{color: '#e25555'}}>&#9829;</span> {by} <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a>
+    </div>
+  )
 }

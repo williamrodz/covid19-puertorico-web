@@ -45,12 +45,13 @@ export default function Navigation(props){
         <Navbar.Brand href="#home" style={{fontSize: "20px"}}><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav className="mr-auto" style={{fontSize: "15px"}}>
             <div style={{display: 'flex',flexDirection: 'row'}}>
               <FacebookButton/>
               <TwitterButton/>
             </div>
-
+            <Nav.Link href="/">Dashboard</Nav.Link>
+            <Nav.Link href="/excessDeaths">{props.excessDeaths}</Nav.Link>
 
           </Nav>
           <Nav style={{fontSize: "15px"}}>

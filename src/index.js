@@ -5,12 +5,25 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
 
+import { Switch, Route,BrowserRouter } from 'react-router-dom';
+
+
 import App from './components/App';
+import ExcessDeaths from './components/ExcessDeathsPage';
+
 import Firebase, {FirebaseContext} from './components/Firebase';
 
 ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
-    <App />
+    <BrowserRouter>
+      <Switch>
+        <Route path="/excessDeaths" component={ExcessDeaths}/>
+        <Route path="/" component={App}/>
+      </Switch>
+
+    </BrowserRouter>
+
+
   </FirebaseContext.Provider>,
   document.getElementById('root'));
 

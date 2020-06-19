@@ -9,7 +9,7 @@ const MainDataBlock = (props) =>{
   return (
     <div className="statsBlock">
         <div style={{display: 'flex',flexDirection: 'column'}}>
-          {getFigureWithTodaysCount("#fdcb6e",props.totalPositiveCasesLabel,props.confirmedCases+props.probableCases,props.saludTimeSignature,props.newCasesToday+props.newProbableCasesToday,props.locale)}
+          {getFigureWithTodaysCount("#fdcb6e",props.totalPositiveCasesLabel,props.totalPositive,props.saludTimeSignature,props.newPositivesToday,props.locale)}
         </div>
         <div style={{display: 'flex',flexDirection: 'column'}}>
           {getFigureWithTodaysCount("red",props.deathsLabel,props.deaths,props.saludTimeSignature,props.newDeathsToday,props.locale)}

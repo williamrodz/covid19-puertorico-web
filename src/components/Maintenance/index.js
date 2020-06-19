@@ -33,22 +33,17 @@ export default function MaintenancePage(props) {
         <div className="maintenanceMessageContainer">
           <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 50,color:"white",backdropFilter:"blur(5px) grayscale(1) contrast(3)",background: 'rgba(0,0,0,.6)',padding: 30}}>
             <text style={{fontSize: 30,fontWeight: 'bold'}}>
-              ¡Estaremos de vuelta esta tarde!
+              ¡Estaremos de vuelta pronto!
             </text>
             <text style={{fontSize: 15}}>
-              Hoy, 11 de junio de 2020, el Departmento de Salud de Puerto Rico cambió el tipo de data que hace pública acerca los
-              casos positivos de COVID-19 en la isla y estamos decidiendo como presentarla en contexto con la data ya existente.
-              ¡Gracias por su paciencia!
+
             </text>
           </div>
           <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 50,color:"white",backdropFilter:"blur(5px) grayscale(1) contrast(3)",background: 'rgba(0,0,0,.6)',padding: 30}}>
             <text style={{fontSize: 30,fontWeight: 'bold'}}>
-              We'll be back this afternoon!
+              We'll be back soon!
             </text>
             <text style={{fontSize: 15}}>
-              Today, June 11th, 2020, the Puerto Rico Department of Health changed the type of data it releases surrounding
-              positive COVID-19 cases on the island. We are in the process of deciding how to best present it.
-              Thank you for your patience!
             </text>
           </div>
 

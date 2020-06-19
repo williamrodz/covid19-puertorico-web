@@ -9,11 +9,11 @@ const TestDistributionChart = (props) =>{
           <PieChart
             startAngle={-90}
             data={[
-              { title: props.confirmed, value:props.confirmedCases, color: '#686de0' },
-              { title: props.probable, value:props.probableCases , color: '#c7ecee' },
+              { title: props.confirmed, value:props.molecularPositive, color: '#686de0' },
+              { title: props.probable, value:props.serologicalPositive , color: '#c7ecee' },
 
             ]}
-            totalValue={props.confirmedCases+props.probableCases}
+            totalValue={props.totalPositive}
 
             animate={true}
             lineWidth={30} // Adjusts "donut" width

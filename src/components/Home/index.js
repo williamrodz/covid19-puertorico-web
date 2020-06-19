@@ -1,7 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import { Button, Alert,Modal,Dropdown} from 'react-bootstrap';
 import LineChart from '../LineChart';
-import Tableau from '../Tableau'
 import { CSVLink } from "react-csv";
 import * as Icon from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
@@ -13,7 +12,7 @@ import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
 
-import {formatInteger, getLabels } from '../Common/index.js'
+import { CoffeeButton,LoveStatement,getLabels } from '../Common/index.js'
 
 let LABELS = getLabels()
 
@@ -49,8 +48,8 @@ const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Dep
 const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) and is subject to change and/or clarification</div>)
 const DISCLAIMER_DIV = {'en-us':DISCLAIMER_EN,'es-pr':DISCLAIMER_ES}
 
-const ATTRIBUTES = ["serologicalTests","confirmedCases","molecularTests",'testsInProgress',"deaths"]
-const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','secondary','danger']
+const ATTRIBUTES = ["serologicalPositive","totalPositive","molecularPositive","deaths"]
+const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','danger']
 
 
 const BOOTSTRAP_BUTTON_CLASSES_TO_COLORS = {'warning':'rgb(255, 193, 7)','primary':'rgb(0, 123, 255)','success':'rgb(40, 167, 69)','secondary':'rgb(108, 117, 125)','danger':'rgb(220, 53, 69)',}
@@ -80,8 +79,6 @@ function anglifySaludTimeSignature(saludTimeSignature){
   var time = splitUp[7]
   var ampm = splitUp[8].replace(")","")
 
-
-
   return `Updated ${currentMonthEN} ${dayNumber}, ${year}, ${time} ${ampm}`
 
 }
@@ -104,36 +101,6 @@ function removeParentheses(string){
 }
 
 
-
-
-function getFigureWithTodaysCount(color,label,figure,saludTimeSignature,newToday,locale){
-  var number = formatInteger(figure)
-
-  const locationOfAl = saludTimeSignature.indexOf("al ")
-  const dateNumberStart = locationOfAl + 3
-  const dateNumberEnd = saludTimeSignature[dateNumberStart+1] === " " ? dateNumberStart+1 : dateNumberStart+2
-
-
-  const saludDayOfMonth = parseInt(saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
-  const todaysDayOfMonth = (new Date()).getDate()
-
-  const dateFromToday = saludDayOfMonth === todaysDayOfMonth
-
-
-  if (dateFromToday){
-    return (<div style={{display:'flex',flexDirection:'column'}}>
-              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
-              <text>{`(+${formatInteger(newToday)}`} { `${LABELS[locale].today})`}</text>
-              <text style={{color: 'grey'}}>{label}</text>
-            </div>)
-  } else{
-    return (<div style={{display:'flex',flexDirection:'column'}}>
-              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
-              <text style={{color: 'grey'}}>{label}</text>
-            </div>)
-  }
-}
-
 function createDataObject(data,UIstate){
 
   let xKey = 'timestamp'
@@ -148,31 +115,23 @@ function createDataObject(data,UIstate){
 
   var formattedData = []
   var formattedDeltaData = []
+  console.log("Data is:",data)
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
     var xShorthand = entry[xKey]
     if (xKey === "timestamp"){
       const dateObj = new Date(entry[xKey])
       if (UIstate.graphLastXdays !== 0 && dateObj < lowerTimeBound){
+        console.log("Skipping")
         continue
       }
 
       xShorthand = UIstate.locale === "es-pr" ? `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}` : `${MONTHS[locale][dateObj.getMonth()+1]}-${dateObj.getDate()}`
     }
 
-    var yValue = 0
-    if (yKey ==="confirmedCases"){
-      yValue = entry[yKey]
-      yValue += entry.probableCases ? entry.probableCases : 0
+    var yValue = entry[yKey]
+    console.log("yValue is",yValue)
 
-    }
-    else{
-      yValue = entry[yKey]
-    }
-
-    if (!yValue){
-      continue
-    }
     if (i >= 1){
       const prevEntry = data[i-1]
       const prevYvalue = prevEntry[yKey]
@@ -185,12 +144,15 @@ function createDataObject(data,UIstate){
     }
 
     const formattedEntry = {"x":xShorthand,"y":yValue}
+    console.log(`Pushing (${xShorthand},${yValue})`)
     formattedData.push(formattedEntry)
   }
 
+  console.log("formattedData",formattedData)
+
   const dataObject = {
   // Hacky
-  "id": UIstate.attributeToGraph === "confirmedCases" ? LABELS[UIstate.locale].totalPositiveCasesLabel : LABELS[UIstate.locale][UIstate.attributeToGraph],
+  "id": LABELS[UIstate.locale][UIstate.attributeToGraph],
   "color":BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES[yKey]],
   "data": formattedData}
 
@@ -268,28 +230,6 @@ return (
 }
 
 
-
-const CoffeeButton = (props) =>{
-  return (
-    <a href="https://buymeacoff.ee/williama">
-      <div id="bmc-wbtn"
-        style={{display: 'flex', alignItems: 'center', justifyContent: 'center',width: "64px",height: "64px", background: 'rgb(255, 129, 63)',color: "white",borderRadius: "32px", position: 'fixed', left: "18px", bottom: "18px",boxShadow: "rgba(0, 0, 0, 0.4) 0px 4px 8px",zIndex: 999,cursor: 'pointer', fontWeight: 600, transition: "all 0.2s ease 0s", transform: 'scale(1)'}}>
-          <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style={{height: "40px", width: "40px", margin: 0, padding: 0}}/>
-      </div>
-    </a>
-  )
-}
-
-const LoveStatement = (props) =>{
-  const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
-  const by = props.locale === "es-pr" ? "por" : "by"
-  return (
-    <div>
-    {madeWith}<span style={{color: '#e25555'}}>&#9829;</span> {by} <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a>
-    </div>
-  )
-}
-
 export default function Home(props) {
 
     const [cookie, setCookie] = useCookies();
@@ -300,51 +240,45 @@ export default function Home(props) {
     for (var i = 0; i < ATTRIBUTES.length; i++) {
       const attribute = ATTRIBUTES[i]
       var defaultButtonVariant = 'light'
-      if (attribute === "confirmedCases"){
+      if (attribute === "totalPositive"){
         defaultButtonVariant = 'warning'
       }
       buttonVariants[`${attribute}ButtonVariant`] = defaultButtonVariant
     }
 
     const [UIstate,setUIState] = useState({
-                attributeToGraph:'confirmedCases',
-                graphColors:[BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES['confirmedCases']],DELTA_LINE_COLOR],
+                attributeToGraph:'totalPositive',
+                graphColors:[BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES['totalPositive']],DELTA_LINE_COLOR],
                 graphOptionAbsolute:true,
                 graphOptionChange:false,
                 ...buttonVariants,
-                alertVisible:cookie.ui ? cookie.ui.alertVisible : true,
+                alertVisible:cookie.ui ? cookie.ui.alertVisible : false,
                 locale:'es-pr',
                 graphLastXdays:14,
               })
     const [historicalData,setHistoricalData] = useState({
       all:[],
-      newCasesToday: 0,
+      newPositivesToday: 0,
       newDeathsToday:0,
-      newProbableCasesToday: 0,
+      newSerologicalPositiveToday: 0,
     })
     const [today,setTodaysData] = useState({
-      confirmedCases: cookie.today ? cookie.today.confirmedCases : 0,
-      probableCases: cookie.today ? cookie.today.probableCases : 0,
-      deaths:cookie.today ? cookie.today.deaths : 0,
-      saludTimeSignature:cookie.today ? cookie.today.saludTimeSignature : "",
-      timestamp:cookie.today ? cookie.today.timestamp : "",
-
+      totalPositive:  0,
+      molecularPositive:  0,
+      serologicalPositive:  0,
+      deaths: 0,
+      saludTimeSignature:"",
+      timestamp: "",
     });
 
 
 
   useEffect(()=>{
     const fetchFirebaseData = async ()=>{
-
+      console.log("FETCHING TODAYS DATA")
       var todaysDataFromFireBase = {}
-      if (cookie.today && (new Date(cookie.today.timestamp)).getDate() === (new Date()).getDate() ){
-        todaysDataFromFireBase = cookie.today
-      } else{
-        console.log("FETCHING TODAYS DATA")
-        var todaysDataRef = await props.firebase.getTodaysData()
-        todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
-      }
-
+      var todaysDataRef = await props.firebase.getTodaysData()
+      todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
 
       const historicalDataRef = await props.firebase.getHistoricalData()
       console.log("FETCHING HISTORICAL DATA")
@@ -354,9 +288,10 @@ export default function Home(props) {
         const lengthOfData = historicalData.length
         historicalDataFromFireBase = {
           all:historicalData,
-          newCasesToday:historicalData[lengthOfData-2].confirmedCases && historicalData[lengthOfData-1].confirmedCases ? historicalData[lengthOfData-1].confirmedCases - historicalData[lengthOfData-2].confirmedCases : 0,
+          newPositivesToday:historicalData[lengthOfData-2].totalPositive && historicalData[lengthOfData-1].totalPositive ? historicalData[lengthOfData-1].totalPositive - historicalData[lengthOfData-2].totalPositive : 0,
           newDeathsToday: historicalData[lengthOfData-1].deaths && historicalData[lengthOfData-2].deaths ? historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths : 0,
-          newProbableCasesToday:historicalData[lengthOfData-2].probableCases && historicalData[lengthOfData-1].probableCases ? historicalData[lengthOfData-1].probableCases - historicalData[lengthOfData-2].probableCases : 0,
+          newMolecularPositiveToday:historicalData[lengthOfData-2].molecularPositive && historicalData[lengthOfData-1].molecularPositive ? historicalData[lengthOfData-1].molecularPositive - historicalData[lengthOfData-2].molecularPositive : 0,
+          newSerologicalPositiveToday:historicalData[lengthOfData-2].serologicalPositive && historicalData[lengthOfData-1].serologicalPositive ? historicalData[lengthOfData-1].serologicalPositive - historicalData[lengthOfData-2].serologicalPositive : 0,
           }
       }
       setHistoricalData({...historicalDataFromFireBase})
@@ -411,6 +346,45 @@ export default function Home(props) {
 
   }
 
+  const getHistoricalDataBackup = () =>{
+    let keys = {}
+    var columnIndex = 0
+    for (var i = 0; i < historicalData.all.length; i++) {
+      let entry = historicalData.all[i]
+      let entryKeys = Object.keys(entry)
+      for (var j = 0; j < entryKeys.length; j++) {
+        let entryKey = entryKeys[j]
+
+        if (entryKey in keys === false){
+          keys[entryKey] = columnIndex
+          columnIndex += 1
+        }
+      }
+    }
+    // [alpha,beta, gamma]
+    let listOfKeys = Object.keys(keys)
+    var csv = [[...listOfKeys]]
+
+    // go again through every entry
+    for (var e = 0; e < historicalData.all.length; e++) {
+      let entry = historicalData.all[e]
+      var newRow = []
+
+      for (var k = 0; k < listOfKeys.length; k++) {
+        let key = listOfKeys[k]
+        if (key in entry){
+          newRow.push(entry[key])
+        }
+        else{
+          newRow.push("")
+        }
+      }
+      csv.push(newRow)
+    }
+    return csv
+  }
+  
+// eslint-disable-next-line
   const getDataForDownload = () =>{
     console.log("--Preparing data for future download--")
 
@@ -451,7 +425,8 @@ export default function Home(props) {
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
-        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}/>
+        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}
+          excessDeaths={LABELS[UIstate.locale].excessDeaths}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>
         </div>
@@ -462,25 +437,29 @@ export default function Home(props) {
           <div className="statsRow">
             <MainDataBlock
               totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}
-              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday}
-              probableCases={today.probableCases} newProbableCasesToday={historicalData.newProbableCasesToday}
+              totalPositive={today.totalPositive} newPositivesToday={historicalData.newPositivesToday}
+              serologicalPositive={today.serologicalPositive} newSerologicalPositiveToday={historicalData.newSerologicalPositiveToday}
               deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <FatalityChartBlock deaths={today.deaths} confirmedCases={today.confirmedCases+today.probableCases} description={LABELS[UIstate.locale].fatalityRate}/>
+            <FatalityChartBlock deaths={today.deaths} totalPositive={today.totalPositive+today.serologicalPositive} description={LABELS[UIstate.locale].fatalityRate}/>
           </div>
           <div className="statsRow">
             <TestNumbersBlock
-              confirmedCases={today.confirmedCases} newCasesToday={historicalData.newCasesToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCases}
-              probableCases={today.probableCases} newProbableCasesToday={0} probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
+              totalPositive={today.totalPositive} newPositivesToday={historicalData.newPositivesToday} totalPositiveLabel={LABELS[UIstate.locale].totalPositive}
+              molecularPositive={today.molecularPositive} newMolecularPositiveToday={historicalData.newMolecularPositiveToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCasesLabel}
+              serologicalPositive={today.serologicalPositive} newSerologicalPositiveToday={historicalData.newSerologicalPositiveToday} probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
               deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <TestDistributionBlock confirmedCases={today.confirmedCases} probableCases={today.probableCases} description={LABELS[UIstate.locale].positiveCaseDistribution}
+            <TestDistributionBlock totalPositive={today.totalPositive} molecularPositive={today.molecularPositive} serologicalPositive={today.serologicalPositive} description={LABELS[UIstate.locale].positiveCaseDistribution}
                                   confirmed={LABELS[UIstate.locale].confirmed} probable={'Probable'}/>
           </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5, fontSize: "14px"}}>
+          <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
         </div>
 
         <div style={{textAlign:'center',marginTop: 10}}>{GRAPHING_DESCRIPTION[UIstate.locale].instructions}</div>
@@ -496,30 +475,28 @@ export default function Home(props) {
           timeRangeSelectionText={LABELS[UIstate.locale]['timeRangeSelectionText']}
           timeRangeSelectionFunction={chooseTimeRange}
 
-
           />
 
 
         <div className="attributeToGraphSelection">
-          <Button onClick={()=>chooseButton('confirmedCases')} variant={UIstate.confirmedCasesButtonVariant}>{LABELS[UIstate.locale].totalPositiveCasesLabel}</Button>{' '}
-          <Button onClick={()=>chooseButton('serologicalTests')} variant={UIstate.serologicalTestsButtonVariant}>{LABELS[UIstate.locale].serologicalTests}</Button>{' '}
-          <Button onClick={()=>chooseButton('molecularTests')} variant={UIstate.molecularTestsButtonVariant}>{LABELS[UIstate.locale].molecularTests}</Button>{' '}
+          <Button onClick={()=>chooseButton('totalPositive')} variant={UIstate.totalPositiveButtonVariant}>{LABELS[UIstate.locale].totalPositiveCasesLabel}</Button>{' '}
+          <Button onClick={()=>chooseButton('molecularPositive')} variant={UIstate.molecularPositiveButtonVariant}>{LABELS[UIstate.locale].molecularTests}</Button>{' '}
+          <Button onClick={()=>chooseButton('serologicalPositive')} variant={UIstate.serologicalPositiveButtonVariant}>{LABELS[UIstate.locale].serologicalTests}</Button>{' '}
           <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>{LABELS[UIstate.locale].deaths}</Button>{' '}
         </div>
 
         <div className="chartContainer">
-          <LineChart data={dataObjectForChart} xAxisLabel={LABELS[UIstate.locale].date} yAxisLabel={UIstate.attributeToGraph === "confirmedCases" ? LABELS[UIstate.locale].totalPositiveCasesLabel : LABELS[UIstate.locale][UIstate.attributeToGraph]} graphColors={UIstate.graphColors}/>
+          <LineChart data={dataObjectForChart} xAxisLabel={LABELS[UIstate.locale].date} yAxisLabel={LABELS[UIstate.locale][UIstate.attributeToGraph]} graphColors={UIstate.graphColors}/>
         </div>
-        <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5}}>
-          <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
-        </div>
+
         <div style={{margin: 5,marginBottom: 20,display: 'flex',flexDirection: 'column',textAlign: 'center'}}>
-          <CSVLink data={getDataForDownload()} filename={`${UIstate.attributeToGraph}${removeParentheses(today.saludTimeSignature)}.csv`}>
-            <Button variant="success">{UIstate.locale === 'es-pr' ? 'Bajar data ' : "Download data "}<Icon.Download /></Button>
+
+          <CSVLink data={getHistoricalDataBackup()} filename={`COVID Tracker PR Data ${removeParentheses(today.saludTimeSignature)}.csv`}>
+            <Button variant="success" style={{fontSize: 14}}>{UIstate.locale === 'es-pr' ? 'Bajar data ' : "Download data "}<Icon.Download /></Button>
           </CSVLink>
+
           <div style={{fontSize: 13}}>{DISCLAIMER_DIV[UIstate.locale]}</div>
         </div>
-        <Tableau title={LABELS[UIstate.locale].excessDeathsTableTitle} description={LABELS[UIstate.locale].excessDeathsTableDescription}/>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
           <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
