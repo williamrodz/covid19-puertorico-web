@@ -5,15 +5,17 @@ import { PieChart } from 'react-minimal-pie-chart';
 const TestDistributionChart = (props) =>{
 
   return (
-        <div className="statsBlock" style={{borderColor:"#cbd5e0", borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'row',alignItems: 'center', minWidth: "410px"}}>
+        <div className="statsBlock" style={{borderColor:"#cbd5e0", borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'column',alignItems: 'center', minWidth: "410px"}}>
+          <text style={{textAlign:'center',fontSize: 20,color:'grey',marginRight: "18px"}}>{props.description}</text>
+
           <PieChart
             startAngle={-90}
             data={[
-              { title: props.confirmed, value:props.molecularPositive, color: '#686de0' },
-              { title: props.probable, value:props.serologicalPositive , color: '#c7ecee' },
+              { title: props.confirmed, value:45, color: '#686de0' },
+              { title: props.probable, value:55 , color: '#c7ecee' },
 
             ]}
-            totalValue={props.totalPositive}
+            totalValue={100}
 
             animate={true}
             lineWidth={30} // Adjusts "donut" width
@@ -28,7 +30,6 @@ const TestDistributionChart = (props) =>{
             style={{height: "140px"}}
 
           />
-          <text style={{textAlign:'center',fontSize: 20,fontWeight: 'bold',marginRight: "18px"}}>{props.description}</text>
 
         </div>
   )

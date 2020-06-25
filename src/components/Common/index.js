@@ -1,4 +1,6 @@
 import React from 'react';
+import * as Icon from 'react-bootstrap-icons';
+
 
 const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
                   percentInfected:"Porciento de puertorriqueños infectados",fatalityRate:"Tasa de muertes",date:"Fecha",
@@ -23,11 +25,12 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   probableCasesLabel:"Casos probables por prueba serológica",
                   positiveCaseDistribution:"Distribución de casos positivos",
                   totalPositiveCasesLabel:"Casos positivos totales",
-                  confirmed:"Confirm.",
+                  confirmed:"Confirmado",
                   excessDeaths:"Muertes en exceso",
                   totalPositive:"Total de pruebas positivas",
                   molecularPositive:"Positivos por prueba molecular",
-                  serologicalPositive:"Positivos por prueba serológica"
+                  serologicalPositive:"Positivos por prueba serológica",
+                  aboveAverageText:"sobre promedio"
                   }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
@@ -76,31 +79,55 @@ export const getLabels = () => {
   return LABELS
 }
 
-export const getFigureWithTodaysCount = (color,label,figure,saludTimeSignature,newToday,locale) =>{
-  var number = formatInteger(figure)
+export const getDeltaAverageForDays = (historicalData,dataPoint) =>{
+  let DAYS_FOR_AVERAGE = 14
 
-  const locationOfAl = saludTimeSignature.indexOf("al ")
+  let totalDaysAvailable = historicalData.all.length
+
+  var deltaSum = 0
+  var i = 1
+  while (i < DAYS_FOR_AVERAGE && totalDaysAvailable - i > 1){
+    let dataForDay = historicalData.all[totalDaysAvailable - i]
+    let dataForDayBefore = historicalData.all[totalDaysAvailable - (i + 1)]
+    deltaSum += dataForDay[dataPoint] - dataForDayBefore[dataPoint]
+    i += 1
+  }
+
+  var deltaAverage = deltaSum / DAYS_FOR_AVERAGE
+  deltaAverage = deltaAverage.toFixed(1)
+  return deltaAverage
+}
+
+export const DataDiv = (props) =>{
+  var number = formatInteger(props.figure)
+
+  const locationOfAl = props.saludTimeSignature.indexOf("al ")
   const dateNumberStart = locationOfAl + 3
-  const dateNumberEnd = saludTimeSignature[dateNumberStart+1] === " " ? dateNumberStart+1 : dateNumberStart+2
+  const dateNumberEnd = props.saludTimeSignature[dateNumberStart+1] === " " ? dateNumberStart+1 : dateNumberStart+2
 
 
-  const saludDayOfMonth = parseInt(saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
+  const saludDayOfMonth = parseInt(props.saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
   const todaysDayOfMonth = (new Date()).getDate()
 
   const dateFromToday = saludDayOfMonth === todaysDayOfMonth
+  const deltaAboveAverage = props.newToday > props.twoWeekAverage
 
-  if (dateFromToday){
-    return (<div style={{display:'flex',flexDirection:'column'}}>
-              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
-              <text>{`(+${formatInteger(newToday)}`} { `${locale === "es-pr" ? "hoy" : "today"})`}</text>
-              <text style={{color: 'grey'}}>{label}</text>
-            </div>)
-  } else{
-    return (<div style={{display:'flex',flexDirection:'column'}}>
-              <text style={{fontSize: 45,fontWeight: 'bold',color:color}}>{number}</text>
-              <text style={{color: 'grey'}}>{label}</text>
-            </div>)
-  }
+  const arrow = deltaAboveAverage ? <Icon.ArrowUp style={{color: 'red'}} /> : <Icon.ArrowDown style={{color: '#b8e994'}} />
+
+
+  return (<div style={{display:'flex',flexDirection:'column'}}>
+            <text style={{color: 'grey'}}>{props.label}</text>
+            <text style={{fontSize: 45,fontWeight: 'bold',color:props.color}}>{number}</text>
+            {dateFromToday ?
+              <text>{`(+${formatInteger(props.newToday)}`} { `${props.locale === "es-pr" ? "hoy" : "today"})`}
+              {arrow}
+              </text>
+                : null}
+            {deltaAboveAverage ?
+              <text style={{color:'#e17055'}}>{`Sobre promedio de ${props.twoWeekAverage}`}<br/> de dos semanas</text>
+              : <text style={{color:'grey'}}>{`Bajo promedio de ${props.twoWeekAverage}`}<br/> de dos semanas</text>}
+          </div>
+  )
 }
 
 export const CoffeeButton = (props) =>{

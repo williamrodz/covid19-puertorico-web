@@ -7,7 +7,7 @@ import { useCookies } from 'react-cookie';
 
 import Navigation from '../NavigationBar'
 
-import MainDataBlock from '../MainDataBlock'
+import PositivesAndDeathsBlock from '../PositivesAndDeathsBlock'
 import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
@@ -383,7 +383,7 @@ export default function Home(props) {
     }
     return csv
   }
-  
+
 // eslint-disable-next-line
   const getDataForDownload = () =>{
     console.log("--Preparing data for future download--")
@@ -433,13 +433,14 @@ export default function Home(props) {
 
 
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
-        <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin:20}}>
+        <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: "100%"}}>
           <div className="statsRow">
-            <MainDataBlock
+            <PositivesAndDeathsBlock
               totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}
-              totalPositive={today.totalPositive} newPositivesToday={historicalData.newPositivesToday}
-              serologicalPositive={today.serologicalPositive} newSerologicalPositiveToday={historicalData.newSerologicalPositiveToday}
-              deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
+              totalPositive={today.totalPositive}
+              serologicalPositive={today.serologicalPositive}
+              deaths={today.deaths} deathsLabel={LABELS[UIstate.locale].deaths}
+              historicalData = {historicalData}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
@@ -447,15 +448,20 @@ export default function Home(props) {
           </div>
           <div className="statsRow">
             <TestNumbersBlock
-              totalPositive={today.totalPositive} newPositivesToday={historicalData.newPositivesToday} totalPositiveLabel={LABELS[UIstate.locale].totalPositive}
-              molecularPositive={today.molecularPositive} newMolecularPositiveToday={historicalData.newMolecularPositiveToday} confirmedCasesLabel={LABELS[UIstate.locale].confirmedCasesLabel}
-              serologicalPositive={today.serologicalPositive} newSerologicalPositiveToday={historicalData.newSerologicalPositiveToday} probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
-              deaths={today.deaths} newDeathsToday={historicalData.newDeathsToday} deathsLabel={LABELS[UIstate.locale].deaths}
+              today={today}
+              historicalData={historicalData}
+              totalPositiveLabel={LABELS[UIstate.locale].totalPositive}
+              confirmedCasesLabel={LABELS[UIstate.locale].confirmedCasesLabel}
+              probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
+              deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <TestDistributionBlock totalPositive={today.totalPositive} molecularPositive={today.molecularPositive} serologicalPositive={today.serologicalPositive} description={LABELS[UIstate.locale].positiveCaseDistribution}
-                                  confirmed={LABELS[UIstate.locale].confirmed} probable={'Probable'}/>
+            <TestDistributionBlock
+              today={today}
+              description={LABELS[UIstate.locale].positiveCaseDistribution}
+              confirmed={LABELS[UIstate.locale].confirmed}
+              probable={'Probable'}/>
           </div>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5, fontSize: "14px"}}>

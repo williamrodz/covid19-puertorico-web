@@ -1,17 +1,37 @@
 import React from 'react';
 
-import { getFigureWithTodaysCount } from '../Common/index.js'
+import { DataDiv,getDeltaAverageForDays } from '../Common/index.js'
 
 
 const TestsNumbersBlock = (props) =>{
 
+  let molecularDeltaAverage = getDeltaAverageForDays(props.historicalData,'molecularPositive')
+  let serelogicalDeltaAverage = getDeltaAverageForDays(props.historicalData,'serologicalPositive')
+
+
+
+
   return (
     <div className="statsBlock">
         <div style={{display: 'flex',flexDirection: 'column'}}>
-          {getFigureWithTodaysCount("#686de0",props.confirmedCasesLabel,props.molecularPositive,props.saludTimeSignature,props.newMolecularPositiveToday,props.locale)}
+          <DataDiv
+            color="#686de0"
+            label={props.confirmedCasesLabel}
+            figure={props.today.molecularPositive}
+            newToday={props.historicalData.newMolecularPositiveToday}
+            twoWeekAverage={molecularDeltaAverage}
+            saludTimeSignature={props.saludTimeSignature}
+            locale={props.locale}/>
         </div>
         <div style={{display: 'flex',flexDirection: 'column'}}>
-          {getFigureWithTodaysCount("#c7ecee",props.probableCasesLabel,props.serologicalPositive,props.saludTimeSignature,props.newSerologicalPositiveToday,props.locale)}
+          <DataDiv
+            color="#c7ecee"
+            label={props.probableCasesLabel}
+            figure={props.today.serologicalPositive}
+            newToday={props.historicalData.newSerologicalPositiveToday}
+            twoWeekAverage={serelogicalDeltaAverage}
+            saludTimeSignature={props.saludTimeSignature}
+            locale={props.locale}/>
         </div>
     </div>
   )
