@@ -10,6 +10,7 @@ import { Switch, Route,BrowserRouter } from 'react-router-dom';
 
 import App from './components/App';
 import ExcessDeaths from './components/ExcessDeathsPage';
+import AdminPage from './components/AdminPage.js';
 
 import Firebase, {FirebaseContext} from './components/Firebase';
 
@@ -17,6 +18,7 @@ ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
     <BrowserRouter>
       <Switch>
+        <Route path="/admin" component={AdminPage}/>
         <Route path="/excessDeaths" component={ExcessDeaths}/>
         <Route path="/" component={App}/>
       </Switch>

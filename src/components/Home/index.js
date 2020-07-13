@@ -12,7 +12,7 @@ import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
 
-import { CoffeeButton,LoveStatement,getLabels } from '../Common/index.js'
+import {SiteDescription, CoffeeButton,LoveStatement,getLabels } from '../Common/index.js'
 
 let LABELS = getLabels()
 
@@ -504,6 +504,7 @@ export default function Home(props) {
           <div style={{fontSize: 13}}>{DISCLAIMER_DIV[UIstate.locale]}</div>
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
+          <SiteDescription locale={UIstate.locale}/>
           <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
           <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
           <CoffeeButton/>

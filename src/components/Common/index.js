@@ -30,7 +30,11 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   totalPositive:"Total de pruebas positivas",
                   molecularPositive:"Positivos por prueba molecular",
                   serologicalPositive:"Positivos por prueba serológica",
-                  aboveAverageText:"sobre promedio"
+                  aboveAverage:"sobre promedio",
+                  belowAverage:"bajo promedio",
+                  of:"de",
+                  twoWeeks:"dos semanas",
+                  siteDescription:"COVID Tracker PR es un website para visualizar el número y crecimiento de los casos de COVID-19 o el coronavirus nuevo del 2019 en Puerto Rico. "
                   }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
@@ -59,7 +63,12 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   excessDeaths:"Excess Deaths",
                   totalPositive:"Total positive tests",
                   molecularPositive:"Positives by molecular test",
-                  serologicalPositive:"Positives by serological test"
+                  serologicalPositive:"Positives by serological test",
+                  aboveAverage:"above average",
+                  belowAverage:"below average",
+                  of:"of",
+                  twoWeeks:"two weeks",
+                  siteDescription:"COVID Tracker PR is a website used to follow and visualize the number of COVID-19 or 2019 novel coronavirus in Puerto Rico. "
                 }
 
 
@@ -124,8 +133,8 @@ export const DataDiv = (props) =>{
               </text>
                 : null}
             {deltaAboveAverage ?
-              <text style={{color:'#e17055'}}>{`Sobre promedio de ${props.twoWeekAverage}`}<br/> de dos semanas</text>
-              : <text style={{color:'grey'}}>{`Bajo promedio de ${props.twoWeekAverage}`}<br/> de dos semanas</text>}
+              <text style={{color:'#e17055'}}>{`${LABELS[props.locale].aboveAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</text>
+              : <text style={{color:'grey'}}>{`${LABELS[props.locale].belowAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</text>}
           </div>
   )
 }
@@ -140,6 +149,16 @@ export const CoffeeButton = (props) =>{
     </a>
   )
 }
+
+export const SiteDescription = (props) =>{
+  return (
+    <div>
+    {LABELS[props.locale].siteDescription}
+    </div>
+  )
+}
+
+
 
 export const LoveStatement = (props) =>{
   const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
