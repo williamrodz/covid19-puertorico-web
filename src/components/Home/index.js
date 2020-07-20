@@ -176,7 +176,13 @@ function createDataObject(data,UIstate){
 }
 
 
-
+const PuertoRicoHeatmap = (props) =>{
+  return (
+    <div style={{display: 'flex',flexDirection: 'column'}}>
+      <img style={{width: '100%'}} alt="Mapa con numeros de casos positivos de COVID-19 por pueblo de Puerto Rico" src="http://www.salud.gov.pr/PublishingImages/Pages/coronavirus/Mapa%20Casos%20Confirmados.png"/>
+    </div>
+  )
+}
 
 const AlertHeader = (props) =>
    (
@@ -280,7 +286,7 @@ export default function Home(props) {
       var todaysDataRef = await props.firebase.getTodaysData()
       todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
 
-      const historicalDataRef = await props.firebase.getHistoricalData()
+      const historicalDataRef = await props.firebase.getHistoricalDataRef()
       console.log("FETCHING HISTORICAL DATA")
       var historicalDataFromFireBase = {}
       if (historicalDataRef.exists){
@@ -434,6 +440,7 @@ export default function Home(props) {
 
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: "100%"}}>
+          <PuertoRicoHeatmap/>
           <div className="statsRow">
             <PositivesAndDeathsBlock
               totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}

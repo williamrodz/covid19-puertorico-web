@@ -18,7 +18,7 @@ ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
     <BrowserRouter>
       <Switch>
-        <Route path="/admin" component={AdminPage}/>
+        {/*<Route path="/admin" component={AdminPage}/>*/}
         <Route path="/excessDeaths" component={ExcessDeaths}/>
         <Route path="/" component={App}/>
       </Switch>
