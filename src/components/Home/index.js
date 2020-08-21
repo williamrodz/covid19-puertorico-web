@@ -76,10 +76,12 @@ function anglifySaludTimeSignature(saludTimeSignature){
   var splitUp = anglified.split("_")
   var dayNumber = splitUp[2]
   var year = splitUp[6].replace(",","")
-  var time = splitUp[7]
-  var ampm = splitUp[8].replace(")","")
 
-  return `Updated ${currentMonthEN} ${dayNumber}, ${year}, ${time} ${ampm}`
+  // time no longer reported by Salud's end
+  // var time = splitUp[7]
+  // var ampm = splitUp[8] 
+
+  return `Updated ${currentMonthEN} ${dayNumber}, ${year}`
 
 }
 
