@@ -32,19 +32,19 @@ export default function MaintenancePage(props) {
         </div>
         <div className="maintenanceMessageContainer">
           <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 50,color:"white",backdropFilter:"blur(5px) grayscale(1) contrast(3)",background: 'rgba(0,0,0,.6)',padding: 30}}>
-            <text style={{fontSize: 30,fontWeight: 'bold'}}>
+            <div style={{fontSize: 30,fontWeight: 'bold'}}>
               ¡Estaremos de vuelta pronto!
-            </text>
-            <text style={{fontSize: 15}}>
+            </div>
+            <div style={{fontSize: 15}}>
 
-            </text>
+            </div>
           </div>
           <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 50,color:"white",backdropFilter:"blur(5px) grayscale(1) contrast(3)",background: 'rgba(0,0,0,.6)',padding: 30}}>
-            <text style={{fontSize: 30,fontWeight: 'bold'}}>
+            <div style={{fontSize: 30,fontWeight: 'bold'}}>
               We'll be back soon!
-            </text>
-            <text style={{fontSize: 15}}>
-            </text>
+            </div>
+            <div style={{fontSize: 15}}>
+            </div>
           </div>
 
         </div>

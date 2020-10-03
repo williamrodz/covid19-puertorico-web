@@ -6,7 +6,7 @@ const TestDistributionChart = (props) =>{
 
   return (
         <div className="statsBlock" style={{borderColor:"#cbd5e0", borderStyle: 'solid',borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'column',alignItems: 'center', minWidth: "410px"}}>
-          <text style={{textAlign:'center',fontSize: 20,color:'grey',marginRight: "18px"}}>{props.description}</text>
+          <div style={{textAlign:'center',fontSize: 20,color:'grey',marginRight: "18px"}}>{props.description}</div>
 
           <PieChart
             startAngle={-90}

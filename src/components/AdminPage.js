@@ -21,7 +21,8 @@ const AddNewEntryButton = (props) =>{
 }
 
 const isDataFresh = async () =>{
-  fetch("https://us-central1-covid19puertorico-1a743.cloudfunctions.net/checkDataFresh")
+
+  return fetch("https://us-central1-covid19puertorico-1a743.cloudfunctions.net/checkDataFresh")
   .then(data=>data.json())
   .then(data=>data.dataFresh)
   .catch(error=>false)

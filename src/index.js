@@ -10,7 +10,9 @@ import { Switch, Route,BrowserRouter } from 'react-router-dom';
 
 import App from './components/App';
 import ExcessDeaths from './components/ExcessDeathsPage';
+// eslint-disable-next-line
 import AdminPage from './components/AdminPage.js';
+import API from './components/API'
 
 import Firebase, {FirebaseContext} from './components/Firebase';
 
@@ -20,6 +22,7 @@ ReactDOM.render(
       <Switch>
         {/*<Route path="/admin" component={AdminPage}/>*/}
         <Route path="/excessDeaths" component={ExcessDeaths}/>
+        <Route path="/api" component={API}/>
         <Route path="/" component={App}/>
       </Switch>
 

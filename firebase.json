@@ -7,10 +7,13 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {"source": "**/api/getData",
+      "function": "getData"
+    },
       {
         "source": "**",
         "destination": "/index.html"
-      }
+      }      
     ]
   }
 }

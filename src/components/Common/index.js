@@ -125,16 +125,16 @@ export const DataDiv = (props) =>{
 
 
   return (<div style={{display:'flex',flexDirection:'column'}}>
-            <text style={{color: 'grey'}}>{props.label}</text>
-            <text style={{fontSize: 45,fontWeight: 'bold',color:props.color}}>{number}</text>
+            <div style={{color: 'grey'}}>{props.label}</div>
+            <div style={{fontSize: 45,fontWeight: 'bold',color:props.color}}>{number}</div>
             {dateFromToday ?
-              <text>{`(+${formatInteger(props.newToday)}`} { `${props.locale === "es-pr" ? "hoy" : "today"})`}
+              <div>{`(+${formatInteger(props.newToday)}`} { `${props.locale === "es-pr" ? "hoy" : "today"})`}
               {arrow}
-              </text>
+              </div>
                 : null}
             {deltaAboveAverage ?
-              <text style={{color:'#e17055'}}>{`${LABELS[props.locale].aboveAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</text>
-              : <text style={{color:'grey'}}>{`${LABELS[props.locale].belowAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</text>}
+              <div style={{color:'#e17055'}}>{`${LABELS[props.locale].aboveAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</div>
+              : <div style={{color:'grey'}}>{`${LABELS[props.locale].belowAverage}`}<br/>{`${LABELS[props.locale].of} ${LABELS[props.locale].twoWeeks}`}</div>}
           </div>
   )
 }

@@ -9,7 +9,7 @@ const FatalityRateChart = (props) =>{
 
   return (
     <div className="statsBlock" style={{borderStyle: 'solid',borderColor: "#cbd5e0",borderWidth: "1px",borderRadius: 15,display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
-      <text style={{textAlign:'center',fontSize: 20,marginRight: "18px",color: 'grey'}}>{props.description}</text>
+      <div style={{textAlign:'center',fontSize: 20,marginRight: "18px",color: 'grey'}}>{props.description}</div>
 
       <PieChart
         data={[
