@@ -16,7 +16,9 @@ export default function ExcessDeaths(props) {
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
-        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>setUIState({...UIstate,locale:'en-us'})} clickSpanishButton={()=>setUIState({...UIstate,locale:'es-pr'})}
+        <Navigation 
+          locale={UIstate.locale}
+        inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>setUIState({...UIstate,locale:'en-us'})} clickSpanishButton={()=>setUIState({...UIstate,locale:'es-pr'})}
           excessDeaths={LABELS[UIstate.locale].excessDeaths}/>
         <Tableau title={LABELS[UIstate.locale].excessDeathsTableTitle} description={LABELS[UIstate.locale].excessDeathsTableDescription}/>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>

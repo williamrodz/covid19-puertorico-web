@@ -285,7 +285,7 @@ export default function Home(props) {
     const fetchFirebaseData = async ()=>{
       console.log("FETCHING TODAYS DATA")
       var todaysDataFromFireBase = {}
-      var todaysDataRef = await props.firebase.getTodaysData()
+      var todaysDataRef = await props.firebase.getTodaysDataRef()
       todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
 
       const historicalDataRef = await props.firebase.getHistoricalDataRef()
@@ -433,7 +433,9 @@ export default function Home(props) {
 
     return (
       <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',backgroundColor: 'white'}}>
-        <Navigation inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}
+        <Navigation 
+        locale={UIstate.locale}
+        inPuertoRico={LABELS[UIstate.locale].inPuertoRico} clickEnglishButton={()=>saveNewLocale('en-us')} clickSpanishButton={()=>saveNewLocale('es-pr')}
           excessDeaths={LABELS[UIstate.locale].excessDeaths}/>
         <div style={{display:'flex',flexDirection:'column',marginTop: 20,alignItems: 'center'}}>
           <InfoModal modalVisible={UIstate.modalVisible} modalHeader={UIstate.modalHeader} modalBody={UIstate.modalBody} handleShow={()=>setUIState({...UIstate,modalVisible:true})} handleClose={()=>setUIState({...UIstate,modalVisible:false})}/>

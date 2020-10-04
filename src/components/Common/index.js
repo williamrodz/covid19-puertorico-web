@@ -164,7 +164,7 @@ export const LoveStatement = (props) =>{
   const madeWith = props.locale === "es-pr" ? "Hecho con " : "Made with "
   const by = props.locale === "es-pr" ? "por" : "by"
   return (
-    <div>
+    <div style={props.style}>
     {madeWith}<span style={{color: '#e25555'}}>&#9829;</span> {by} <a href="https://twitter.com/williamrodz" target="_blank" rel="noopener noreferrer" onClick={(event) => {event.preventDefault(); window.open("https://twitter.com/williamrodz");}}>William Rodríguez Jiménez</a>
     </div>
   )

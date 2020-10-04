@@ -4,10 +4,13 @@ import {Navbar,Nav} from 'react-bootstrap';
 import logo from '../../logo192.png';
 
 import {
-  FacebookShareButton,
-  FacebookIcon,
   TwitterIcon,
 } from "react-share";
+
+
+import {getLabels } from '../Common/index.js'
+
+let LABELS = getLabels()
 
 
 const Logo = (props) =>{
@@ -21,13 +24,13 @@ const Logo = (props) =>{
   )
 }
 
-const FacebookButton = (props)=>{
+/*const FacebookButton = (props)=>{
   return(
   <FacebookShareButton url="covidtrackerpr.com">
     <FacebookIcon size={'35px'} round={true}/>
   </FacebookShareButton>
   )
-}
+}*/
 
 const TwitterButton = (props)=>{
   return(
@@ -42,23 +45,23 @@ export default function Navigation(props){
   return (
     <div style={{width: "100%"}}>
       <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-        <Navbar.Brand href="#home" style={{fontSize: "20px"}}><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
+        <Navbar.Brand href="/" style={{fontSize: "20px"}}><Logo inPuertoRico={props.inPuertoRico}/></Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" style={{fontSize: "15px"}}>
             <div style={{display: 'flex',flexDirection: 'row'}}>
-              <FacebookButton/>
+              {/* {<FacebookButton/>} */}
               <TwitterButton/>
             </div>
             <Nav.Link href="/">Dashboard</Nav.Link>
-            <Nav.Link href="/excessDeaths">{props.excessDeaths}</Nav.Link>
+            <Nav.Link href="/excessDeaths">{LABELS[props.locale].excessDeaths}</Nav.Link>
+            <Nav.Link href="/api"><div style={{borderRadius:5,width:34,textAlign:'center',background:'rgb(34,193,195) linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%)',color:'white'}}>API</div></Nav.Link>
+
 
           </Nav>
           <Nav style={{fontSize: "15px"}}>
-            <Nav.Link eventKey={2} onClick={()=>props.clickSpanishButton()}>Español</Nav.Link>
-            <Nav.Link eventKey={1} onClick={()=>props.clickEnglishButton()}>
-              English
-            </Nav.Link>
+            <Nav.Link eventKey={'español'} onClick={props.clickSpanishButton}>Español</Nav.Link>
+            <Nav.Link eventKey={'english'} onClick={props.clickEnglishButton}>English</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
