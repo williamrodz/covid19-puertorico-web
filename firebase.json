@@ -7,9 +7,12 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {"source": "**/api/getData",
-      "function": "getData"
-    },
+      {"source": "**/api/getTodaysData",
+      "function": "getTodaysData"
+      },
+      {"source": "**/api/getHistoricalData",
+        "function": "getHistoricalData"
+      },      
       {
         "source": "**",
         "destination": "/index.html"

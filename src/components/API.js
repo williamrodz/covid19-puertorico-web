@@ -96,7 +96,8 @@ const LogInOrSignUp = (props) =>{
 
 const APIExample = (props)=>{
     var JSONcontent = [
-    <div className='flexRow '>"status":"OK",</div>
+    <div className='flexRow '>"status":"OK",</div>,
+    <div className='flexRow '>"data":{'{'}</div>
         ]
 
     let todaysDataKeys = Object.keys(props.todaysData)
@@ -104,7 +105,7 @@ const APIExample = (props)=>{
     todaysDataKeys.forEach(key => {
         const div = (
         <div key={key} className='flexRow'>
-            "{key}":"{props.todaysData[key]}"
+            {' "'}{key}":"{props.todaysData[key]}"
         </div>)
         JSONcontent.push(div)
     }); 
@@ -112,11 +113,12 @@ const APIExample = (props)=>{
 
     return(
         <div className='centeringContainer flexColumn' style={{backgroundColor:'#2980b9',color:'white',fontFamily:'Courier New',fontWeight:'bold',borderRadius:'15px'}}>
-            <div className='flexRow centeringContainer'>GET https://www.covidtrackerpr.com/api?key=<div style={{color:'red'}}>{'<YOURKEY>'}</div>&timeframe=<div style={{color:'red'}}>today</div></div>
+            <div className='flexRow centeringContainer'>GET https://www.covidtrackerpr.com/api/getTodaysData?key=<div style={{color:'red'}}>{'<YOURKEY>'}</div></div>
             <div className='flexColumn'>
                 <div className='flexRow centeringContainer'>{'{'}</div>
                 {JSONcontent}
-                <div>{'}'}</div>
+                <div className='flexRow centeringContainer'>{'}'}</div>
+                <div className='flexRow centeringContainer'>{'}'}</div>
 
             </div>
 
@@ -179,9 +181,13 @@ const DescriptionSection = (props) =>{
                 <APIExample todaysData={props.todaysData}/>
             </div>
             <ul className='flexColumn' style={{textAlign:'left',margin:'20px'}}>
+                <h5>Methods:</h5>
+                <li><strong>getTodaysData</strong>: {props.textContent[props.locale].getTodaysDataDescription}</li>
+                <li><strong>getHistoricalData</strong>: {props.textContent[props.locale].getHistoricalDataDescription}</li>                             
+            </ul>
+            <ul className='flexColumn' style={{textAlign:'left',margin:'20px'}}>
                 <h5>Parameters:</h5>
                 <li><strong>key</strong>: {props.textContent[props.locale].keyDescriptionText}</li>
-                <li><strong>timeframe</strong>: {props.textContent[props.locale].timeframeDescriptionText}</li>                             
             </ul>
         </div>
     </div>)
@@ -307,7 +313,9 @@ const APIpage = (props)=>{
             weakPassword:'Password should be at least 6 characters',
             wrongPassword:'The password is invalid or the user does not have a password.',
             resetPassword:'Forgot my password',
-            emailResetLinkSent:'An link to reset your password has been sent to your email.'
+            emailResetLinkSent:'An link to reset your password has been sent to your email.',
+            getTodaysDataDescription:'Returns a JSON describing with COVID-19 data for the day the API is called.',
+            getHistoricalDataDescription:'Returns a JSON with a list of objects with data since the first positive case in Puerto Rico. ',
 
 
         },
@@ -345,10 +353,10 @@ const APIpage = (props)=>{
             weakPassword:'La contraseña debe más de 6 caracteres.',
             wrongPassword:'La contraseña es inválida o no existe tal registro con este email.',
             resetPassword:'Me olvidé mi contraseña',
-            emailResetLinkSent:'Un enlace para reestablecer tu contraseña se ha enviado a su email.'
-
+            emailResetLinkSent:'Un enlace para reestablecer tu contraseña se ha enviado a su email.',
+            getTodaysDataDescription:'Devuelve un JSON con la data de COVID-19 data para el día en que el API es accesado.',
+            getHistoricalDataDescription:'Devuelve un JSON con una lista de objetos desde el día del primer caso positivo en Puerto Rico.',
                         
-
         }
     }
 
