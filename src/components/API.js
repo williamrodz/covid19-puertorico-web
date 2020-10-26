@@ -16,14 +16,14 @@ const APISignUpForm = (props) => {
     return (
     <>
         <div className='flexColumn' style={{width:'500px'}}>
-            <h2 style={{margin:'40px'}}>
+            <h2 style={{padding:'40px'}}>
                 {props.textContent[props.locale].signupforapikey}
             </h2>
                 {props.textContent[props.locale].APIdescriptionText}          
 
         </div>
        
-        <Form style={{marginTop:'20px'}}>     
+        <Form style={{paddingTop:'20px'}}>     
         <Form.Group controlId="formBasicEmail">
             <Form.Label>Email</Form.Label>
             <Form.Control type="email" placeholder={props.textContent[props.locale].enterEmailText} onChange={(event)=>props.onChangeEmail((event.target.value))} />
@@ -73,8 +73,8 @@ const LogInForm = (props) => {
 const LoggedInBlock = (props) =>{
     return(
         <div className='centeringContainer' style={{flexDirection:'column'}}>
-            <h5 style={{position:'absolute',top:'1px',left:'20px'}}>{props.textContent[props.locale].loggedInAsText} {props.displayName}</h5>
-            <h5 style={{position:'absolute',top:'5px',right:'20px'}} className='clickable' onClick={props.signOutClick}>{props.textContent[props.locale].logoutText}</h5>
+            <h6 style={{position:'absolute',top:'1px',left:'20px',color:'white'}}>{props.textContent[props.locale].loggedInAsText} {props.displayName}</h6>
+            <h5 style={{position:'absolute',top:'5px',right:'20px',color:'white'}} className='clickable' onClick={props.signOutClick}>{props.textContent[props.locale].logoutText}</h5>
             <h5>{props.textContent[props.locale].yourApiKeyIsText}</h5>
             <div style={{background:'#bdc3c7',fontFamily:'"Courier New", Courier, monospace',borderRadius:10}}>{props.displayedAPIkey}</div>
         </div>
@@ -84,7 +84,7 @@ const LoggedInBlock = (props) =>{
 const LogInOrSignUp = (props) =>{
 
     return(
-        <div className='flexRow'style={{margin:'80px',}}>
+        <div className='flexRow'style={{padding:'80px',}}>
           {  
             props.signUpVisible ? 
             <APISignUpForm {...props}/> :     
@@ -113,18 +113,19 @@ const APIExample = (props)=>{
 
     return(
         <div className='centeringContainer flexColumn' style={{backgroundColor:'#2980b9',color:'white',fontFamily:'Courier New',fontWeight:'bold',borderRadius:'15px'}}>
-            <div className='flexRow centeringContainer'>GET https://www.covidtrackerpr.com/api/getTodaysData?key=<div style={{color:'red'}}>{'<YOURKEY>'}</div></div>
+            <div className='flexRow centeringContainer'>GET https://www.covidtrackerpr.com/api/<div style={{color:'white'}}>getTodaysData</div>?key=<div style={{color:'red'}}>{'<YOURKEY>'}</div></div>
             <div className='flexColumn'>
                 <div className='flexRow centeringContainer'>{'{'}</div>
                 {JSONcontent}
                 <div className='flexRow centeringContainer'>{'}'}</div>
                 <div className='flexRow centeringContainer'>{'}'}</div>
-
             </div>
 
         </div>
     )
 }
+
+
 
 const DefinitionsSection = (props) =>{
     let definitions = 
@@ -158,14 +159,14 @@ const DefinitionsSection = (props) =>{
  
     definitions.forEach(definition=>{
     let div =
-    <div key={definition.dataLabel} className='flexColumn' style={{marginTop:'20px'}}>
+    <div key={definition.dataLabel} className='flexColumn' style={{paddingTop:'20px'}}>
         <strong>{definition.dataLabel}</strong>{definition.explanation}
     </div>
     definitionDivs.push(div);
     })
 
     return(
-        <div className='flexColumn' style={{width:'70%',marginBottom:'30px'}}>
+        <div className='flexColumn' style={{width:'70%',paddingBottom:'30px'}}>
             <h3>{props.textContent[props.locale].definitionText}</h3>
             {definitionDivs}
         </div>
@@ -177,15 +178,13 @@ const DescriptionSection = (props) =>{
     <div className='flexColumn'>
         <h3>{props.textContent[props.locale].getStartedText}</h3>
         <div className='flexColumn'>
-            <div>
-                <APIExample todaysData={props.todaysData}/>
-            </div>
-            <ul className='flexColumn' style={{textAlign:'left',margin:'20px'}}>
+            <APIExample todaysData={props.todaysData}/>
+            <ul className='flexColumn' style={{textAlign:'left',padding:'20px'}}>
                 <h5>Methods:</h5>
-                <li><strong>getTodaysData</strong>: {props.textContent[props.locale].getTodaysDataDescription}</li>
-                <li><strong>getHistoricalData</strong>: {props.textContent[props.locale].getHistoricalDataDescription}</li>                             
+                <li><strong style={{color:'#007bff'}}>getTodaysData</strong>: {props.textContent[props.locale].getTodaysDataDescription}</li>
+                <li><strong style={{color:'#007bff'}}>getHistoricalData</strong>: {props.textContent[props.locale].getHistoricalDataDescription}</li>                             
             </ul>
-            <ul className='flexColumn' style={{textAlign:'left',margin:'20px'}}>
+            <ul className='flexColumn' style={{textAlign:'left',padding:'20px'}}>
                 <h5>Parameters:</h5>
                 <li><strong>key</strong>: {props.textContent[props.locale].keyDescriptionText}</li>
             </ul>
@@ -361,10 +360,10 @@ const APIpage = (props)=>{
     }
 
     return(
-        <div className='centeringContainer coolGradient flexColumn' style={{justifyContent:'space-evenly'}}>
+        <div className='centeringContainer coolGradient flexColumn' style={{justifyContent:'space-evenly',width:'100%'}}>
             <Navigation locale={locale} clickSpanishButton={()=>setLocale(ES_LOCALE)} clickEnglishButton={()=>setLocale(EN_LOCALE)}/>
-            <div style={{display:'flex',flexDirection:'row',textAlign:'center',justifyContent:'space-around',width:'412px',marginTop:'20px'}}>
-                <h1>COVID Tracker PR </h1><h1 style={{color: 'blue'}}>API</h1>
+            <div style={{display:'flex',flexDirection:'row',textAlign:'center',justifyContent:'space-around',width:'412px',paddingTop:'20px'}}>
+                <h1>COVID Tracker PR </h1><h1 style={{color: '#007bff'}}>API</h1>
             </div>
             <div className='centeringContainer'>
                 { loggedIn ? 
@@ -386,7 +385,7 @@ const APIpage = (props)=>{
             <DescriptionSection locale={locale} textContent={textContent} todaysData={todaysData}/>     
             <DefinitionsSection locale={locale} textContent={textContent}/>
             <CoffeeButton/>            
-            <LoveStatement style={{fontSize: 13,marginTop: 10,marginBottom:20}} locale={locale}/>
+            <LoveStatement style={{fontSize: 13,paddingTop: 10,paddingBottom:20}} locale={locale}/>
             
         </div>
     )

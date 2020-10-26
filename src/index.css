@@ -38,7 +38,7 @@ body {
 
 .fullSpaceContainer{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width:100%;
   height: 100%;  
 }
@@ -58,6 +58,74 @@ body {
   text-align: center;
   display: flex;
 }
+
+/* Hackathon Page */
+
+.typingTitle{
+  font-size: 80px;
+}
+
+.typingAnimationFirst { 
+  border-right: solid 3px rgba(0,255,0,.75);
+  white-space: nowrap;
+  overflow: hidden;    
+  font-family: 'Source Code Pro', monospace;  
+  color: rgba(255,255,255,.70);
+}
+
+.typingAnimationFirst {
+  animation: animated-text 4s steps(29,end) 1s 1 normal both,
+             animated-cursor 600ms steps(29,end) infinite;
+}
+
+.typingAnimationSecond {
+  animation-delay: 2s;
+
+  animation: animated-text 4s steps(29,end) 1s 1 normal both,
+             animated-cursor 600ms steps(29,end) infinite;
+             
+}
+
+
+/* text animation */
+
+@keyframes animated-text{
+  from{width: 0%;}
+  to{width: 100%;}
+}
+
+/* cursor animations */
+
+@keyframes animated-cursor{
+  from{border-right-color: rgba(0,255,0,.75);}
+  to{border-right-color: transparent;}
+}
+
+
+/* Appear animation */
+
+.fadeInSlow{
+  animation: fadeInAnimation ease 6s;
+  animation-iteration-count: 1; 
+  animation-fill-mode: forwards; 
+
+}
+
+.fadeInFast{
+  animation: fadeInAnimation ease 1s;
+  animation-iteration-count: 1; 
+  animation-fill-mode: forwards; 
+
+}
+
+@keyframes fadeInAnimation {
+  0% {opacity:0;}
+  66% { opacity:0; }
+  100% {opacity: 1;}
+} 
+
+
+
 
 .gradientBackground{
   background: rgb(255,255,255);
@@ -246,6 +314,17 @@ code {
   .chartContainer{
     width:114vw;
   }
+
+
+  .listOfTopics{
+    flex-direction: column;
+  }
+
+  .typingTitle{
+    font-size: 30px;
+  }  
+
+  
 
 
 

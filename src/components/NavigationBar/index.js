@@ -33,8 +33,11 @@ const Logo = (props) =>{
 }*/
 
 const TwitterButton = (props)=>{
+
+  //let tweetLink = 'https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com'
+  
   return(
-  <a href="https://twitter.com/intent/tweet?text=Visualiza%20la%20curva%20de%20COVID-19%20en%20Puerto%20Rico%3A&url=http%3A%2F%2Fcovidtrackerpr.com">
+  <a href="https://twitter.com/COVIDTrackerPR">
     <TwitterIcon size={'35px'} round={true}/>
   </a>
   )
