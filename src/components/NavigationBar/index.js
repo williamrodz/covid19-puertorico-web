@@ -39,6 +39,7 @@ const TwitterButton = (props)=>{
   return(
   <a href="https://twitter.com/COVIDTrackerPR">
     <TwitterIcon size={'35px'} round={true}/>
+    <div>Follow daily updates</div>
   </a>
   )
 }
@@ -58,7 +59,8 @@ export default function Navigation(props){
             </div>
             <Nav.Link href="/">Dashboard</Nav.Link>
             <Nav.Link href="/excessDeaths">{LABELS[props.locale].excessDeaths}</Nav.Link>
-            <Nav.Link href="/api"><div style={{borderRadius:5,width:34,textAlign:'center',background:'rgb(34,193,195) linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%)',color:'white'}}>API</div></Nav.Link>
+            <Nav.Link href="/api"><div>API</div></Nav.Link>
+            <Nav.Link href="https://www.prcovidideathon.com"><div style={{borderRadius:5,width:100,textAlign:'center',background:'rgb(34,193,195) linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%)',color:'white'}}>IDEATHON</div></Nav.Link>
 
 
           </Nav>

@@ -5,7 +5,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
 
-import { Switch, Route,BrowserRouter } from 'react-router-dom';
+import { Switch, Route,BrowserRouter,Redirect } from 'react-router-dom';
 
 
 import App from './components/App';
@@ -17,12 +17,17 @@ import HackathonPage from './components/HackathonPage.js'
 
 import Firebase, {FirebaseContext} from './components/Firebase';
 
+const RedirectToIdeathon = () => {window.location.href = 'https://www.prcovidideathon.com'; 
+  return null;}
+
 ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
     <BrowserRouter>
       <Switch>
         {/*<Route path="/admin" component={AdminPage}/>*/}
-        <Route path="/hackathon" component={HackathonPage}/>
+        <Route path="/hackathon" component={RedirectToIdeathon}/>
+        <Route path="/challenge" component={RedirectToIdeathon}/>
+        <Route path="/ideathon" component={RedirectToIdeathon}/>
         <Route path="/excessDeaths" component={ExcessDeaths}/>
         <Route path="/api" component={API}/>
         <Route path="/" component={App}/>

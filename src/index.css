@@ -105,7 +105,7 @@ body {
 /* Appear animation */
 
 .fadeInSlow{
-  animation: fadeInAnimation ease 6s;
+  animation: fadeInAnimation ease 10s;
   animation-iteration-count: 1; 
   animation-fill-mode: forwards; 
 

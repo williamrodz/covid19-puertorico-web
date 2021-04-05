@@ -230,6 +230,11 @@ return (
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(7)}>{props.last7daysText}</Dropdown.Item>
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(14)}>{props.last14daysText}</Dropdown.Item>
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(30)}>{props.last30daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(60)}>{props.last60daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(90)}>{props.last90daysText}</Dropdown.Item>
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(180)}>{props.last180daysText}</Dropdown.Item>        
+        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(365)}>{props.last365daysText}</Dropdown.Item>
+
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(0)}>{props.last0daysText}</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
@@ -472,7 +477,12 @@ export default function Home(props) {
               today={today}
               description={LABELS[UIstate.locale].positiveCaseDistribution}
               confirmed={LABELS[UIstate.locale].confirmed}
-              probable={'Probable'}/>
+              probable={'Probable'}
+              totalPositive={today.totalPositive}
+              serologicalPositive={today.serologicalPositive}              
+              molecularPositive={today.molecularPositive} 
+              antigenPositive={today.antigenPositive}              
+              />
           </div>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5, fontSize: "14px"}}>
@@ -489,6 +499,10 @@ export default function Home(props) {
           last7daysText={LABELS[UIstate.locale]['last7daysText']}
           last14daysText={LABELS[UIstate.locale]['last14daysText']}
           last30daysText={LABELS[UIstate.locale]['last30daysText']}
+          last60daysText={LABELS[UIstate.locale]['last60daysText']}
+          last90daysText={LABELS[UIstate.locale]['last90daysText']}
+          last180daysText={LABELS[UIstate.locale]['last180daysText']}
+          last365daysText={LABELS[UIstate.locale]['last365daysText']}
           timeRangeSelectionText={LABELS[UIstate.locale]['timeRangeSelectionText']}
           timeRangeSelectionFunction={chooseTimeRange}
 
