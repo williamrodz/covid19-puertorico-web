@@ -22,7 +22,7 @@ export default function ExcessDeaths(props) {
           excessDeaths={LABELS[UIstate.locale].excessDeaths}/>
         <Tableau title={LABELS[UIstate.locale].excessDeathsTableTitle} description={LABELS[UIstate.locale].excessDeathsTableDescription}/>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
-          <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
+          <div style={{fontSize: 13,margin:10}}>&copy; 2021 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
           <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
           <CoffeeButton/>
         </div>

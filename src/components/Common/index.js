@@ -27,7 +27,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   serological:"Serológica",
                   confirmedCasesLabel:"Casos confirmados por prueba molecular",
                   probableCasesLabel:"Casos probables por prueba serológica",
-                  positiveCaseDistribution:"Distribución de casos positivos",
+                  positiveCaseDistribution:"Distribución de pruebas positivas",
                   totalPositiveCasesLabel:"Pruebas positivas totales",
                   confirmed:"Confirmado",
                   excessDeaths:"Muertes en exceso",
@@ -38,8 +38,9 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   belowAverage:"bajo promedio",
                   of:"de",
                   twoWeeks:"dos semanas",
-                  siteDescription:"COVID Tracker PR es un website para visualizar el número y crecimiento de los casos de COVID-19 o el coronavirus nuevo del 2019 en Puerto Rico. "
-                  }
+                  siteDescription:"COVID Tracker PR es un website para visualizar el número y crecimiento de los casos de COVID-19 o el coronavirus nuevo del 2019 en Puerto Rico. ",
+                  vaccineCallToAction:"¡Vacúnate o coordina una cita!",  
+                }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
@@ -76,7 +77,9 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   belowAverage:"below average",
                   of:"of",
                   twoWeeks:"two weeks",
-                  siteDescription:"COVID Tracker PR is a website used to follow and visualize the number of COVID-19 or 2019 novel coronavirus in Puerto Rico. "
+                  siteDescription:"COVID Tracker PR is a website used to follow and visualize the number of COVID-19 or 2019 novel coronavirus in Puerto Rico. ",
+                  vaccineCallToAction:"Get your vaccine or know when your appointment will be!",  
+
                 }
 
 

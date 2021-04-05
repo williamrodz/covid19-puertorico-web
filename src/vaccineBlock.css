@@ -1,0 +1,32 @@
+.vaccineBlock{
+  align-items: center;
+  border-style: solid;
+  border-color: rgb(203, 213, 224);
+  border-width: 1px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vaccineCallToAction{
+  padding-top: 1em;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+.vaccineInfoRow{
+  align-items: center;
+  justify-content: center;
+}
+
+.vaccineSource{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vaccineSourceImage{
+    height: auto;
+    width: 7em;
+    padding: 1em;
+  }

@@ -316,16 +316,5 @@ code {
   }
 
 
-  .listOfTopics{
-    flex-direction: column;
-  }
-
-  .typingTitle{
-    font-size: 30px;
-  }  
-
-  
-
-
 
 }

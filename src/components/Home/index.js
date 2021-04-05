@@ -11,6 +11,7 @@ import PositivesAndDeathsBlock from '../PositivesAndDeathsBlock'
 import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
+import VaccineBlock from '../VaccineBlock';
 
 import {SiteDescription, CoffeeButton,LoveStatement,getLabels } from '../Common/index.js'
 
@@ -44,8 +45,8 @@ const GRAPHING_DESCRIPTION_ES = {instructions:"Qué graficar:",dataPerDay:"Data 
 const GRAPHING_DESCRIPTION_EN = {instructions:"What to graph:",dataPerDay:"Data per day",changePerDay:"Change per day"}
 const GRAPHING_DESCRIPTION = {'en-us':GRAPHING_DESCRIPTION_EN,'es-pr':GRAPHING_DESCRIPTION_ES}
 
-const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) y está sujeta a cambio y/o clarificación.</div>)
-const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="http://www.salud.gov.pr/Pages/coronavirus.aspx" target="_blank" rel="noopener noreferrer">http://www.salud.gov.pr/Pages/coronavirus.aspx</a>) and is subject to change and/or clarification</div>)
+const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Departamento de Salúd del coronavirus (<a href="https://covid19datos.salud.gov.pr/" target="_blank" rel="noopener noreferrer">https://covid19datos.salud.gov.pr/</a>) y está sujeta a cambio y/o clarificación.</div>)
+const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="https://covid19datos.salud.gov.pr/" target="_blank" rel="noopener noreferrer">https://covid19datos.salud.gov.pr/</a>) and is subject to change and/or clarification</div>)
 const DISCLAIMER_DIV = {'en-us':DISCLAIMER_EN,'es-pr':DISCLAIMER_ES}
 
 const ATTRIBUTES = ["serologicalPositive","totalPositive","molecularPositive","deaths"]
@@ -70,12 +71,9 @@ function anglifySaludTimeSignature(saludTimeSignature){
   const currentMonth = (new Date ()).getMonth() + 1
   const currentMonthEN = MONTHS_EN[currentMonth]
 
-  var anglified = saludTimeSignature.trim()
-  anglified = anglified.replace(/\s/g,"_")
-
-  var splitUp = anglified.split("_")
-  var dayNumber = splitUp[2]
-  var year = splitUp[6].replace(",","")
+  var splitUp = saludTimeSignature.trim().split("de")
+  var dayNumber = splitUp[0].substring(saludTimeSignature.indexOf(",")+ 2).trim()
+  var year = splitUp[2].trim();
 
   // time no longer reported by Salud's end
   // var time = splitUp[7]
@@ -449,7 +447,8 @@ export default function Home(props) {
 
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: "100%"}}>
-          <PuertoRicoHeatmap/>
+          {/* <PuertoRicoHeatmap/> */}
+          <VaccineBlock vaccineCallToAction={LABELS[UIstate.locale].vaccineCallToAction}/>
           <div className="statsRow">
             <PositivesAndDeathsBlock
               totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}
@@ -530,7 +529,7 @@ export default function Home(props) {
         </div>
         <div style={{display: 'flex',flexDirection: 'column',height: "10vh",alignItems: 'center',textAlign: 'center',marginBottom: 40}}>
           <SiteDescription locale={UIstate.locale}/>
-          <div style={{fontSize: 13,margin:10}}>&copy; 2020 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
+          <div style={{fontSize: 13,margin:10}}>&copy; 2021 <a href="https://github.com/williamrodz/covid19-puertorico-web/blob/master/LICENSE.txt">{UIstate.locale === 'es-pr' ? 'Licencia' : 'License'}</a></div>
           <LoveStatement style={{fontSize: 13,marginTop: 10}} locale={UIstate.locale}/>
           <CoffeeButton/>
         </div>

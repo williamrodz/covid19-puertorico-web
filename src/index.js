@@ -13,7 +13,6 @@ import ExcessDeaths from './components/ExcessDeathsPage';
 // eslint-disable-next-line
 import AdminPage from './components/AdminPage.js';
 import API from './components/API';
-import HackathonPage from './components/HackathonPage.js'
 
 import Firebase, {FirebaseContext} from './components/Firebase';
 
