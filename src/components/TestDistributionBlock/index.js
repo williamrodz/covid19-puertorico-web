@@ -12,7 +12,7 @@ const TestDistributionChart = (props) =>{
           <PieChart
             startAngle={-90}
             data={[
-              { title: "RT-PCR", value:props.molecularPositive, color: '#686de0' },
+              { title: "PCR", value:props.molecularPositive, color: '#686de0' },
               { title: "Antibody", value:props.serologicalPositive , color: '#fab1a0' },
               { title: "Antigen", value:props.antigenPositive , color: 'yellow' },
 

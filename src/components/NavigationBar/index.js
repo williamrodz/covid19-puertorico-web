@@ -39,7 +39,6 @@ const TwitterButton = (props)=>{
   return(
   <a href="https://twitter.com/COVIDTrackerPR">
     <TwitterIcon size={'35px'} round={true}/>
-    <div>Follow daily updates</div>
   </a>
   )
 }
