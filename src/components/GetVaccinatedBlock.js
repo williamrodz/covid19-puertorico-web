@@ -1,5 +1,5 @@
 import React from 'react';
-import '../vaccineBlock.css'
+import '../vaccineBlocks.css'
 const VaccineSource = (props) =>{
     return(
         <div className="vaccineSource">
@@ -12,7 +12,7 @@ const VaccineSource = (props) =>{
 
 const VaccineBlock = (props) =>{
     return(
-        <div className="vaccineBlock">
+        <div className="vaccineBlock statsBlock">
             <div className="vaccineCallToAction">{props.vaccineCallToAction}</div>
             <div className="flexRow vaccineInfoRow">
                 <VaccineSource link={"https://www.cvs.com/immunizations/covid-19-vaccine"} logo={"https://sunrisemarketplace.com/wp-content/uploads/2020/03/3979_SMP-cvs-logo.jpg"} alt="CVS"/>

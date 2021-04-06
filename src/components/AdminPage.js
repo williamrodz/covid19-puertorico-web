@@ -189,7 +189,6 @@ const AdminPage = (props) =>{
   const fetchData = async ()=>{
 
     const historicalDataRef = await props.firebase.getHistoricalDataRef()
-    console.log("FETCHING HISTORICAL DATA")
     if (historicalDataRef.exists){
       const historicalData = historicalDataRef.data().all
       setUIState({...UIstate,dataObjects:historicalData})

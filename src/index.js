@@ -5,7 +5,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
 
-import { Switch, Route,BrowserRouter,Redirect } from 'react-router-dom';
+import { Switch, Route,BrowserRouter, } from 'react-router-dom';
 
 
 import App from './components/App';

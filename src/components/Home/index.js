@@ -11,9 +11,10 @@ import PositivesAndDeathsBlock from '../PositivesAndDeathsBlock'
 import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
-import VaccineBlock from '../VaccineBlock';
+import GetVaccinatedBlock from '../GetVaccinatedBlock';
+import VaccineStatsBlock from '../VaccineStatsBlock';
 
-import {SiteDescription, CoffeeButton,LoveStatement,getLabels } from '../Common/index.js'
+import {SiteDescription, CoffeeButton,LoveStatement,getLabels, formatInteger } from '../Common/index.js'
 
 let LABELS = getLabels()
 
@@ -176,13 +177,13 @@ function createDataObject(data,UIstate){
 }
 
 
-const PuertoRicoHeatmap = (props) =>{
-  return (
-    <div style={{display: 'flex',flexDirection: 'column'}}>
-      <img style={{width: '100%'}} alt="Mapa con numeros de casos positivos de COVID-19 por pueblo de Puerto Rico" src="http://www.salud.gov.pr/PublishingImages/Pages/coronavirus/Mapa%20Casos%20Confirmados.png"/>
-    </div>
-  )
-}
+// const PuertoRicoHeatmap = (props) =>{
+//   return (
+//     <div style={{display: 'flex',flexDirection: 'column'}}>
+//       <img style={{width: '100%'}} alt="Mapa con numeros de casos positivos de COVID-19 por pueblo de Puerto Rico" src="http://www.salud.gov.pr/PublishingImages/Pages/coronavirus/Mapa%20Casos%20Confirmados.png"/>
+//     </div>
+//   )
+// }
 
 const AlertHeader = (props) =>
    (
@@ -220,7 +221,7 @@ return (
       {props.timeRangeSelectionText}:
     </div>
     <Dropdown>
-      <Dropdown.Toggle variant="primary" id="dropdown-basic">
+      <Dropdown.Toggle variant="warning" id="dropdown-basic">
         {props[`last${props.graphLastXdays}daysText`]}
       </Dropdown.Toggle>
 
@@ -232,7 +233,6 @@ return (
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(90)}>{props.last90daysText}</Dropdown.Item>
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(180)}>{props.last180daysText}</Dropdown.Item>        
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(365)}>{props.last365daysText}</Dropdown.Item>
-
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(0)}>{props.last0daysText}</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
@@ -282,17 +282,21 @@ export default function Home(props) {
       timestamp: "",
     });
 
+    const [todaysVaccinationData, setTodaysVaccinationData] = useState({
+      administeredDoses:0,
+      peopleWithAtLeastOneDose:0,
+      peopleWithTwoDoses:0,
+    });
+
 
 
   useEffect(()=>{
     const fetchFirebaseData = async ()=>{
-      console.log("FETCHING TODAYS DATA")
       var todaysDataFromFireBase = {}
       var todaysDataRef = await props.firebase.getTodaysDataRef()
       todaysDataFromFireBase = todaysDataRef.exists ? {...todaysDataRef.data()} : null
 
       const historicalDataRef = await props.firebase.getHistoricalDataRef()
-      console.log("FETCHING HISTORICAL DATA")
       var historicalDataFromFireBase = {}
       if (historicalDataRef.exists){
         const historicalData = historicalDataRef.data().all
@@ -317,9 +321,21 @@ export default function Home(props) {
 
     }
 
+    const getTodaysVaccinationData = async () =>{
+      console.log("fetching")
+      var todaysVaccinationDataRef = await props.firebase.getTodaysVaccinationData();
+      if (todaysVaccinationDataRef.exists){
+        const todaysVaccinationData = todaysVaccinationDataRef.data()
+        console.log("todays vax data:",todaysVaccinationData)
+        setTodaysVaccinationData(todaysVaccinationData);
+      }
+    }    
+
     fetchFirebaseData();
+    getTodaysVaccinationData();
 // eslint-disable-next-line
   },[props.firebase])
+
 
 
   const chooseButton = (attributeToGraph)=>{
@@ -395,27 +411,6 @@ export default function Home(props) {
     return csv
   }
 
-// eslint-disable-next-line
-  const getDataForDownload = () =>{
-    console.log("--Preparing data for future download--")
-
-    const dataObjectForChart = createDataObject(historicalData.all,UIstate)
-    var csv = [["fecha",UIstate.attributeToGraph]]
-    for (var i = 0; i < dataObjectForChart.length; i++) {
-      let data = dataObjectForChart[i].data
-      if (i === 1){
-        csv.push(["fecha","Cambio en "+UIstate.attributeToGraph])
-      }
-      for (var j = 0; j < data.length; j++) {
-        let date = data[j].x
-        let value = data[j].y
-        csv.push([date,value])
-      }
-    }
-    return csv
-  }
-
-
   const closeAlert = async () =>{
     setUIState({...UIstate,alertVisible:false})
     setCookie("ui",{...UIstate,alertVisible:false})
@@ -448,7 +443,18 @@ export default function Home(props) {
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: "100%"}}>
           {/* <PuertoRicoHeatmap/> */}
-          <VaccineBlock vaccineCallToAction={LABELS[UIstate.locale].vaccineCallToAction}/>
+          <div className="statsRow">
+            <GetVaccinatedBlock vaccineCallToAction={LABELS[UIstate.locale].vaccineCallToAction}/>
+            <VaccineStatsBlock  
+              administeredDosesText={LABELS[UIstate.locale].administeredDosesText}
+              peopleWithAtLeastOneDoseText={LABELS[UIstate.locale].peopleWithAtLeastOneDoseText}
+              peopleWithTwoDosesText={LABELS[UIstate.locale].peopleWithTwoDosesText}
+              administeredDoses={formatInteger(todaysVaccinationData.administeredDoses)}
+              peopleWithAtLeastOneDose={formatInteger(todaysVaccinationData.peopleWithAtLeastOneDose)}
+              peopleWithTwoDoses={formatInteger(todaysVaccinationData.peopleWithTwoDoses)}
+            />
+
+          </div>
           <div className="statsRow">
             <PositivesAndDeathsBlock
               totalPositiveCasesLabel={LABELS[UIstate.locale].totalPositiveCasesLabel}

@@ -29,4 +29,26 @@
     height: auto;
     width: 7em;
     padding: 1em;
+
+  }
+
+  .vaccineSourceImage:hover{
+    opacity: 20%;
+  }
+
+
+  /* Vaccine Stats */
+  .vaccineStatTitle{
+    padding: 0.1em;
+    color: gray;
+    font-size: 1em;
+    width: 10em;
+    text-align: center;
+  }
+
+  .vaccineStatValue{
+    font-weight: bold;
+    color: rgb(93,232,196);
+    font-size: 2em;
+    text-align: center;
   }

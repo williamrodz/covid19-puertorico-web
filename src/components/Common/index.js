@@ -39,7 +39,10 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   of:"de",
                   twoWeeks:"dos semanas",
                   siteDescription:"COVID Tracker PR es un website para visualizar el número y crecimiento de los casos de COVID-19 o el coronavirus nuevo del 2019 en Puerto Rico. ",
-                  vaccineCallToAction:"¡Vacúnate o coordina una cita!",  
+                  vaccineCallToAction:"¡Vacúnate o coordina una cita!",
+                  administeredDosesText:"Vacunas administradas",
+                  peopleWithAtLeastOneDoseText:"Personas con una dosis",
+                  peopleWithTwoDosesText:"Personas con dos dosis",
                 }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
@@ -78,8 +81,10 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   of:"of",
                   twoWeeks:"two weeks",
                   siteDescription:"COVID Tracker PR is a website used to follow and visualize the number of COVID-19 or 2019 novel coronavirus in Puerto Rico. ",
-                  vaccineCallToAction:"Get your vaccine or know when your appointment will be!",  
-
+                  vaccineCallToAction:"Get your vaccine or plan your appointment!",  
+                  administeredDosesText:"Administered vaccines",
+                  peopleWithAtLeastOneDoseText:"People with one dose",
+                  peopleWithTwoDosesText:"People with two doses",
                 }
 
 
