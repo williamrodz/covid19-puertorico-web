@@ -23,7 +23,7 @@ const theme = {
 
 const App = (props) => {
 
-  const toolTipElement = (tooltipProps: PointTooltipProps) => {
+  const toolTipElement = (tooltipProps) => {
 
 
       return (

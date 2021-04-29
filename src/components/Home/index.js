@@ -100,11 +100,45 @@ function removeParentheses(string){
   }
   return output
 }
+let MONTHS_ES_LIST = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+let MONTHS_ES_TO_NUMBER = {}
+MONTHS_ES_LIST.map( (month,i)=>MONTHS_ES_TO_NUMBER[month] = i)
 
+function getDateObjectFromEntry(entry){
+  var jsDate;
+  var dayOfMonth;
+  var monthNumber;
+  var year;
+  if (entry.timestamp){
+    jsDate = new Date(entry.timestamp)
+    dayOfMonth = jsDate.getDate();
+    monthNumber = jsDate.getMonth();
+    year = jsDate.getYear();
+  }
+  else{
+    let dateSplit = entry.saludTimeSignature.split(" de ");
+    dayOfMonth = parseInt(dateSplit[0].substring(dateSplit[0].length - 3));
+    let monthInSpanish = dateSplit[1];
+    monthNumber = MONTHS_ES_TO_NUMBER[monthInSpanish];
+    year = parseInt(dateSplit[2]);
+    jsDate = Date(year,monthNumber,dayOfMonth)
+  }
+
+  return {jsDate:jsDate,year:year,monthNumber:monthNumber,dayOfMonth:dayOfMonth}
+
+
+}
+
+
+function getSlashedDateFromDate(date,locale){
+
+  let espagnol = `${date.dayOfMonth}-${MONTHS[locale][date.monthNumber+1]}` 
+  let anglais = `${MONTHS[locale][date.monthNumber+1]}-${date.dayOfMonth}`
+  return locale === "es-pr" ? espagnol : anglais;
+}
 
 function createDataObject(data,UIstate){
 
-  let xKey = 'timestamp'
   let yKey = `${UIstate.attributeToGraph}`
   let graphOptionAbsolute = UIstate.graphOptionAbsolute
   let graphOptionChange = UIstate.graphOptionChange
@@ -119,16 +153,14 @@ function createDataObject(data,UIstate){
   console.log("Data is:",data)
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
-    var xShorthand = entry[xKey]
-    if (xKey === "timestamp"){
-      const dateObj = new Date(entry[xKey])
-      if (UIstate.graphLastXdays !== 0 && dateObj < lowerTimeBound){
-        console.log("Skipping")
-        continue
-      }
 
-      xShorthand = UIstate.locale === "es-pr" ? `${dateObj.getDate()}-${MONTHS[locale][dateObj.getMonth()+1]}` : `${MONTHS[locale][dateObj.getMonth()+1]}-${dateObj.getDate()}`
+    const dateInfo = getDateObjectFromEntry(entry);
+
+    if (UIstate.graphLastXdays !== 0 && dateInfo.jsDate < lowerTimeBound){
+      continue
     }
+
+    let xShorthand = getSlashedDateFromDate(dateInfo,UIstate.locale);
 
     var yValue = entry[yKey]
     console.log("yValue is",yValue)
