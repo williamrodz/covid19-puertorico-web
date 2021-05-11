@@ -5,10 +5,16 @@ const VaccineBlock = (props) =>{
     return(
         <div className="vaccineBlock statsBlock">
             <div className="flexColumn vaccineInfoRow">
-                <div className="flexColumn">
-                    <div className="vaccineStatTitle">{props.administeredDosesText}</div>
-                    <div className="vaccineStatValue">{props.administeredDoses}</div>
-                </div>
+                <div className="flexRow">
+                    <div className="flexColumn">
+                        <div className="vaccineStatTitle">{props.administeredDosesText}</div>
+                        <div className="vaccineStatValue">{props.administeredDoses}</div>
+                    </div>
+                    {/* <div className="flexColumn">
+                        <div className="vaccineStatTitle">{props.percentageFullyVaccinatedText}</div>
+                        <div className="vaccineStatValue">{props.percentageFullyVaccinated}</div>
+                    </div>                       */}
+                </div>              
                 <div className="flexRow">
                     <div className="flexColumn">
                         <div className="vaccineStatTitle">{props.peopleWithAtLeastOneDoseText}</div>
@@ -22,6 +28,7 @@ const VaccineBlock = (props) =>{
                                       
 
             </div>
+     
         </div>
     )
 }

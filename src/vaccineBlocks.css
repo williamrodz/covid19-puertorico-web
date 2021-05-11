@@ -53,3 +53,79 @@
     font-size: 2em;
     text-align: center;
   }
+
+  /* Vaccine Graph */
+
+  .vaccination-graph{
+    height: 20em;
+    width:40vw;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    padding:0.1em
+  }
+
+  .vaccination-graph-title{
+    padding-top: 1em;
+  }
+
+  /* Herd Immunity Bar */
+.herd-immunity-block{
+  height: 10em;
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+}
+
+.herd-immunity-title{
+  font-size: 1.2em;
+
+}
+
+  .herd-immunity-bar{
+    width: 12em;
+    height: 3em;
+    border:gray 0.2em solid;
+    border-radius: 1vw;
+  }
+
+  .progress{
+    height: 100%;
+    font-size: 1.2em;
+  }
+
+  .current-herd-progress{
+    height: 8vh;
+    left:0;
+    background-color: greenyellow;
+    border-radius: 1vw;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .herd-immunity-marker{
+    position: relative;
+    top:-2.6em;
+    left:70%;
+    width: 0.1vw;
+    height: 2.6em;
+    border-left:#2ecc71 0.5em solid;
+
+  }
+
+  @media (max-width: 767px) {
+    .herd-immunity-title{
+      font-size: 1em;
+    }
+
+    .herd-immunity-block{
+      width:90vw;
+    }
+
+    .vaccination-graph{
+      width: 90vw;
+
+    }
+  
+  }

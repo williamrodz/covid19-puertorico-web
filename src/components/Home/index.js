@@ -13,6 +13,8 @@ import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
 import GetVaccinatedBlock from '../GetVaccinatedBlock';
 import VaccineStatsBlock from '../VaccineStatsBlock';
+import VaccinationGraph from '../VaccinationGraph';
+import HerdImmunityBar from '../HerdImmunityBar';
 
 import {SiteDescription, CoffeeButton,LoveStatement,getLabels, formatInteger } from '../Common/index.js'
 
@@ -142,7 +144,6 @@ function createDataObject(data,UIstate){
   let yKey = `${UIstate.attributeToGraph}`
   let graphOptionAbsolute = UIstate.graphOptionAbsolute
   let graphOptionChange = UIstate.graphOptionChange
-  let locale = UIstate.locale
 
   let today = new Date()
   let lowerTimeBound =  today.setDate(today.getDate()-UIstate.graphLastXdays);
@@ -150,7 +151,7 @@ function createDataObject(data,UIstate){
 
   var formattedData = []
   var formattedDeltaData = []
-  console.log("Data is:",data)
+  // console.log("Data is:",data)
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
 
@@ -163,7 +164,7 @@ function createDataObject(data,UIstate){
     let xShorthand = getSlashedDateFromDate(dateInfo,UIstate.locale);
 
     var yValue = entry[yKey]
-    console.log("yValue is",yValue)
+    // console.log("yValue is",yValue)
 
     if (i >= 1){
       const prevEntry = data[i-1]
@@ -177,11 +178,11 @@ function createDataObject(data,UIstate){
     }
 
     const formattedEntry = {"x":xShorthand,"y":yValue}
-    console.log(`Pushing (${xShorthand},${yValue})`)
+    // console.log(`Pushing (${xShorthand},${yValue})`)
     formattedData.push(formattedEntry)
   }
 
-  console.log("formattedData",formattedData)
+  // console.log("formattedData",formattedData)
 
   const dataObject = {
   // Hacky
@@ -474,7 +475,15 @@ export default function Home(props) {
 
         {UIstate.alertVisible ? <AlertHeader onClose={closeAlert} header={ALERT_HEADER[UIstate.locale]} body={ALERT_BODY[UIstate.locale]}/> : <div/>}
         <div style={{display: 'flex',flexDirection: 'column',alignItems: 'center',width: "100%"}}>
-          {/* <PuertoRicoHeatmap/> */}
+        <div className="statsRow">
+            <HerdImmunityBar
+              percentageFullyVaccinatedText={LABELS[UIstate.locale].percentageFullyVaccinatedText}
+              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}/>
+            <VaccinationGraph firebase={props.firebase}/>
+          
+          </div>            
+          {/* <div className="statsRow">
+          </div>   */}
           <div className="statsRow">
             <GetVaccinatedBlock vaccineCallToAction={LABELS[UIstate.locale].vaccineCallToAction}/>
             <VaccineStatsBlock  
@@ -484,8 +493,9 @@ export default function Home(props) {
               administeredDoses={formatInteger(todaysVaccinationData.administeredDoses)}
               peopleWithAtLeastOneDose={formatInteger(todaysVaccinationData.peopleWithAtLeastOneDose)}
               peopleWithTwoDoses={formatInteger(todaysVaccinationData.peopleWithTwoDoses)}
+              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}
+              percentageFullyVaccinatedText={LABELS[UIstate.locale].percentageFullyVaccinatedText}
             />
-
           </div>
           <div className="statsRow">
             <PositivesAndDeathsBlock

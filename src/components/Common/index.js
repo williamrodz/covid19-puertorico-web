@@ -43,6 +43,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   administeredDosesText:"Vacunas administradas",
                   peopleWithAtLeastOneDoseText:"Personas con una dosis",
                   peopleWithTwoDosesText:"Personas con dos dosis",
+                  percentageFullyVaccinatedText:"Porciento de población con 2 dosis"
                 }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
@@ -85,6 +86,8 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   administeredDosesText:"Administered vaccines",
                   peopleWithAtLeastOneDoseText:"People with one dose",
                   peopleWithTwoDosesText:"People with two doses",
+                  percentageFullyVaccinatedText:"Percentage of population with 2 doses"
+
                 }
 
 
