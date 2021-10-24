@@ -127,7 +127,7 @@ export const getDeltaAverageForDays = (historicalData,dataPoint) =>{
 }
 
 export const DataDiv = (props) =>{
-  var number = formatInteger(props.figure)
+  var number = formatInteger(props.figure ? props.figure : "0")
 
   const locationOfAl = props.saludTimeSignature.indexOf("al ")
   const dateNumberStart = locationOfAl + 3

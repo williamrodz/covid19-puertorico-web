@@ -13,7 +13,6 @@ import TestNumbersBlock from '../TestNumbersBlock'
 import TestDistributionBlock from '../TestDistributionBlock'
 import GetVaccinatedBlock from '../GetVaccinatedBlock';
 import VaccineStatsBlock from '../VaccineStatsBlock';
-import VaccinationGraph from '../VaccinationGraph';
 import HerdImmunityBar from '../HerdImmunityBar';
 
 import {SiteDescription, CoffeeButton,LoveStatement,getLabels, formatInteger } from '../Common/index.js'
@@ -316,7 +315,6 @@ export default function Home(props) {
     });
 
     const [todaysVaccinationData, setTodaysVaccinationData] = useState({
-      administeredDoses:0,
       peopleWithAtLeastOneDose:0,
       peopleWithTwoDoses:0,
     });
@@ -478,19 +476,15 @@ export default function Home(props) {
         <div className="statsRow">
             <HerdImmunityBar
               percentageFullyVaccinatedText={LABELS[UIstate.locale].percentageFullyVaccinatedText}
-              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}/>
-            <VaccinationGraph firebase={props.firebase}/>
-          
+              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}/>          
           </div>            
           {/* <div className="statsRow">
           </div>   */}
           <div className="statsRow">
             <GetVaccinatedBlock vaccineCallToAction={LABELS[UIstate.locale].vaccineCallToAction}/>
             <VaccineStatsBlock  
-              administeredDosesText={LABELS[UIstate.locale].administeredDosesText}
               peopleWithAtLeastOneDoseText={LABELS[UIstate.locale].peopleWithAtLeastOneDoseText}
               peopleWithTwoDosesText={LABELS[UIstate.locale].peopleWithTwoDosesText}
-              administeredDoses={formatInteger(todaysVaccinationData.administeredDoses)}
               peopleWithAtLeastOneDose={formatInteger(todaysVaccinationData.peopleWithAtLeastOneDose)}
               peopleWithTwoDoses={formatInteger(todaysVaccinationData.peopleWithTwoDoses)}
               percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}
@@ -507,7 +501,6 @@ export default function Home(props) {
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <FatalityChartBlock deaths={today.deaths} totalPositive={today.totalPositive+today.serologicalPositive} description={LABELS[UIstate.locale].fatalityRate}/>
           </div>
           <div className="statsRow">
             <TestNumbersBlock

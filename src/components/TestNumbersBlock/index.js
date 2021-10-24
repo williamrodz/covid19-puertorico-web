@@ -23,16 +23,6 @@ const TestsNumbersBlock = (props) =>{
             saludTimeSignature={props.saludTimeSignature}
             locale={props.locale}/>
         </div>
-        <div style={{display: 'flex',flexDirection: 'column'}}>
-          <DataDiv
-            color="#c7ecee"
-            label={props.probableCasesLabel}
-            figure={props.today.serologicalPositive}
-            newToday={props.historicalData.newSerologicalPositiveToday}
-            twoWeekAverage={serelogicalDeltaAverage}
-            saludTimeSignature={props.saludTimeSignature}
-            locale={props.locale}/>
-        </div>
     </div>
   )
 }
