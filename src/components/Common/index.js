@@ -42,7 +42,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   vaccineCallToAction:"¡Vacúnate o coordina una cita!",
                   administeredDosesText:"Vacunas administradas",
                   peopleWithAtLeastOneDoseText:"Personas con una dosis",
-                  peopleWithTwoDosesText:"Personas con dos dosis",
+                  peopleWithTwoDosesText:"Personas con dosis completada",
                   percentageFullyVaccinatedText:"Porciento de población con serie de dosis completada"
                 }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
@@ -85,7 +85,7 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   vaccineCallToAction:"Get your vaccine or plan your appointment!",  
                   administeredDosesText:"Administered vaccines",
                   peopleWithAtLeastOneDoseText:"People with one dose",
-                  peopleWithTwoDosesText:"People with two doses",
+                  peopleWithTwoDosesText:"People with completed dose series",
                   percentageFullyVaccinatedText:"Percentage of population with completed vaccine series"
 
                 }
