@@ -4,15 +4,9 @@ import '../vaccineBlocks.css'
 
 function formatVaccinationData(rawHistoricalData){
     let timeSeriesData =  rawHistoricalData
-    let administeredDosesTimeSeries = getNivoDataObject(timeSeriesData,'administeredDoses')
     let peopleWithAtLeastOneDoseTimeSeries = getNivoDataObject(timeSeriesData,'peopleWithAtLeastOneDose')
     let peopleWithTwoDosesTimeSeries = getNivoDataObject(timeSeriesData,'peopleWithTwoDoses')
     return [
-        {
-            "id": "Dosis adminstradas",
-            "color": "hsl(160, 70%, 50%)",
-            "data": administeredDosesTimeSeries            
-        },
         {
             "id": "Personas on 1 dosis",
             "color": "hsl(189, 70%, 50%)",

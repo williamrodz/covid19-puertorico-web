@@ -51,7 +51,7 @@ const DISCLAIMER_ES = (<div>*La data provista fue obtenida del sitio web del Dep
 const DISCLAIMER_EN = (<div>*The provided data was obtained from the Puerto Rico Department of Health's coronavirus website(<a href="https://covid19datos.salud.gov.pr/" target="_blank" rel="noopener noreferrer">https://covid19datos.salud.gov.pr/</a>) and is subject to change and/or clarification</div>)
 const DISCLAIMER_DIV = {'en-us':DISCLAIMER_EN,'es-pr':DISCLAIMER_ES}
 
-const ATTRIBUTES = ["serologicalPositive","totalPositive","molecularPositive","deaths"]
+const ATTRIBUTES = ["totalPositive","molecularPositive","antigenPositive","deaths"]
 const ATTRIBUTE_CLASS_ORDER= ['primary','warning','success','danger']
 
 
@@ -337,7 +337,7 @@ export default function Home(props) {
           newPositivesToday:historicalData[lengthOfData-2].totalPositive && historicalData[lengthOfData-1].totalPositive ? historicalData[lengthOfData-1].totalPositive - historicalData[lengthOfData-2].totalPositive : 0,
           newDeathsToday: historicalData[lengthOfData-1].deaths && historicalData[lengthOfData-2].deaths ? historicalData[lengthOfData-1].deaths - historicalData[lengthOfData-2].deaths : 0,
           newMolecularPositiveToday:historicalData[lengthOfData-2].molecularPositive && historicalData[lengthOfData-1].molecularPositive ? historicalData[lengthOfData-1].molecularPositive - historicalData[lengthOfData-2].molecularPositive : 0,
-          newSerologicalPositiveToday:historicalData[lengthOfData-2].serologicalPositive && historicalData[lengthOfData-1].serologicalPositive ? historicalData[lengthOfData-1].serologicalPositive - historicalData[lengthOfData-2].serologicalPositive : 0,
+          newAntigenPositiveToday:historicalData[lengthOfData-2].antigenPositive && historicalData[lengthOfData-1].antigenPositive ? historicalData[lengthOfData-1].antigenPositive - historicalData[lengthOfData-2].antigenPositive : 0,
           }
       }
       setHistoricalData({...historicalDataFromFireBase})
@@ -508,12 +508,12 @@ export default function Home(props) {
               historicalData={historicalData}
               totalPositiveLabel={LABELS[UIstate.locale].totalPositive}
               confirmedCasesLabel={LABELS[UIstate.locale].confirmedCasesLabel}
-              probableCasesLabel={LABELS[UIstate.locale].probableCasesLabel}
+              antigenCasesLabel={LABELS[UIstate.locale].antigenCasesLabel}
               deathsLabel={LABELS[UIstate.locale].deaths}
               saludTimeSignature={today.saludTimeSignature}
               locale={UIstate.locale}
               />
-            <TestDistributionBlock
+            {/* <TestDistributionBlock
               today={today}
               description={LABELS[UIstate.locale].positiveCaseDistribution}
               confirmed={LABELS[UIstate.locale].confirmed}
@@ -522,7 +522,7 @@ export default function Home(props) {
               serologicalPositive={today.serologicalPositive}              
               molecularPositive={today.molecularPositive} 
               antigenPositive={today.antigenPositive}              
-              />
+              /> */}
           </div>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5, fontSize: "14px"}}>
@@ -552,7 +552,7 @@ export default function Home(props) {
         <div className="attributeToGraphSelection">
           <Button onClick={()=>chooseButton('totalPositive')} variant={UIstate.totalPositiveButtonVariant}>{LABELS[UIstate.locale].totalPositiveCasesLabel}</Button>{' '}
           <Button onClick={()=>chooseButton('molecularPositive')} variant={UIstate.molecularPositiveButtonVariant}>{LABELS[UIstate.locale].molecularTests}</Button>{' '}
-          <Button onClick={()=>chooseButton('serologicalPositive')} variant={UIstate.serologicalPositiveButtonVariant}>{LABELS[UIstate.locale].serologicalTests}</Button>{' '}
+          <Button onClick={()=>chooseButton('antigenPositive')} variant={UIstate.antigenPositiveButtonVariant}>{LABELS[UIstate.locale].antigenTests}</Button>{' '}
           <Button onClick={()=>chooseButton('deaths')} variant={UIstate.deathsButtonVariant}>{LABELS[UIstate.locale].deaths}</Button>{' '}
         </div>
 

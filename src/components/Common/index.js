@@ -2,7 +2,9 @@ import React from 'react';
 import * as Icon from 'react-bootstrap-icons';
 
 
-const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
+const LABELS_ES = {confirmedCases:"Casos positivos confirmados",
+                  antigenTests:"Prueba de antígeno",
+                  molecularTests:"Prueba molecular",serologicalTests:"Prueba serológica",deaths:"Muertes",
                   percentInfected:"Porciento de puertorriqueños infectados",fatalityRate:"Tasa de muertes",date:"Fecha",
                   confirmedCasesExplanation:"Es el número de casos positivos atribuidos a una sola persona. Antes del 5 de mayo del 2020, el Departmento de Salúd publicaba el número de pruebas positivas que no necesariamente correspondía al número de personas que probaron positivo al COVID-19.",
                   molecularTestsExplanation:"Éste es el número de casos positivos del COVID-19 de acuerdo a pruebas moleculares. Éstas detectan directamente el ARN (ácido ribonucleico), es decir, el material genético del virus, en las muestras tomadas de secreciones respiratorias del paciente.",
@@ -26,6 +28,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   testDistribution:"Distribución de pruebas",
                   serological:"Serológica",
                   confirmedCasesLabel:"Casos confirmados por prueba molecular",
+                  antigenCasesLabel:"Casos probables por prueba de antígeno",
                   probableCasesLabel:"Casos probables por prueba serológica",
                   positiveCaseDistribution:"Distribución de pruebas positivas",
                   totalPositiveCasesLabel:"Pruebas positivas totales",
@@ -33,6 +36,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   excessDeaths:"Muertes en exceso",
                   totalPositive:"Total de pruebas positivas",
                   molecularPositive:"Positivos por prueba molecular",
+                  antigenPositive:"Positivos por prueba de antígeno",
                   serologicalPositive:"Positivos por prueba serológica",
                   aboveAverage:"sobre promedio",
                   belowAverage:"bajo promedio",
@@ -45,7 +49,9 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",molecularTests:"
                   peopleWithTwoDosesText:"Personas con dosis completada",
                   percentageFullyVaccinatedText:"Porciento de población con serie de dosis completada"
                 }
-const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
+const LABELS_EN = {confirmedCases:"Confirmed positive cases",
+                  antigenTests:"Antigen Tests",
+                  molecularTests:"Molecular Tests",serologicalTests:"Serological Tests",deaths:"Deaths",
                   percentInfected:"Percent of PR population infected ",fatalityRate:"Fatality rate",date:"Date",
                   confirmedCasesExplanation: "This is the number of positive cases attributed to a single person. Before May 5, 2020, the PR Department of Health published the number of positive tests that did not necessarily correspond to the number of people who tested positive for COVID-19. (e.g multiple tests per person)" ,
                   molecularTestsExplanation: "This is the number of positive cases of COVID-19 according to molecular tests. These directly detect RNA (ribonucleic acid), the genetic material of the virus, in samples taken from the patient's respiratory secretions." ,
@@ -70,12 +76,14 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",molecularTests:"Mol
                   serological:"Serological",
                   probableCasesLabel:"Probable positive cases by serelogical test",
                   confirmedCasesLabel:"Confirmed cases by molecular test",
+                  antigenCasesLabel:"Probable cases by antigen test",
                   positiveCaseDistribution:"Distribution of positive tests",
                   totalPositiveCasesLabel:"Total positive tests",
                   confirmed:"Confirmed",
                   excessDeaths:"Excess Deaths",
                   totalPositive:"Total positive tests",
                   molecularPositive:"Positives by molecular test",
+                  antigenPositive:"Positives by antigen test",
                   serologicalPositive:"Positives by serological test",
                   aboveAverage:"above average",
                   belowAverage:"below average",
