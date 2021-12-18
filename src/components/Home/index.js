@@ -257,8 +257,8 @@ export default function Home(props) {
     const [UIstate,setUIState] = useState({
                 attributeToGraph:'totalPositive',
                 graphColors:[BOOTSTRAP_BUTTON_CLASSES_TO_COLORS[ATTRIBUTES_TO_CLASSES['totalPositive']],DELTA_LINE_COLOR],
-                graphOptionAbsolute:true,
-                graphOptionChange:false,
+                graphOptionAbsolute:false,
+                graphOptionChange:true,
                 ...buttonVariants,
                 alertVisible:cookie.ui ? cookie.ui.alertVisible : false,
                 locale:'es-pr',
