@@ -136,13 +136,8 @@ export const getDeltaAverageForDays = (historicalData,dataPoint) =>{
 
 export const DataDiv = (props) =>{
   var number = formatInteger(props.figure ? props.figure : "0")
-
-  const locationOfAl = props.saludTimeSignature.indexOf("al ")
-  const dateNumberStart = locationOfAl + 3
-  const dateNumberEnd = props.saludTimeSignature[dateNumberStart+1] === " " ? dateNumberStart+1 : dateNumberStart+2
-
-
-  const saludDayOfMonth = parseInt(props.saludTimeSignature.substring(dateNumberStart,dateNumberEnd))
+  const dateObject = getDateObjectFromEntry({saludTimeSignature: props.saludTimeSignature})
+  const saludDayOfMonth = dateObject.dayOfMonth
   const todaysDayOfMonth = (new Date()).getDate()
 
   const dateFromToday = saludDayOfMonth === todaysDayOfMonth
@@ -150,11 +145,10 @@ export const DataDiv = (props) =>{
 
   const arrow = deltaAboveAverage ? <Icon.ArrowUp style={{color: 'red'}} /> : <Icon.ArrowDown style={{color: '#b8e994'}} />
 
-
   return (<div style={{display:'flex',flexDirection:'column'}}>
             <div style={{color: 'grey'}}>{props.label}</div>
             <div style={{fontSize: 45,fontWeight: 'bold',color:props.color}}>{number}</div>
-            {dateFromToday ?
+            {dateFromToday && props.newToday?
               <div>{`(+${formatInteger(props.newToday)}`} { `${props.locale === "es-pr" ? "hoy" : "today"})`}
               {arrow}
               </div>
@@ -208,4 +202,43 @@ export const printObject = (object) =>{
     stringVersion += `${key}:${object[key]}`
   }
   return stringVersion
+}
+
+
+let MONTHS_ES_LIST = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+let MONTHS_ES_TO_NUMBER = {}
+MONTHS_ES_LIST.map( (month,i)=>MONTHS_ES_TO_NUMBER[month] = i)
+
+
+export function getDateObjectFromEntry(entry){
+  var jsDate;
+  var dayOfMonth;
+  var monthNumber;
+  var year;
+  if (entry.timestamp){
+    jsDate = new Date(entry.timestamp)
+    dayOfMonth = jsDate.getDate();
+    monthNumber = jsDate.getMonth();
+    year = jsDate.getYear();
+  }
+  else if (entry.saludTimeSignature.indexOf(" de ") !== -1){
+    let dateSplit = entry.saludTimeSignature.split(" de ");
+    dayOfMonth = parseInt(dateSplit[0].substring(dateSplit[0].length - 3));
+    let monthInSpanish = dateSplit[1];
+    monthNumber = MONTHS_ES_TO_NUMBER[monthInSpanish];
+    year = parseInt(dateSplit[2]);
+    jsDate = new Date(year,monthNumber - 1,dayOfMonth)
+  } else if (entry.saludTimeSignature.indexOf("/") !== -1){
+    let slashedDate = entry.saludTimeSignature.split(" ")[2]
+    let dateComponents = slashedDate.split("/")
+    monthNumber = parseInt(dateComponents[0]);
+    dayOfMonth = parseInt(dateComponents[1]);
+    year = parseInt(dateComponents[2]);
+    jsDate = new Date(year,monthNumber - 1,dayOfMonth)    
+  } else {
+    console.log(`Date format is invalid.`)
+  }
+
+  return {jsDate:jsDate,year:year,monthNumber:monthNumber,dayOfMonth:dayOfMonth}
+
 }

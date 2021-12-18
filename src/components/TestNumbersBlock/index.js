@@ -9,8 +9,6 @@ const TestsNumbersBlock = (props) =>{
   let antigenDeltaAverage = getDeltaAverageForDays(props.historicalData,'antigenPositive')
 
 
-
-
   return (
     <div className="statsBlock">
         <div style={{display: 'flex',flexDirection: 'column'}}>

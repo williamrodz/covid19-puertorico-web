@@ -25,7 +25,6 @@ const App = (props) => {
 
   const toolTipElement = (tooltipProps) => {
 
-
       return (
         <div className="toolTipElement">
           <div style={{margin:5}}>
@@ -41,7 +40,6 @@ const App = (props) => {
           </div>
         </div>)
   };
-
 
   return (
       <ResponsiveLine

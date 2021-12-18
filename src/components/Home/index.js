@@ -8,14 +8,12 @@ import { useCookies } from 'react-cookie';
 import Navigation from '../NavigationBar'
 
 import PositivesAndDeathsBlock from '../PositivesAndDeathsBlock'
-import FatalityChartBlock from '../FatalityChartBlock'
 import TestNumbersBlock from '../TestNumbersBlock'
-import TestDistributionBlock from '../TestDistributionBlock'
 import GetVaccinatedBlock from '../GetVaccinatedBlock';
 import VaccineStatsBlock from '../VaccineStatsBlock';
 import HerdImmunityBar from '../HerdImmunityBar';
 
-import {SiteDescription, CoffeeButton,LoveStatement,getLabels, formatInteger } from '../Common/index.js'
+import {SiteDescription, CoffeeButton,LoveStatement,getLabels, formatInteger,getDateObjectFromEntry } from '../Common/index.js'
 
 let LABELS = getLabels()
 
@@ -101,40 +99,11 @@ function removeParentheses(string){
   }
   return output
 }
-let MONTHS_ES_LIST = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-let MONTHS_ES_TO_NUMBER = {}
-MONTHS_ES_LIST.map( (month,i)=>MONTHS_ES_TO_NUMBER[month] = i)
-
-function getDateObjectFromEntry(entry){
-  var jsDate;
-  var dayOfMonth;
-  var monthNumber;
-  var year;
-  if (entry.timestamp){
-    jsDate = new Date(entry.timestamp)
-    dayOfMonth = jsDate.getDate();
-    monthNumber = jsDate.getMonth();
-    year = jsDate.getYear();
-  }
-  else{
-    let dateSplit = entry.saludTimeSignature.split(" de ");
-    dayOfMonth = parseInt(dateSplit[0].substring(dateSplit[0].length - 3));
-    let monthInSpanish = dateSplit[1];
-    monthNumber = MONTHS_ES_TO_NUMBER[monthInSpanish];
-    year = parseInt(dateSplit[2]);
-    jsDate = Date(year,monthNumber,dayOfMonth)
-  }
-
-  return {jsDate:jsDate,year:year,monthNumber:monthNumber,dayOfMonth:dayOfMonth}
-
-
-}
-
 
 function getSlashedDateFromDate(date,locale){
 
-  let espagnol = `${date.dayOfMonth}-${MONTHS[locale][date.monthNumber+1]}` 
-  let anglais = `${MONTHS[locale][date.monthNumber+1]}-${date.dayOfMonth}`
+  let espagnol = `${date.dayOfMonth}-${MONTHS[locale][date.monthNumber]}` 
+  let anglais = `${MONTHS[locale][date.monthNumber]}-${date.dayOfMonth}`
   return locale === "es-pr" ? espagnol : anglais;
 }
 
@@ -147,23 +116,24 @@ function createDataObject(data,UIstate){
   let today = new Date()
   let lowerTimeBound =  today.setDate(today.getDate()-UIstate.graphLastXdays);
 
-
   var formattedData = []
   var formattedDeltaData = []
-  // console.log("Data is:",data)
+  console.log(`Supposed to graph last ${UIstate.graphLastXdays} days`)
+  console.log(`Not admitting anything before  ${new Date(lowerTimeBound)}`)
+
   for (var i = 0; i < data.length; i++) {
     const entry = data[i]
-
     const dateInfo = getDateObjectFromEntry(entry);
+    console.log(`dateInfo is `,dateInfo)
 
     if (UIstate.graphLastXdays !== 0 && dateInfo.jsDate < lowerTimeBound){
       continue
+    } else {
+      console.log(`Admitting ${dateInfo.jsDate}`)
     }
 
     let xShorthand = getSlashedDateFromDate(dateInfo,UIstate.locale);
-
     var yValue = entry[yKey]
-    // console.log("yValue is",yValue)
 
     if (i >= 1){
       const prevEntry = data[i-1]
@@ -177,11 +147,8 @@ function createDataObject(data,UIstate){
     }
 
     const formattedEntry = {"x":xShorthand,"y":yValue}
-    // console.log(`Pushing (${xShorthand},${yValue})`)
     formattedData.push(formattedEntry)
   }
-
-  // console.log("formattedData",formattedData)
 
   const dataObject = {
   // Hacky
@@ -193,8 +160,6 @@ function createDataObject(data,UIstate){
   "id": LABELS[UIstate.locale].change,
   "color":DELTA_LINE_COLOR,
   "data": formattedDeltaData}
-  // console.log("formattedData",formattedData)
-  // console.log("formattedDeltaData",formattedDeltaData)
 
   var dataList = []
   if (graphOptionAbsolute){
@@ -264,8 +229,8 @@ return (
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(60)}>{props.last60daysText}</Dropdown.Item>
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(90)}>{props.last90daysText}</Dropdown.Item>
         <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(180)}>{props.last180daysText}</Dropdown.Item>        
-        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(365)}>{props.last365daysText}</Dropdown.Item>
-        <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(0)}>{props.last0daysText}</Dropdown.Item>
+        {/* <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(365)}>{props.last365daysText}</Dropdown.Item> */}
+        {/* <Dropdown.Item onClick={()=>props.timeRangeSelectionFunction(0)}>{props.last0daysText}</Dropdown.Item> */}
       </Dropdown.Menu>
     </Dropdown>
   </>
