@@ -47,7 +47,7 @@ const LABELS_ES = {confirmedCases:"Casos positivos confirmados",
                   administeredDosesText:"Vacunas administradas",
                   peopleWithAtLeastOneDoseText:"Personas con una dosis",
                   peopleWithTwoDosesText:"Personas con dosis completada",
-                  percentageFullyVaccinatedText:"Porciento de población con serie de dosis completada"
+                  percentageFullyVaccinatedText:"Porciento de población apta (5 años o más) con serie de dosis completada"
                 }
 const LABELS_EN = {confirmedCases:"Confirmed positive cases",
                   antigenTests:"Antigen Tests",
@@ -94,7 +94,7 @@ const LABELS_EN = {confirmedCases:"Confirmed positive cases",
                   administeredDosesText:"Administered vaccines",
                   peopleWithAtLeastOneDoseText:"People with one dose",
                   peopleWithTwoDosesText:"People with completed dose series",
-                  percentageFullyVaccinatedText:"Percentage of population with completed vaccine series"
+                  percentageFullyVaccinatedText:"Percentage of eligible population (at least 5 years old) with completed vaccine series"
 
                 }
 

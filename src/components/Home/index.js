@@ -70,10 +70,23 @@ const PR_POPULATION = 3.194*(10**6)
 function anglifySaludTimeSignature(saludTimeSignature){
   const currentMonth = (new Date ()).getMonth() + 1
   const currentMonthEN = MONTHS_EN[currentMonth]
+  var dayNumber;
+  var year;
+  if (saludTimeSignature.indexOf("de") !== -1){
+    var splitUp = saludTimeSignature.trim().split("de")
+    dayNumber = splitUp[0].substring(saludTimeSignature.indexOf(",")+ 2).trim()
+    year = splitUp[2].trim();
+  }
+  else  if (saludTimeSignature.indexOf("/") !== -1){
+    let slashedDate = saludTimeSignature.split(" ")[2]
+    let components = slashedDate.split("/")
+    dayNumber = components[1]
+    year = components[2]
+  } else {
+    dayNumber = "XX"
+    year = "XXXX"
+  }
 
-  var splitUp = saludTimeSignature.trim().split("de")
-  var dayNumber = splitUp[0].substring(saludTimeSignature.indexOf(",")+ 2).trim()
-  var year = splitUp[2].trim();
 
   // time no longer reported by Salud's end
   // var time = splitUp[7]
@@ -441,7 +454,7 @@ export default function Home(props) {
         <div className="statsRow">
             <HerdImmunityBar
               percentageFullyVaccinatedText={LABELS[UIstate.locale].percentageFullyVaccinatedText}
-              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) / 2799926) * 100).toFixed(1) + "%"}/>          
+              percentageFullyVaccinated={((parseInt(todaysVaccinationData.peopleWithTwoDoses) /  3076212) * 100).toFixed(1) + "%"}/>          
           </div>            
           {/* <div className="statsRow">
           </div>   */}
@@ -491,7 +504,7 @@ export default function Home(props) {
           </div>
         </div>
         <div style={{display:'flex',flexDirection:'row',textAlign: 'center',margin: 5, fontSize: "14px"}}>
-          <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature)}</div>
+          <div>{UIstate.locale === 'es-pr' ? today.saludTimeSignature : anglifySaludTimeSignature(today.saludTimeSignature ?today.saludTimeSignature : "" )}</div>
         </div>
 
         <div style={{textAlign:'center',marginTop: 10}}>{GRAPHING_DESCRIPTION[UIstate.locale].instructions}</div>
