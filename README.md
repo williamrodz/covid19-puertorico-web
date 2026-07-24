@@ -1,74 +1,194 @@
-## Web Tracker for COVID-19 in Puerto Rico
+# COVID-19 Puerto Rico Web Tracker
+
+A bilingual (Spanish/English) COVID-19 data visualization dashboard for Puerto Rico, providing real-time statistics on cases, deaths, testing, and vaccination progress.
 
 ![Desktop Demo](demoImages/desktop_demo.png)
-![Mobile Demo](demoImages/mobile_demo.png) 
+![Mobile Demo](demoImages/mobile_demo.png)
 
+## Overview
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This web application served as a public health information dashboard during the COVID-19 pandemic, tracking and communicating critical data to the Puerto Rican population. Key features include:
+
+- **Real-time Statistics**: Confirmed cases, deaths, and testing data
+- **Interactive Charts**: Time-series visualizations with customizable date ranges
+- **Vaccination Tracking**: Progress toward herd immunity with visual indicators
+- **Excess Deaths Data**: CDC data integration via Tableau
+- **Public API**: Developer access for COVID-19 data
+- **Bilingual Interface**: Full Spanish and English support
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         DATA PIPELINE                                   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────────────┐      ┌─────────────────────┐                  │
+│   │  PR Health Dept     │      │  CDC / External     │                  │
+│   │  Data Sources       │      │  Data Sources       │                  │
+│   └─────────┬───────────┘      └─────────┬───────────┘                  │
+│             │                            │                              │
+│             ▼                            ▼                              │
+│   ┌─────────────────────────────────────────────────────┐               │
+│   │           Data Scraping Server                      │               │
+│   │  github.com/williamrodz/server-covid19pr            │               │
+│   └─────────────────────┬───────────────────────────────┘               │
+│                         │                                               │
+│                         ▼                                               │
+│   ┌─────────────────────────────────────────────────────┐               │
+│   │              Firebase Firestore                     │               │
+│   │  ┌─────────────┐ ┌─────────────┐ ┌───────────────┐  │               │
+│   │  │ todaysData  │ │ historical  │ │ vaccination   │  │               │
+│   │  │             │ │ Data        │ │ Data          │  │               │
+│   │  └─────────────┘ └─────────────┘ └───────────────┘  │               │
+│   └─────────────────────┬───────────────────────────────┘               │
+│                         │                                               │
+└─────────────────────────┼───────────────────────────────────────────────┘
+                          │
+┌─────────────────────────┼───────────────────────────────────────────────┐
+│                         ▼           WEB APPLICATION                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────────────────────────────────────────────┐               │
+│   │              React Application                      │               │
+│   │                                                     │               │
+│   │  ┌───────────────┐  ┌───────────────────────────┐   │               │
+│   │  │ NavigationBar │  │      Home Dashboard       │   │               │
+│   │  │ (Lang Toggle) │  │  ┌─────────┐ ┌─────────┐  │   │               │
+│   │  └───────────────┘  │  │ Stats   │ │ Charts  │  │   │               │
+│   │                     │  │ Blocks  │ │ (Nivo)  │  │   │               │
+│   │  ┌───────────────┐  │  └─────────┘ └─────────┘  │   │               │
+│   │  │  API Page     │  │  ┌─────────┐ ┌─────────┐  │   │               │
+│   │  │  (Developer   │  │  │ Vaccine │ │ Herd    │  │   │               │
+│   │  │   Access)     │  │  │ Stats   │ │ Immunity│  │   │               │
+│   │  └───────────────┘  │  └─────────┘ └─────────┘  │   │               │
+│   │                     └───────────────────────────┘   │               │
+│   │  ┌───────────────┐                                  │               │
+│   │  │ Excess Deaths │  ← Tableau Integration           │               │
+│   │  │ Page          │                                  │               │
+│   │  └───────────────┘                                  │               │
+│   └─────────────────────────────────────────────────────┘               │
+│                         │                                               │
+│                         ▼                                               │
+│   ┌─────────────────────────────────────────────────────┐               │
+│   │              Firebase Hosting                       │               │
+│   └─────────────────────────────────────────────────────┘               │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Related Repositories
+
+| Repository | Description |
+|------------|-------------|
+| **[server-covid19pr](https://github.com/williamrodz/server-covid19pr)** | Data scraping server that collects COVID-19 statistics from Puerto Rico's health department and populates the Firebase database |
+| **This repo** | Web frontend for visualizing the data |
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Frontend** | React 16, React Router, React Bootstrap |
+| **Charts** | Nivo (@nivo/line, @nivo/pie), Tableau |
+| **Backend** | Firebase (Firestore, Auth, Hosting) |
+| **Styling** | Bootstrap 4, CSS |
+| **i18n** | Custom bilingual labels (es-pr / en-us) |
+
+## Project Structure
+
+```
+src/
+├── index.js                 # App entry point with routing
+├── components/
+│   ├── Home/                # Main dashboard
+│   ├── Firebase/            # Firebase config & context
+│   ├── Common/              # Shared utilities & i18n labels
+│   ├── LineChart/           # Time-series chart component
+│   ├── NavigationBar/       # Header with language toggle
+│   ├── API.js               # API registration page
+│   ├── ExcessDeathsPage/    # CDC excess deaths (Tableau)
+│   ├── *Block.js            # Stats display components
+│   └── ...
+├── constants/
+│   └── routes.js            # Route definitions
+└── fonts/                   # Custom fonts
+```
+
+## Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Main dashboard with all statistics |
+| `/excessDeaths` | Excess deaths visualization (CDC data) |
+| `/api` | API registration and documentation |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v12+)
+- Yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/williamrodz/covid19-puertorico-web.git
+cd covid19-puertorico-web
+
+# Install dependencies
+yarn install
+
+# Start development server
+yarn start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000).
+
+### Environment Variables
+
+The app requires Firebase configuration. Create a `.env` file with:
+
+```
+REACT_APP_API_KEY=your_firebase_api_key
+REACT_APP_AUTH_DOMAIN=your_project.firebaseapp.com
+REACT_APP_DATABASE_URL=https://your_project.firebaseio.com
+REACT_APP_PROJECT_ID=your_project_id
+REACT_APP_STORAGE_BUCKET=your_project.appspot.com
+REACT_APP_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_APP_ID=your_app_id
+REACT_APP_MEASUREMENT_ID=your_measurement_id
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+| Command | Description |
+|---------|-------------|
+| `yarn start` | Run development server |
+| `yarn build` | Build for production |
+| `yarn test` | Run tests |
 
-### `yarn start`
+## Deployment
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The app is configured for Firebase Hosting:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```bash
+yarn build
+firebase deploy
+```
 
-### `yarn test`
+## Data Model
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The Firebase Firestore database contains:
 
-### `yarn build`
+| Collection | Description |
+|------------|-------------|
+| `data/todaysData` | Current day COVID statistics |
+| `data/historicalData` | Time-series data for charts |
+| `data/vaccinesToday` | Current vaccination counts |
+| `data/vaccineHistory` | Historical vaccination data |
+| `users/{uid}` | API user registrations |
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## License
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This project was created to serve the public health needs of Puerto Rico during the COVID-19 pandemic.
